@@ -3,7 +3,7 @@ import { Field, Int, ObjectType } from 'type-graphql'
 
 @ObjectType()
 @Entity()
-export class Advisor extends BaseEntity {
+export class User extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number
@@ -17,9 +17,27 @@ export class Advisor extends BaseEntity {
   last_name!: string
 
   @Field(() => String)
+  @Column()
+  position!: string
+
+  @Field(() => String)
+  @Column()
+  department!: string
+
+  @Field(() => String)
+  @Column()
+  permissions!: string // replace with enums
+
+  // email will double as username
+  @Field(() => String)
   @Column({ unique: true })
   email!: string
 
+  // don't share publicly
+  @Column()
+  password!: string
+
+  // store phone numbers?
   @Field(() => [Int])
   @Column()
   phone_numbers!: number[]
@@ -28,6 +46,7 @@ export class Advisor extends BaseEntity {
   @Column()
   languages!: string[]
 
+  // remove?
   @Field(() => [String])
   @Column()
   regions!: string[]
@@ -35,10 +54,6 @@ export class Advisor extends BaseEntity {
   @Field(() => [String])
   @Column()
   notes: string[]
-
-  @Field(() => [Date])
-  @Column()
-  days_unavailable: Date[]
 
   // one to many for sessions
   // link to a user account so advisors can also sign in?
