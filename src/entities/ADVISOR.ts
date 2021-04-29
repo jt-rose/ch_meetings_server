@@ -1,6 +1,6 @@
 import { Entity, Column } from 'typeorm'
-import { Field, ObjectType } from 'type-graphql'
-import { BaseUser } from './BASEUSER'
+import { Field, ObjectType, InputType } from 'type-graphql'
+import { BaseUser, BaseUserInput } from './BASEUSER'
 
 @ObjectType()
 @Entity()
@@ -11,4 +11,14 @@ export class Advisor extends BaseUser {
 
   // one to many for sessions
   // link to a user account so advisors can also sign in?
+}
+
+// input type
+@InputType()
+export class AdvisorDaysOff {
+  @Field()
+  advisor_id!: string
+
+  @Field(() => [Date])
+  days_unavailable!: Date[]
 }
