@@ -1,41 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
-import { Field, Int, ObjectType } from 'type-graphql'
+import { Entity, Column } from 'typeorm'
+import { Field, ObjectType } from 'type-graphql'
+import { BaseUser } from './BASEUSER'
 
 @ObjectType()
 @Entity()
-export class Advisor extends BaseEntity {
-  @Field(() => Int)
-  @PrimaryGeneratedColumn()
-  id!: number
-
-  @Field(() => String)
-  @Column()
-  first_name!: string
-
-  @Field(() => String)
-  @Column()
-  last_name!: string
-
-  @Field(() => String)
-  @Column({ unique: true })
-  email!: string
-
-  @Field(() => [Int])
-  @Column()
-  phone_numbers!: number[]
-
-  @Field(() => [String])
-  @Column()
-  languages!: string[]
-
-  @Field(() => [String])
-  @Column()
-  regions!: string[]
-
-  @Field(() => [String])
-  @Column()
-  notes: string[]
-
+export class Advisor extends BaseUser {
   @Field(() => [Date])
   @Column()
   days_unavailable: Date[]
