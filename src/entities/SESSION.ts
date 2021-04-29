@@ -1,20 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
-import { Field, Float, Int, ObjectType } from 'type-graphql'
-
-// date
-// time
-// duration
-// advisor fk
-// business fk
-// course type
-// record attendance
-// participants?
-// notes
-// opid
-// language
-// timezone
-// managers users-fk
-// zoom link
+import { Field, Int, ObjectType } from 'type-graphql'
 
 // separate sessions from session requests? or perhaps status?
 // have single workshops table that links to individual sessions
@@ -26,6 +11,14 @@ import { Field, Float, Int, ObjectType } from 'type-graphql'
 @ObjectType()
 @Entity()
 export class Session extends BaseEntity {
+  @Field(() => Int)
+  @PrimaryGeneratedColumn()
+  session_id!: number
+
+  @Field(() => Int)
+  @Column()
+  workshop_id!: number // FK
+
   @Field(() => Date)
   @Column()
   date!: Date
@@ -44,59 +37,11 @@ export class Session extends BaseEntity {
 
   @Field()
   @Column()
-  duration!: number
-
-  @Field()
-  @Column()
-  timezone!: string // use Date?
-
-  @Field()
-  @Column()
-  advisor!: string
-
-  @Field()
-  @Column()
-  client!: string
-
-  @Field()
-  @Column()
-  business_unit!: string
-
-  @Field()
-  @Column()
-  open_air_id!: string
-
-  @Field(() => Int)
-  @Column({ unique: true })
-  workshop_id!: number
-
-  @Field()
-  @Column()
-  workshop_type!: string // enum later
-
-  @Field()
-  @Column()
-  language!: string
-
-  @Field()
-  @Column()
-  record_attendance!: boolean
-
-  @Field(() => [String])
-  @Column()
-  participants!: string[]
+  duration_in_hours!: number
 
   @Field()
   @Column()
   notes: string // text column
-
-  @Field(() => [String])
-  @Column()
-  client_success_team!: string[]
-
-  @Field(() => [String])
-  @Column()
-  sales_team!: string[]
 
   @Field()
   @Column()
@@ -105,10 +50,6 @@ export class Session extends BaseEntity {
   @Field(() => [String])
   @Column()
   change_log!: string[]
-
-  @Field(() => String) // change to doc later
-  @Column()
-  config_summary!: string
 }
 
 /*
