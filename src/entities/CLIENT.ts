@@ -1,5 +1,5 @@
 import { Entity, Column, BaseEntity, PrimaryColumn, OneToMany } from 'typeorm'
-import { Field, ObjectType } from 'type-graphql'
+import { Field, InputType, ObjectType } from 'type-graphql'
 import { Workshop } from './WORKSHOP'
 
 @ObjectType()
@@ -19,3 +19,13 @@ export class Client extends BaseEntity {
 }
 
 // include client/ BU contacts?
+@InputType()
+export class ClientInput {
+  @Field()
+  client!: string
+
+  @Field()
+  business_units!: string[]
+
+  // workshops will be scheduled separately
+}
