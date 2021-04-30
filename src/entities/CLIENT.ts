@@ -1,5 +1,6 @@
-import { Entity, Column, BaseEntity, PrimaryColumn } from 'typeorm'
-import { Field, Int, ObjectType } from 'type-graphql'
+import { Entity, Column, BaseEntity, PrimaryColumn, OneToMany } from 'typeorm'
+import { Field, ObjectType } from 'type-graphql'
+import { Workshop } from './WORKSHOP'
 
 @ObjectType()
 @Entity()
@@ -12,9 +13,9 @@ export class Client extends BaseEntity {
   @Column()
   business_units!: string[]
 
-  @Field(() => [Int])
-  @Column()
-  workshops: number[] // FK[]
+  @Field(() => [Workshop])
+  @OneToMany(() => Workshop, (workshop) => workshop.client)
+  workshops: Workshop[]
 }
 
 // include client/ BU contacts?

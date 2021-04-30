@@ -1,5 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm'
 import { Field, Int, ObjectType } from 'type-graphql'
+import { Advisor } from './ADVISOR'
+import { Client } from './CLIENT'
+import { Session } from './SESSION'
 
 @ObjectType()
 @Entity()
@@ -13,17 +23,21 @@ export class Workshop extends BaseEntity {
   course_type!: string // enum later
 
   @Field()
-  @Column()
-  conference_type!: string // change to enum later, ex: in_person, zoom, teams, etc.
-
-  @Field(() => [Int])
-  @Column()
-  sessions!: number[] // sessions ID[]
-  // breakout to sess1, sess2
+  @ManyToOne(() => Advisor, (advisor) => advisor.email)
+  advisor!: Advisor
 
   @Field()
   @Column()
-  client!: string // change to FK later
+  conference_type!: string // change to enum later, ex: in_person, zoom, teams, etc.
+
+  @Field(() => [Session])
+  @OneToMany(() => Session, (session) => session.session_id)
+  sessions!: Session[]
+  // breakout to sess1, sess2
+
+  @Field(() => Client)
+  @ManyToOne(() => Client, (client) => client.client)
+  client!: Client
 
   @Field()
   @Column()

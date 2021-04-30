@@ -1,6 +1,7 @@
-import { Entity, Column } from 'typeorm'
+import { Entity, Column, OneToMany } from 'typeorm'
 import { Field, ObjectType, InputType } from 'type-graphql'
-import { BaseUser, BaseUserInput } from './BASEUSER'
+import { BaseUser } from './BASEUSER'
+import { Workshop } from './WORKSHOP'
 
 @ObjectType()
 @Entity()
@@ -9,7 +10,9 @@ export class Advisor extends BaseUser {
   @Column()
   days_unavailable: Date[]
 
-  // one to many for sessions
+  @Field()
+  @OneToMany(() => Workshop, (workshop) => workshop.advisor)
+  workshops: Workshop
   // link to a user account so advisors can also sign in?
 }
 

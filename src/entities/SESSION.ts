@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToOne,
+} from 'typeorm'
 import { Field, Int, ObjectType } from 'type-graphql'
+import { Workshop } from './WORKSHOP'
 
 // separate sessions from session requests? or perhaps status?
 // have single workshops table that links to individual sessions
@@ -15,9 +22,9 @@ export class Session extends BaseEntity {
   @PrimaryGeneratedColumn()
   session_id!: number
 
-  @Field(() => Int)
-  @Column()
-  workshop_id!: number // FK
+  @Field(() => Workshop)
+  @ManyToOne(() => Workshop, (workshop) => workshop.workshop_id)
+  workshop_id!: Workshop
 
   @Field(() => Date)
   @Column()
