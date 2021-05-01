@@ -7,10 +7,9 @@ import { Workshop } from './WORKSHOP'
 @Entity()
 export class Advisor extends BaseUser {
   @Field(() => [Date])
-  @Column()
+  @Column({ type: 'timestamptz', array: true })
   days_unavailable: Date[]
 
-  @Field()
   @OneToMany(() => Workshop, (workshop) => workshop.advisor)
   workshops: Workshop
   // link to a user account so advisors can also sign in?

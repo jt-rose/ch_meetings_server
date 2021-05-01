@@ -5,7 +5,7 @@ import {
   BaseEntity,
   ManyToOne,
 } from 'typeorm'
-import { Field, Int, ObjectType } from 'type-graphql'
+import { Field, InputType, Int, ObjectType } from 'type-graphql'
 import { Workshop } from './WORKSHOP'
 
 // separate sessions from session requests? or perhaps status?
@@ -22,7 +22,6 @@ export class Session extends BaseEntity {
   @PrimaryGeneratedColumn()
   session_id!: number
 
-  @Field(() => Workshop)
   @ManyToOne(() => Workshop, (workshop) => workshop.workshop_id)
   workshop_id!: Workshop
 
@@ -55,7 +54,7 @@ export class Session extends BaseEntity {
   zoom_link!: string
 
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   change_log!: string[]
 }
 
@@ -71,3 +70,6 @@ validate session
 generate comms template
 generate meetings planner
 */
+
+@InputType()
+export class SessionInput {}

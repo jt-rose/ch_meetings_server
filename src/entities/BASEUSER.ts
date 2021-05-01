@@ -17,20 +17,21 @@ export class BaseUser extends BaseEntity {
   @PrimaryColumn()
   email!: string
 
+  /*
   @Field(() => [Int])
   @Column()
   phone_numbers!: number[]
-
+*/
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   languages!: string[]
 
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   regions!: string[]
 
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   notes: string[]
 }
 
@@ -47,9 +48,10 @@ export class BaseUserInput {
   @Field(() => String)
   email!: string
 
+  /*
   @Field(() => [Int])
   phone_numbers!: number[]
-
+*/
   @Field(() => [String])
   languages!: string[]
 

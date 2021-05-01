@@ -22,7 +22,6 @@ export class Workshop extends BaseEntity {
   @Column()
   course_type!: string // enum later
 
-  @Field()
   @ManyToOne(() => Advisor, (advisor) => advisor.email)
   advisor!: Advisor
 
@@ -35,7 +34,6 @@ export class Workshop extends BaseEntity {
   sessions!: Session[]
   // breakout to sess1, sess2
 
-  @Field(() => Client)
   @ManyToOne(() => Client, (client) => client.client)
   client!: Client
 
@@ -64,15 +62,15 @@ export class Workshop extends BaseEntity {
   record_attendance!: boolean
 
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   client_success_team!: string[] // change to user FK?
 
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   sales_team!: string[]
 
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   change_log: string[] // may change to jsonb later
 
   @Field()
@@ -80,7 +78,7 @@ export class Workshop extends BaseEntity {
   config_summary: string // change to doc type later
 
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   notes: string[]
 }
 

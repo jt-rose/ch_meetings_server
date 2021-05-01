@@ -10,10 +10,9 @@ export class Client extends BaseEntity {
   client!: string
 
   @Field(() => [String])
-  @Column()
+  @Column('text', { array: true })
   business_units!: string[]
 
-  @Field(() => [Workshop])
   @OneToMany(() => Workshop, (workshop) => workshop.client)
   workshops: Workshop[]
 }
@@ -24,7 +23,7 @@ export class ClientInput {
   @Field()
   client!: string
 
-  @Field()
+  @Field(() => [String])
   business_units!: string[]
 
   // workshops will be scheduled separately
