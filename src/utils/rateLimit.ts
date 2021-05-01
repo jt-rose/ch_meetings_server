@@ -1,8 +1,7 @@
 import { MiddlewareFn } from 'type-graphql'
-import Redis from 'ioredis'
 import { MyContext } from './myContext'
+import { redis } from './redis'
 
-const redis = new Redis()
 const ONE_DAY = 60 * 60 * 24
 const standardLimit = 500
 

@@ -1,6 +1,10 @@
 import 'reflect-metadata'
 import express from 'express'
+import cors from 'cors'
+import session from 'express-session'
+import connectRedis from 'connect-redis'
 import { createConnection } from 'typeorm'
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import path from 'path'
 import { buildSchema } from 'type-graphql'
 import { ApolloServer } from 'apollo-server-express'
@@ -42,7 +46,8 @@ const main = async () => {
     password: process.env.LOCAL_PASSWORD,
     port: 8000,
     logging: true,
-    //synchronize: true, disable in prod 12:16
+    synchronize: true, // disable in prod 12:16
+    namingStrategy: new SnakeNamingStrategy(),
     entities: [Advisor, User, Client, Session, Workshop],
     migrations: [path.join(__dirname, './migrations/*')],
   })
@@ -52,6 +57,36 @@ const main = async () => {
   /* --------------------------- initialize express --------------------------- */
 
   const app = express()
+
+  const RedisStore = connectRedis(session)
+
+  //app.set('trust proxy', 1) // for use in prod with nginx
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+    })
+  )
+
+  app.use(
+    session({
+      name: 'qid',
+      store: new RedisStore({
+        client: redis as any,
+        disableTouch: true,
+      }),
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production', // disable for dev in localhost
+        // add domain when in prod
+      },
+      secret: process.env.COOKIE_SECRET as string,
+      resave: false,
+      saveUninitialized: false,
+    })
+  )
 
   /* ---------------------------- initalize apollo ---------------------------- */
 
