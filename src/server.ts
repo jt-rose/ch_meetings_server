@@ -37,7 +37,7 @@ const main = async () => {
 
   const conn = await createConnection({
     type: 'postgres',
-    database: 'ahab',
+    database: 'ch_meetings',
     username: 'postgres',
     password: process.env.LOCAL_PASSWORD,
     port: 8000,
