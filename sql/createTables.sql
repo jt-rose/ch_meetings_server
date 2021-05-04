@@ -24,15 +24,18 @@ CREATE TABLE unavailable_days (
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     day_unavailable DATE NOT NULL,
     note TEXT
-) CREATE TABLE languages (
+);
+CREATE TABLE languages (
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     advisor_language VARCHAR(255) NOT NULL
-) CREATE TABLE regions (
+);
+CREATE TABLE regions (
     advisor_region VARCHAR(255) NOT NULL,
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL
-) CREATE TABLE workshops (
+);
+CREATE TABLE workshops (
     workshop_id BIGSERIAL PRIMARY KEY,
-    course_type VARCHAR(255),
+    course_type VARCHAR(255) NOT NULL,
     -- enum later
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     conference_type VARCHAR(255) NOT NULL,
