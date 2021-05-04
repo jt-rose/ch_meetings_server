@@ -1,15 +1,9 @@
 CREATE TABLE clients (
     client_id BIGSERIAL PRIMARY KEY,
-    company_name VARCHAR(255) NOT NULL,
+    client_name VARCHAR(255) NOT NULL,
     business_unit VARCHAR(255)
 );
-CREATE TABLE change_log (
-    log_id BIGSERIAL PRIMARY KEY,
-    workshop BIGINT REFERENCES workshops (workshop_id) NOT NULL,
-    note TEXT NOT NULL,
-    log_date TIMESTAMPTZ NOT NULL
-);
-CREATE TABLE users (
+CREATE TABLE managers (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) PRIMARY KEY,
@@ -58,9 +52,15 @@ CREATE TABLE workshop_sessions (
     duration_in_hours DECIMAL(1, 1) NOT NULL,
     zoom_link VARCHAR(255)
 );
+CREATE TABLE change_log (
+    log_id BIGSERIAL PRIMARY KEY,
+    workshop BIGINT REFERENCES workshops (workshop_id) NOT NULL,
+    note TEXT NOT NULL,
+    log_date TIMESTAMPTZ NOT NULL
+);
 CREATE TABLE project_managers (
     workshop_id BIGINT REFERENCES workshops (workshop_id) NOT NULL,
-    manager VARCHAR(255) REFERENCES users (email) NOT NULL,
+    manager VARCHAR(255) REFERENCES managers (email) NOT NULL,
     current_involvement VARCHAR(255) NOT NULL -- active, inactive - change to enums
 );
 CREATE TABLE workshop_notes (
@@ -69,6 +69,6 @@ CREATE TABLE workshop_notes (
     apply_to_all_sessions BOOLEAN NOT NULL,
     -- will apply to each session if true
     -- otherwise the specific workshop_session_id will be listed
-    workshop_session_id BIGINT REFERENCES workshops_sessions (workshop_session_id),
+    workshop_session_id BIGINT REFERENCES workshop_sessions (workshop_session_id),
     note TEXT NOT NULL
 );
