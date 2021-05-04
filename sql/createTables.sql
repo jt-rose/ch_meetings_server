@@ -1,3 +1,10 @@
+CREATE TYPE WORKSHOP_STATUS AS ENUM (
+    'REQUESTED',
+    'SCHEDULED',
+    'COMPLETED',
+    'HOLD A',
+    'HOLD B' -- possible extras: PAID, REJECTED, REQUEST_NEW_DATES, REQUEST_INFO, etc.
+);
 CREATE TABLE clients (
     client_id BIGSERIAL PRIMARY KEY,
     client_name VARCHAR(255) NOT NULL,
@@ -27,10 +34,18 @@ CREATE TABLE regions (
     advisor_region VARCHAR(255) NOT NULL,
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL
 );
+CREATE TABLE courses (
+    course_name VARCHAR(255) PRIMARY KEY,
+    course_description TEXT NOT NULL,
+    active BOOLEAN NOT NULL,
+    virtual_course BOOLEAN NOT NULL,
+    -- vilt, may switch to 'in_person' if vilt becomes default
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW() -- store changes?
+);
 CREATE TABLE workshops (
     workshop_id BIGSERIAL PRIMARY KEY,
-    course_type VARCHAR(255) NOT NULL,
-    -- enum later
+    course_type VARCHAR(255) REFERENCES courses (course_name) NOT NULL,
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     conference_type VARCHAR(255) NOT NULL,
     -- change to enum later, ex: in_person, zoom, teams, etc.
