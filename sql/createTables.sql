@@ -22,15 +22,18 @@ CREATE TABLE advisors (
     last_name VARCHAR(255) NOT NULL
 );
 CREATE TABLE unavailable_days (
+    unavailable_id BIGSERIAL PRIMARY KEY,
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     day_unavailable DATE NOT NULL,
     note TEXT
 );
 CREATE TABLE languages (
+    language_id BIGSERIAL PRIMARY KEY,
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     advisor_language VARCHAR(255) NOT NULL
 );
 CREATE TABLE regions (
+    region_id BIGSERIAL PRIMARY KEY,
     advisor_region VARCHAR(255) NOT NULL,
     advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL
 );
@@ -73,7 +76,8 @@ CREATE TABLE change_log (
     note TEXT NOT NULL,
     log_date TIMESTAMPTZ NOT NULL
 );
-CREATE TABLE project_managers (
+CREATE TABLE manager_assignments (
+    assignment_id BIGSERIAL PRIMARY KEY,
     workshop_id BIGINT REFERENCES workshops (workshop_id) NOT NULL,
     manager VARCHAR(255) REFERENCES managers (email) NOT NULL,
     current_involvement VARCHAR(255) NOT NULL -- active, inactive - change to enums
