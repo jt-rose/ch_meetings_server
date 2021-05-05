@@ -1,10 +1,3 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  BaseEntity,
-  ManyToOne,
-} from 'typeorm'
 import { Field, InputType, Int, ObjectType } from 'type-graphql'
 import { Workshop } from './WORKSHOP'
 
@@ -16,45 +9,34 @@ import { Workshop } from './WORKSHOP'
 // change log
 
 @ObjectType()
-@Entity()
-export class Session extends BaseEntity {
+export class Session {
   @Field(() => Int)
-  @PrimaryGeneratedColumn()
   session_id!: number
 
-  @ManyToOne(() => Workshop, (workshop) => workshop.workshop_id)
   workshop_id!: Workshop
 
   @Field(() => Date)
-  @Column()
   date!: Date
 
   @Field(() => Date)
-  @Column()
   start_time!: Date
 
   @Field(() => Date)
-  @Column()
   end_time!: Date
 
   @Field()
-  @Column()
   status!: string
 
   @Field()
-  @Column()
   duration_in_hours!: number
 
   @Field()
-  @Column()
   notes: string // text column
 
   @Field()
-  @Column()
   zoom_link!: string
 
   @Field(() => [String])
-  @Column('text', { array: true })
   change_log!: string[]
 }
 

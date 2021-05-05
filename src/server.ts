@@ -3,8 +3,6 @@ import express from 'express'
 import cors from 'cors'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
-import { createConnection } from 'typeorm'
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import path from 'path'
 import { buildSchema } from 'type-graphql'
 import { ApolloServer } from 'apollo-server-express'
@@ -16,19 +14,21 @@ import {
   simpleEstimator,
 } from 'graphql-query-complexity'
 
-/* ----------------------------- import entities ---------------------------- */
+import { PrismaClient } from '@prisma/client'
 
+/* ----------------------------- import entities ---------------------------- */
+/*
 import { Advisor } from './entities/ADVISOR'
 import { User } from './entities/USER'
 import { Client } from './entities/CLIENT'
 import { Session } from './entities/SESSION'
 import { Workshop } from './entities/WORKSHOP'
-
+*/
 /* ---------------------------- import resolvers ---------------------------- */
 
 import { AdvisorResolver } from './resolvers/advisor'
 //import {} from './resolvers/user'
-//import {} from './resolvers/client'
+import { ClientResolver } from './resolvers/client'
 //import {} from './resolvers/session'
 //import {} from './resolvers/workshop'
 
@@ -37,22 +37,8 @@ import { AdvisorResolver } from './resolvers/advisor'
 require('dotenv').config()
 
 const main = async () => {
-  /* ------------------------- connect to TypeORM DB ------------------------ */
-
-  const conn = await createConnection({
-    type: 'postgres',
-    database: 'ch_meetings',
-    username: 'postgres',
-    password: process.env.LOCAL_PASSWORD,
-    port: 8000,
-    logging: true,
-    synchronize: true, // disable in prod 12:16
-    namingStrategy: new SnakeNamingStrategy(),
-    entities: [Advisor, User, Client, Session, Workshop],
-    migrations: [path.join(__dirname, './migrations/*')],
-  })
-
-  await conn.runMigrations()
+  /* ---------------------------- connect to Prisma --------------------------- */
+  const prisma = new PrismaClient()
 
   /* --------------------------- initialize express --------------------------- */
 
@@ -91,7 +77,7 @@ const main = async () => {
   /* ---------------------------- initalize apollo ---------------------------- */
 
   const schema = await buildSchema({
-    resolvers: [AdvisorResolver],
+    resolvers: [AdvisorResolver, ClientResolver],
     validate: false,
     // automatically create `schema.gql` file with schema definition in project's working directory
     emitSchemaFile: true,

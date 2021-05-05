@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model advisors {
+  email            String             @id @db.VarChar(255)
+  first_name       String             @db.VarChar(255)
+  last_name        String             @db.VarChar(255)
+  languages        languages[]
+  regions          regions[]
+  unavailable_days unavailable_days[]
+  workshops        workshops[]
+}
+
+model change_log {
+  log_id    BigInt    @id @default(autoincrement())
+  workshop  BigInt
+  note      String
+  log_date  DateTime  @db.Timestamptz(6)
+  workshops workshops @relation(fields: [workshop], references: [workshop_id])
+}
+
+model clients {
+  client_id     BigInt      @id @default(autoincrement())
+  client_name   String      @db.VarChar(255)
+  business_unit String?     @db.VarChar(255)
+  workshops     workshops[]
+}
+
+model courses {
+  course_name        String      @id @db.VarChar(255)
+  course_description String
+  active             Boolean
+  virtual_course     Boolean
+  created_at         DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime    @default(now()) @db.Timestamptz(6)
+  workshops          workshops[]
+}
+
+model languages {
+  advisor          String   @db.VarChar(255)
+  advisor_language String   @db.VarChar(255)
+  language_id      BigInt   @id @default(autoincrement())
+  advisors         advisors @relation(fields: [advisor], references: [email])
+}
+
+model manager_assignments {
+  workshop_id         BigInt
+  manager             String    @db.VarChar(255)
+  current_involvement String    @db.VarChar(255)
+  assignment_id       BigInt    @id @default(autoincrement())
+  managers            managers  @relation(fields: [manager], references: [email])
+  workshops           workshops @relation(fields: [workshop_id], references: [workshop_id])
+}
+
+model managers {
+  first_name          String                @db.VarChar(255)
+  last_name           String                @db.VarChar(255)
+  email               String                @id @db.VarChar(255)
+  email_password      String                @db.VarChar(255)
+  manager_assignments manager_assignments[]
+}
+
+model regions {
+  advisor_region String   @db.VarChar(255)
+  advisor        String   @db.VarChar(255)
+  region_id      BigInt   @id @default(autoincrement())
+  advisors       advisors @relation(fields: [advisor], references: [email])
+}
+
+model unavailable_days {
+  advisor         String   @db.VarChar(255)
+  day_unavailable DateTime @db.Date
+  note            String?
+  unavailable_id  BigInt   @id @default(autoincrement())
+  advisors        advisors @relation(fields: [advisor], references: [email])
+}
+
+model workshop_notes {
+  notes_id              BigInt             @id @default(autoincrement())
+  workshop_id           BigInt
+  apply_to_all_sessions Boolean
+  workshop_session_id   BigInt?
+  note                  String
+  workshops             workshops          @relation(fields: [workshop_id], references: [workshop_id])
+  workshop_sessions     workshop_sessions? @relation(fields: [workshop_session_id], references: [workshop_session_id])
+}
+
+model workshop_sessions {
+  workshop_session_id BigInt           @id @default(autoincrement())
+  workshop_id         BigInt
+  session_date        DateTime         @db.Date
+  start_time          DateTime         @db.Timestamptz(6)
+  session_status      String           @db.VarChar(255)
+  duration_in_hours   Decimal          @db.Decimal(1, 1)
+  zoom_link           String?          @db.VarChar(255)
+  workshops           workshops        @relation(fields: [workshop_id], references: [workshop_id])
+  workshop_notes      workshop_notes[]
+}
+
+model workshops {
+  workshop_id         BigInt                @id @default(autoincrement())
+  course_type         String                @db.VarChar(255)
+  advisor             String                @db.VarChar(255)
+  conference_type     String                @db.VarChar(255)
+  client              BigInt
+  open_air_id         String                @db.VarChar(255)
+  workshop_status     String                @db.VarChar(255)
+  time_zone           String                @db.VarChar(10)
+  workshop_language   String                @db.VarChar(255)
+  record_attendance   Boolean
+  advisors            advisors              @relation(fields: [advisor], references: [email])
+  clients             clients               @relation(fields: [client], references: [client_id])
+  courses             courses               @relation(fields: [course_type], references: [course_name])
+  change_log          change_log[]
+  manager_assignments manager_assignments[]
+  workshop_notes      workshop_notes[]
+  workshop_sessions   workshop_sessions[]
+}
+
+enum workshop_status {
+  REQUESTED
+  SCHEDULED
+  COMPLETED
+  HOLD_A @map("HOLD A")
+  HOLD_B @map("HOLD B")
+}

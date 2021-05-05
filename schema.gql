@@ -13,6 +13,16 @@ type Advisor {
   regions: [String!]!
 }
 
+type Client {
+  business_units: [String!]!
+  client: String!
+}
+
+input ClientInput {
+  business_units: [String!]!
+  client: String!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -20,6 +30,7 @@ scalar DateTime
 
 type Mutation {
   createAdvisor: Advisor!
+  createClient(clientInfo: ClientInput!): Client!
   deleteAdvisor: Advisor!
   editAdvisor: Advisor!
 }

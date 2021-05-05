@@ -1,19 +1,14 @@
-import { Entity, Column, BaseEntity, PrimaryColumn, OneToMany } from 'typeorm'
 import { Field, InputType, ObjectType } from 'type-graphql'
 import { Workshop } from './WORKSHOP'
 
 @ObjectType()
-@Entity()
-export class Client extends BaseEntity {
+export class Client {
   @Field()
-  @PrimaryColumn()
   client!: string
 
   @Field(() => [String])
-  @Column('text', { array: true })
   business_units!: string[]
 
-  @OneToMany(() => Workshop, (workshop) => workshop.client)
   workshops: Workshop[]
 }
 

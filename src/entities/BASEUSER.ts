@@ -1,20 +1,15 @@
-import { Entity, PrimaryColumn, Column, BaseEntity } from 'typeorm'
 import { Field, InputType, ObjectType } from 'type-graphql'
 
 @ObjectType()
-@Entity()
-export class BaseUser extends BaseEntity {
+export class BaseUser {
   @Field()
-  @Column()
   first_name!: string
 
   @Field()
-  @Column()
   last_name!: string
 
   // email will double as PK and username
   @Field()
-  @PrimaryColumn()
   email!: string
 
   /*
@@ -23,15 +18,12 @@ export class BaseUser extends BaseEntity {
   phone_numbers!: number[]
 */
   @Field(() => [String])
-  @Column('text', { array: true })
   languages!: string[]
 
   @Field(() => [String])
-  @Column('text', { array: true })
   regions!: string[]
 
   @Field(() => [String])
-  @Column('text', { array: true })
   notes: string[]
 }
 

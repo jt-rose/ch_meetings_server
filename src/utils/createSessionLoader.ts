@@ -1,21 +1,28 @@
 import DataLoader from 'dataloader'
 import { Session } from '../entities/SESSION'
+import { Prisma, PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export const createUserLoader = () =>
   new DataLoader<number, Session>(async (sessionIds) => {
-    const sessions = await Session.findByIds(sessionIds as number[])
+    const sessions = await prisma.workshop_sessions.findMany({
+      where: {
+        workshop_session_id: { in: sessionIds as Prisma.Enumerable<number> },
+      },
+    })
     const sessionIdToSession: Record<number, Session> = {}
     sessions.forEach((session) => {
+      // will update later
+      // @ts-ignore
       sessionIdToSession[session.session_id] = session
     })
     return sessionIds.map((sessionId) => sessionIdToSession[sessionId])
   })
-
 /*
+const findByIds = (ids: number[]) => Session.findByIds(ids)
 
-  const findByIds = (ids: number[]) => Session.findByIds(ids)
-
-  const dataLoaderTemplate = (entity: Session, search: typeof findByIds) => () => 
+const dataLoaderTemplate = (entity: Session, search: typeof findByIds) => () =>
   new DataLoader<number, typeof entity>(async (entityIds) => {
     const entities = await search(entityIds as number[])
     const entityIdToEntity: Record<number, typeof entity> = {}
@@ -24,5 +31,15 @@ export const createUserLoader = () =>
     })
     return entityIds.map((entityId) => entityIdToEntity[entityId])
   })
-
-  */
+/*
+  const createDataLoader = (entity: typeof Session) => () => {
+    new DataLoader<number, typeof entity>(async (entityIds) => {
+        const entities = await entity.findByIds(entityIds as number[])
+        const entityIdToEntity: Record<number,  typeof entity> = {}
+        entities.forEach((singleEntity) => {
+          entityIdToEntity[singleEntity.session_id] = singleEntity
+        })
+        return entityIds.map((entityId) => entityIdToEntity[entityId])
+      })
+  }
+*/
