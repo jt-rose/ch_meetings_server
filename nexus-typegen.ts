@@ -29,12 +29,26 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   Query: {};
-  User: { // root type
-    admin_access?: boolean | null; // Boolean
-    age?: number | null; // Int
-    aliases?: Array<string | null> | null; // [String]
-    first_name?: string | null; // String
-    last_name?: string | null; // String
+  Workshop: { // root type
+    advisor?: string | null; // String
+    client?: string | null; // String
+    conference_type?: string | null; // String
+    course_type?: string | null; // String
+    open_air_id?: string | null; // String
+    record_attendance?: boolean | null; // Boolean
+    time_zone?: string | null; // String
+    workshop_id?: number | null; // Int
+    workshop_language?: string | null; // String
+    workshop_status?: string | null; // String
+  }
+  Workshop_Sessions: { // root type
+    duration_in_hours?: number | null; // Float
+    session_date?: string | null; // String
+    session_status?: string | null; // String
+    start_time?: string | null; // String
+    workshop_id?: number | null; // Int
+    workshop_session_id?: number | null; // Int
+    zoom_link?: string | null; // String
   }
 }
 
@@ -52,13 +66,26 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     ok: boolean; // Boolean!
   }
-  User: { // field return type
-    admin_access: boolean | null; // Boolean
-    age: number | null; // Int
-    aliases: Array<string | null> | null; // [String]
-    first_name: string | null; // String
-    id: string | null; // String
-    last_name: string | null; // String
+  Workshop: { // field return type
+    advisor: string | null; // String
+    client: string | null; // String
+    conference_type: string | null; // String
+    course_type: string | null; // String
+    open_air_id: string | null; // String
+    record_attendance: boolean | null; // Boolean
+    time_zone: string | null; // String
+    workshop_id: number | null; // Int
+    workshop_language: string | null; // String
+    workshop_status: string | null; // String
+  }
+  Workshop_Sessions: { // field return type
+    duration_in_hours: number | null; // Float
+    session_date: string | null; // String
+    session_status: string | null; // String
+    start_time: string | null; // String
+    workshop_id: number | null; // Int
+    workshop_session_id: number | null; // Int
+    zoom_link: string | null; // String
   }
 }
 
@@ -66,13 +93,26 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     ok: 'Boolean'
   }
-  User: { // field return type name
-    admin_access: 'Boolean'
-    age: 'Int'
-    aliases: 'String'
-    first_name: 'String'
-    id: 'String'
-    last_name: 'String'
+  Workshop: { // field return type name
+    advisor: 'String'
+    client: 'String'
+    conference_type: 'String'
+    course_type: 'String'
+    open_air_id: 'String'
+    record_attendance: 'Boolean'
+    time_zone: 'String'
+    workshop_id: 'Int'
+    workshop_language: 'String'
+    workshop_status: 'String'
+  }
+  Workshop_Sessions: { // field return type name
+    duration_in_hours: 'Float'
+    session_date: 'String'
+    session_status: 'String'
+    start_time: 'String'
+    workshop_id: 'Int'
+    workshop_session_id: 'Int'
+    zoom_link: 'String'
   }
 }
 
