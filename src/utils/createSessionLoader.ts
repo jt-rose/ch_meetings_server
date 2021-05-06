@@ -1,9 +1,9 @@
-import DataLoader from 'dataloader'
-import { Session } from '../entities/SESSION'
-import { Prisma, PrismaClient } from '@prisma/client'
+//import DataLoader from 'dataloader'
+//import { Prisma, PrismaClient } from '@prisma/client'
+console.log('working on it!')
 
-const prisma = new PrismaClient()
-
+// cancel out for now while implementing graphql-nexus
+/*
 export const createUserLoader = () =>
   new DataLoader<number, Session>(async (sessionIds) => {
     const sessions = await prisma.workshop_sessions.findMany({

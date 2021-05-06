@@ -1,10 +1,10 @@
-import 'reflect-metadata'
+//import 'reflect-metadata'
 import express from 'express'
 import cors from 'cors'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
-import path from 'path'
-import { buildSchema } from 'type-graphql'
+//import path from 'path'
+//import { buildSchema } from 'type-graphql'
 import { ApolloServer } from 'apollo-server-express'
 import { redis } from './utils/redis'
 import { MyContext } from './utils/myContext'
@@ -15,22 +15,7 @@ import {
 } from 'graphql-query-complexity'
 
 import { PrismaClient } from '@prisma/client'
-
-/* ----------------------------- import entities ---------------------------- */
-/*
-import { Advisor } from './entities/ADVISOR'
-import { User } from './entities/USER'
-import { Client } from './entities/CLIENT'
-import { Session } from './entities/SESSION'
-import { Workshop } from './entities/WORKSHOP'
-*/
-/* ---------------------------- import resolvers ---------------------------- */
-
-import { AdvisorResolver } from './resolvers/advisor'
-//import {} from './resolvers/user'
-import { ClientResolver } from './resolvers/client'
-//import {} from './resolvers/session'
-//import {} from './resolvers/workshop'
+import { schema } from './schema'
 
 /* --------------------------- init main function --------------------------- */
 
@@ -76,18 +61,20 @@ const main = async () => {
 
   /* ---------------------------- initalize apollo ---------------------------- */
 
-  const schema = await buildSchema({
+  /*const schema = await buildSchema({
     resolvers: [AdvisorResolver, ClientResolver],
     validate: false,
     // automatically create `schema.gql` file with schema definition in project's working directory
     emitSchemaFile: true,
-  })
+  })*/
+
   const apolloServer = new ApolloServer({
     schema,
     context: ({ req, res }): MyContext => ({
       req,
       res,
       redis,
+      prisma,
     }),
     // plugins: [apolloLogger],
     plugins: [
