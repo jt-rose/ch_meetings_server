@@ -1,11 +1,11 @@
 import { MiddlewareFn } from 'type-graphql'
-import { MyContext } from './myContext'
+import { Context } from '../utils/context'
 import { redis } from './redis'
 
 const ONE_DAY = 60 * 60 * 24
 const standardLimit = 500
 
-type RateLimit = (limit?: number) => MiddlewareFn<MyContext>
+type RateLimit = (limit?: number) => MiddlewareFn<Context>
 export const rateLimit: RateLimit = (limit = standardLimit) => async (
   { context: { req } /*, info */ },
   next

@@ -3,7 +3,7 @@ import { Redis } from 'ioredis'
 import { Session } from 'express-session'
 import { PrismaClient } from '@prisma/client'
 
-export type MyContext = {
+export type Context = {
   req: Request & { session: IGetUserIDSession }
   res: Response
   redis: Redis

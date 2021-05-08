@@ -1,30 +1,29 @@
-//import 'reflect-metadata'
+import 'reflect-metadata'
 import express from 'express'
 import cors from 'cors'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
 //import path from 'path'
-//import { buildSchema } from 'type-graphql'
+import { buildSchema } from 'type-graphql'
 import { ApolloServer } from 'apollo-server-express'
 import { redis } from './utils/redis'
-import { MyContext } from './utils/myContext'
+import { Context } from './utils/context'
 import {
   getComplexity,
   fieldExtensionsEstimator,
   simpleEstimator,
 } from 'graphql-query-complexity'
 
-import { PrismaClient } from '@prisma/client'
-import { schema } from './schema'
+import { prisma } from './prisma'
+
+/* ---------------------------- import resolvers ---------------------------- */
+import { WorkshopSessionResolver } from './graphql/resolvers/SessionResolver'
 
 /* --------------------------- init main function --------------------------- */
 
 require('dotenv').config()
 
 const main = async () => {
-  /* ---------------------------- connect to Prisma --------------------------- */
-  const prisma = new PrismaClient()
-
   /* --------------------------- initialize express --------------------------- */
 
   const app = express()
@@ -59,18 +58,20 @@ const main = async () => {
     })
   )
 
-  /* ---------------------------- initalize apollo ---------------------------- */
+  /* ------------------------------ build schema ------------------------------ */
 
-  /*const schema = await buildSchema({
-    resolvers: [AdvisorResolver, ClientResolver],
+  const schema = await buildSchema({
+    resolvers: [WorkshopSessionResolver],
     validate: false,
     // automatically create `schema.gql` file with schema definition in project's working directory
     emitSchemaFile: true,
-  })*/
+  })
+
+  /* ---------------------------- initialize apollo --------------------------- */
 
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req, res }): MyContext => ({
+    context: ({ req, res }): Context => ({
       req,
       res,
       redis,
