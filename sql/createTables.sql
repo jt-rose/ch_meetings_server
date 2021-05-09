@@ -95,9 +95,9 @@ CREATE TABLE manager_assignments (
 CREATE TABLE workshop_notes (
     notes_id BIGSERIAL PRIMARY KEY,
     workshop_id BIGINT REFERENCES workshops (workshop_id) NOT NULL,
-    apply_to_all_sessions BOOLEAN NOT NULL,
-    -- will apply to each session if true
-    -- otherwise the specific workshop_session_id will be listed
+    -- if this note only applies to a single session,
+    -- a session ID should be supplied to the below parameter
+    -- if that value is null, the note will apply to all sessions in the workshop
     workshop_session_id BIGINT REFERENCES workshop_sessions (workshop_session_id),
     note TEXT NOT NULL
 );

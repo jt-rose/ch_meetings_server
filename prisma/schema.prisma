@@ -84,13 +84,12 @@ model unavailable_days {
 }
 
 model workshop_notes {
-  notes_id              BigInt             @id @default(autoincrement())
-  workshop_id           BigInt
-  apply_to_all_sessions Boolean
-  workshop_session_id   BigInt?
-  note                  String
-  workshops             workshops          @relation(fields: [workshop_id], references: [workshop_id])
-  workshop_sessions     workshop_sessions? @relation(fields: [workshop_session_id], references: [workshop_session_id])
+  notes_id            BigInt             @id @default(autoincrement())
+  workshop_id         BigInt
+  workshop_session_id BigInt?
+  note                String
+  workshops           workshops          @relation(fields: [workshop_id], references: [workshop_id])
+  workshop_sessions   workshop_sessions? @relation(fields: [workshop_session_id], references: [workshop_session_id])
 }
 
 model workshop_sessions {
