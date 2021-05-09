@@ -52,12 +52,12 @@ model languages {
 }
 
 model manager_assignments {
-  workshop_id         BigInt
-  manager             String    @db.VarChar(255)
-  current_involvement String    @db.VarChar(255)
-  assignment_id       BigInt    @id @default(autoincrement())
-  managers            managers  @relation(fields: [manager], references: [email])
-  workshops           workshops @relation(fields: [workshop_id], references: [workshop_id])
+  workshop_id   BigInt
+  manager       String    @db.VarChar(255)
+  assignment_id BigInt    @id @default(autoincrement())
+  active        Boolean
+  managers      managers  @relation(fields: [manager], references: [email])
+  workshops     workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
 
 model managers {

@@ -90,7 +90,7 @@ CREATE TABLE manager_assignments (
     assignment_id BIGSERIAL PRIMARY KEY,
     workshop_id BIGINT REFERENCES workshops (workshop_id) NOT NULL,
     manager VARCHAR(255) REFERENCES managers (email) NOT NULL,
-    current_involvement VARCHAR(255) NOT NULL -- active, inactive - change to enums
+    active BOOLEAN NOT NULL
 );
 CREATE TABLE workshop_notes (
     notes_id BIGSERIAL PRIMARY KEY,
