@@ -1,4 +1,4 @@
-CREATE TYPE WORKSHOP_STATUS AS ENUM (
+CREATE TYPE SESSION_STATUS_ENUM AS ENUM (
     'REQUESTED',
     'SCHEDULED',
     'COMPLETED',
@@ -44,32 +44,43 @@ CREATE TABLE courses (
     virtual_course BOOLEAN NOT NULL,
     -- vilt, may switch to 'in_person' if vilt becomes default
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW() -- store changes?
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+-- initially, separating a workshop request from the workshop entity
+-- was considered, but since much of the data is shared, this did not make sense
+-- these have been combined, with the requested advisor distinguished
+-- from the assigned advisor
+-- and the associated session statuses used to determine
+-- the scheduling status of the work shop (see not below)
 CREATE TABLE workshops (
     workshop_id BIGSERIAL PRIMARY KEY,
     course_type VARCHAR(255) REFERENCES courses (course_name) NOT NULL,
-    advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
-    conference_type VARCHAR(255) NOT NULL,
-    -- change to enum later, ex: in_person, zoom, teams, etc.
+    requested_advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
+    backup_requested_advisor VARCHAR(255) REFERENCES advisors (email),
+    assigned_advisor VARCHAR(255) REFERENCES advisors (email),
+    workshop_location VARCHAR(255) NOT NULL,
     client BIGINT REFERENCES clients (client_id) NOT NULL,
     open_air_id VARCHAR(255) NOT NULL,
-    workshop_status VARCHAR(255) NOT NULL,
-    -- change to enum later
     time_zone VARCHAR(10) NOT NULL,
     workshop_language VARCHAR(255) NOT NULL,
     record_attendance BOOLEAN NOT NULL
 );
+-- to determine the scheduling status of a workshop, a join will be used
+-- to query it's associated sessions
+-- this allows us to store detailed info about each session
+-- for example, if just one session needs to be rescheduled
 CREATE TABLE workshop_sessions (
     workshop_session_id BIGSERIAL PRIMARY KEY,
     workshop_id BIGINT REFERENCES workshops (workshop_id) NOT NULL,
     session_date DATE NOT NULL,
     start_time TIMESTAMPTZ NOT NULL,
-    session_status VARCHAR(255) NOT NULL,
-    -- switch to enums
+    session_status WORKSHOP_STATUS NOT NULL,
     duration_in_hours DECIMAL(1, 1) NOT NULL,
     zoom_link VARCHAR(255)
 );
+-- currently, sessions are set up around specific dates
+-- with date ranges left for associated session notes
+-- this may be changed later to more explicitly recognize date ranges
 CREATE TABLE change_log (
     log_id BIGSERIAL PRIMARY KEY,
     workshop BIGINT REFERENCES workshops (workshop_id) NOT NULL,
