@@ -73,7 +73,7 @@ CREATE TABLE workshop_sessions (
     workshop_session_id BIGSERIAL PRIMARY KEY,
     workshop_id BIGINT REFERENCES workshops (workshop_id) NOT NULL,
     session_date DATE NOT NULL,
-    start_time TIMESTAMPTZ NOT NULL,
+    start_time TIME WITH TIME ZONE NOT NULL,
     session_status WORKSHOP_STATUS NOT NULL,
     duration_in_hours DECIMAL(1, 1) NOT NULL,
     zoom_link VARCHAR(255)

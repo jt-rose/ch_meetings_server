@@ -97,10 +97,10 @@ model workshop_sessions {
   workshop_session_id BigInt               @id @default(autoincrement())
   workshop_id         BigInt
   session_date        DateTime             @db.Date
-  start_time          DateTime             @db.Timestamptz(6)
   duration_in_hours   Decimal              @db.Decimal(1, 1)
   zoom_link           String?              @db.VarChar(255)
   session_status      session_status_enum?
+  start_time          DateTime             @db.Timetz(6)
   workshops           workshops            @relation(fields: [workshop_id], references: [workshop_id])
   workshop_notes      workshop_notes[]
 }
