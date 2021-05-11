@@ -1,7 +1,3 @@
--- log_id BIGSERIAL PRIMARY KEY,
---workshop BIGINT REFERENCES workshops (workshop_id) NOT NULL,
---note TEXT NOT NULL,
---log_date TIMESTAMPTZ NOT NULL
 INSERT INTO change_log (workshop, note, log_date)
 VALUES (
         1,

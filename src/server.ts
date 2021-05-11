@@ -18,6 +18,7 @@ import { prisma } from './prisma'
 
 /* ---------------------------- import resolvers ---------------------------- */
 import { WorkshopSessionResolver } from './graphql/resolvers/SessionResolver'
+import { ClientResolver } from './graphql/resolvers/ClientResolver'
 
 /* --------------------------- init main function --------------------------- */
 
@@ -61,7 +62,7 @@ const main = async () => {
   /* ------------------------------ build schema ------------------------------ */
 
   const schema = await buildSchema({
-    resolvers: [WorkshopSessionResolver],
+    resolvers: [WorkshopSessionResolver, ClientResolver],
     validate: false,
     // automatically create `schema.gql` file with schema definition in project's working directory
     emitSchemaFile: true,
