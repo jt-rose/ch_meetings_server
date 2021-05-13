@@ -63,6 +63,7 @@ const main = async () => {
 
   const schema = await buildSchema({
     resolvers: [WorkshopSessionResolver, ClientResolver],
+    dateScalarMode: 'timestamp',
     validate: false,
     // automatically create `schema.gql` file with schema definition in project's working directory
     emitSchemaFile: true,
