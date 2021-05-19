@@ -1,4 +1,4 @@
-import { PrismaClient } from 'prisma'
+import { PrismaClient } from '@prisma/client'
 
 // seeds the database with advisors and relational data
 // for each advisor's language, regions, and unavailable days
