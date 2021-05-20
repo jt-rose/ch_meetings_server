@@ -1,5 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 
+// prisma seeding for workshops
+// with relational fields for workshop_sessions,
+// workshop_notes, and change_logs
+
 export const seedWorkshops = async (prisma: PrismaClient) => {
   const workshop1 = await prisma.workshops.create({
     data: {
