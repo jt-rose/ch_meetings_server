@@ -5,6 +5,9 @@ import { seedAdvisors } from './seeds/seedAdvisors'
 import { seedWorkshops } from './seeds/seedWorkshops'
 import { seedManagers } from './seeds/seedManagers'
 
+// run all prisma seeding
+// some tables are set up with PK / FK constraints
+// so the order here matters
 async function main(prisma: PrismaClient) {
   await seedCourses(prisma)
   await seedClients(prisma)
@@ -15,6 +18,7 @@ async function main(prisma: PrismaClient) {
   console.log('all database seeding complete')
 }
 
+// generate new prisma client, run db seeding, then disconnect
 const prisma = new PrismaClient()
 main(prisma)
   .catch((e) => {
