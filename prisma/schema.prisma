@@ -130,6 +130,6 @@ enum session_status_enum {
   REQUESTED
   SCHEDULED
   COMPLETED
-  HOLD_A @map("HOLD A")
-  HOLD_B @map("HOLD B")
+  HOLD_A     @map("HOLD A")
+  HOLD_B     @map("HOLD B")
 }
