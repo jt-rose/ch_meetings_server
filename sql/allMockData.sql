@@ -48,7 +48,7 @@ VALUES ('john.doe@email.com', 'North America'),
     ('henri@email.net', 'Africa'),
     ('yusuke@tokyo.co.jp', 'APAC'),
     ('yusuke@tokyo.co.jp', 'North America'),
-    ('jorge@advisor.net', 'South AMerica');
+    ('jorge@advisor.net', 'South America');
 INSERT INTO unavailable_days (advisor, day_unavailable, note)
 VALUES (
         'john.doe@email.com',
@@ -142,7 +142,7 @@ VALUES (
         'jorge@advisor.net',
         NULL,
         'jorge@advisor.net',
-        'Sap Paulo, Brazil',
+        'Sao Paulo, Brazil',
         4,
         'OPID23560h-jk',
         'EST',

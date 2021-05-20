@@ -63,7 +63,7 @@ VALUES (
         'jorge@advisor.net',
         NULL,
         'jorge@advisor.net',
-        'Sap Paulo, Brazil',
+        'Sao Paulo, Brazil',
         4,
         'OPID23560h-jk',
         'EST',
