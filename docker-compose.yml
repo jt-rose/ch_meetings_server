@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  test_server:
+    build:
+      context: '.'
+      target: base
+    command: yarn start
+    environment:
+      # local .env url will be overriden by below
+      SERVER_DATABASE_NAME: test_db
+      DATABASE_URL: postgresql://prisma:prisma@localhost:5433/tests
+      REDIS_HOST: test_redis
+    ports:
+      - 8378:5000
+    expose:
+      - 8378
+    networks:
+      - test_vm
+    volumes:
+      - .\\src:/usr/src/app/src
+      - .\\package.json:/usr/src/app/package.json
+    depends_on:
+      - test_db
+      - test_redis
+
+  test_db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: test_db
+      POSTGRES_PASSWORD: test_db
+      POSTGRES_DB: tests
+    expose:
+      - 8379
+    ports:
+      - 8379:5432
+    networks:
+      - test_vm
+    #command: yarn seed
+
+  test_redis:
+    image: redis
+    expose:
+      - 8380
+    ports:
+      - 8380:6379
+    networks:
+      - test_vm
+
+networks:
+  test_vm:
