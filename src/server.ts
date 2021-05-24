@@ -118,6 +118,9 @@ const main = async () => {
 
   const port = 5000
   app.listen(port, () => console.log(`listening on port ${port}`))
+
+  const redisConnected = await redis.ping()
+  console.log('redis connected: ' + !!redisConnected)
 }
 
 /* ------------------------------- launch app ------------------------------- */
