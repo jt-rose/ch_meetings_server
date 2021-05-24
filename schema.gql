@@ -3,7 +3,21 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type Client {
+  business_unit: String
+  client_id: Int!
+  client_name: String!
+}
+
+type Mutation {
+  addClient(business_unit: String, client_name: String!): Client!
+  editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
+  removeClient(client_id: Int!): Client!
+}
+
 type Query {
+  getAllClients: [Client!]
+  getClient(client_id: Int!): Client
   getSession(sessionID: Float!): [WorkshopSession!]!
 }
 

@@ -8,7 +8,11 @@
     "start": "node dist/server.js",
     "dev": "nodemon dist/server.js",
     "watch": "tsc -w",
-    "seed": "prisma db seed --preview-feature"
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "migrate:init": "npx prisma migrate dev --name init",
+    "seed": "prisma db seed --preview-feature",
+    "test": "yarn docker:up && yarn migrate:init && yarn seed && jest -i"
   },
   "devDependencies": {
     "@types/argon2": "^0.15.0",
@@ -16,8 +20,6 @@
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
     "@types/express-session": "^1.17.3",
-    "@types/graphql": "^14.5.0",
-    "@types/graphql-query-complexity": "^0.2.1",
     "@types/ioredis": "^4.26.0",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.0.2",
