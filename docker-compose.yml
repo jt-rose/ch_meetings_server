@@ -9,7 +9,7 @@ services:
     environment:
       # local .env url will be overriden by below
       SERVER_DATABASE_NAME: test_db
-      DATABASE_URL: postgresql://prisma:prisma@localhost:5433/tests
+      DATABASE_URL: postgresql://test_db:test_db@test_db:5432/tests
       REDIS_HOST: test_redis
     ports:
       - 8378:5000
