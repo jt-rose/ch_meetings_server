@@ -22,8 +22,8 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "types": ["node", "jest"]
+    "types": ["node"]
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "./dist/", "./tests/"],
   "include": ["./src/**/*.tsx", "./src/**/*.ts"]
 }
