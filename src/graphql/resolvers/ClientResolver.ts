@@ -13,7 +13,6 @@ import { Client } from '../objects/Client'
 export class ClientResolver {
   //@FieldResolver() workshops
 
-  //getClient
   //use dataloader
   @Query(() => Client, { nullable: true })
   async getClient(
@@ -30,6 +29,7 @@ export class ClientResolver {
   }
 
   //editClient
+  // not passing an argument for business_unit will leave it unchanged
   @Mutation(() => Client)
   async editClient(
     @Ctx() ctx: Context,
@@ -42,7 +42,7 @@ export class ClientResolver {
       where: { client_id },
       data: { client_name, business_unit },
     })
-  } // Q: is undefined data ignored? or should bu be passed explicitly as null
+  }
 
   @Mutation(() => Client)
   async addClient(
@@ -51,7 +51,7 @@ export class ClientResolver {
     @Arg('business_unit', () => String, { nullable: true })
     business_unit?: string
   ) {
-    const alreadyRegistered = await ctx.prisma.clients.count({
+    const alreadyRegistered = await ctx.prisma.clients.findFirst({
       where: { client_name, business_unit },
     })
     if (alreadyRegistered) {
@@ -61,19 +61,28 @@ export class ClientResolver {
   }
 
   //addClient
-  @Mutation(() => Client) // res-status
+  @Mutation(() => Client)
   async removeClient(
     @Arg('client_id', () => Int) client_id: number,
     @Ctx() ctx: Context
   ) {
-    const hasWorkshops = await ctx.prisma.workshops.count({
-      where: { client: client_id },
+    // search for client and related workshops
+    const clientAndWorkshops = await ctx.prisma.clients.findFirst({
+      where: { client_id },
+      include: { workshops: true },
     })
-    if (hasWorkshops) {
+
+    // reject if no client found
+    if (!clientAndWorkshops) {
+      throw new Error(`Client ${client_id} not found in database`)
+    }
+    // reject if client has workshops scheduled, past or present
+    if (clientAndWorkshops.workshops.length > 0) {
       throw Error(
         `Client #${client_id} cannot be deleted because this client currently has past or present workshops assigned`
       )
     }
+    // safe to delete if client present but without workshops
     return ctx.prisma.clients.delete({ where: { client_id } })
   }
 }
