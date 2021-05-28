@@ -95,9 +95,10 @@ CREATE TABLE manager_assignments (
 CREATE TABLE workshop_notes (
     notes_id SERIAL PRIMARY KEY,
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
-    -- if this note only applies to a single session,
-    -- a session ID should be supplied to the below parameter
-    -- if that value is null, the note will apply to all sessions in the workshop
-    workshop_session_id INT REFERENCES workshop_sessions (workshop_session_id),
     note TEXT NOT NULL
 );
+CREATE TABLE session_notes (
+    notes_id SERIAL PRIMARY KEY,
+    workshop_session_id INT REFERENCES workshop_sessions (workshop_session_id) NOT NULL,
+    note TEXT NOT NULL
+)
