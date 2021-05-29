@@ -65,28 +65,28 @@ VALUES (
     --
     (
         3,
-        'Aug 01 2021 16:00:00 GMT',
+        NULL,
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         3,
-        'Aug 08 2021 16:00:00 GMT',
+        NULL,
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         3,
-        'Aug 15 2021 16:00:00 GMT',
+        NULL,
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         3,
-        'Aug 22 2021 16:00:00 GMT',
+        NULL,
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
@@ -159,14 +159,14 @@ VALUES (
     ),
     (
         6,
-        'Nov 10 2021 12:00:00 GMT',
+        NULL,
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         6,
-        'Nov 17 2021 12:30:00 GMT',
+        NULL,
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'

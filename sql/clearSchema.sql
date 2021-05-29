@@ -5,3 +5,4 @@ FROM pg_stat_activity
 WHERE pg_stat_activity.datname = 'ch_meetings'
     AND pid <> pg_backend_pid();
 DROP SCHEMA "public" CASCADE;
+CREATE SCHEMA "public";
