@@ -7,28 +7,28 @@ INSERT INTO workshop_sessions (
     )
 VALUES (
         1,
-        '2021-7-22T08:00:00EST',
+        'July 22 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         1,
-        '2021-7-23T08:00:00EST',
+        'July 23 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         1,
-        '2021-7-24T08:00:00EST',
+        'July 24 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         1,
-        '2021-7-25T08:00:00EST',
+        'July 25 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
@@ -36,28 +36,28 @@ VALUES (
     --
     (
         2,
-        '2021-7-22T08:00:00CET',
+        'July 22 2021 06:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         2,
-        '2021-7-23T08:00:00CET',
+        'July 23 2021 06:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         2,
-        '2021-7-24T08:00:00CET',
+        'July 24 2021 06:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         2,
-        '2021-7-25T08:00:00CET',
+        'July 25 2021 06:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
@@ -65,28 +65,28 @@ VALUES (
     --
     (
         3,
-        '2021-8-01T08:00:00PST',
+        'Aug 01 2021 16:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         3,
-        '2021-8-08T08:00:00PST',
+        'Aug 08 2021 16:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         3,
-        '2021-8-15T08:00:00PST',
+        'Aug 15 2021 16:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         3,
-        '2021-8-22T08:00:00PST',
+        'Aug 22 2021 16:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
@@ -94,28 +94,28 @@ VALUES (
     --
     (
         4,
-        '2021-10-20T08:00:00EST',
+        'Oct 20 2021 14:00:00 GMT',
         1.5,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         4,
-        '2021-10-22T08:00:00EST',
+        'Oct 22 2021 14:00:00 GMT',
         1.5,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         4,
-        '2021-10-24T08:00:00EST',
+        'Oct 24 2021 14:00:00 GMT',
         1.5,
         'www.zoom.com/user/abcdef1234',
         'HOLD A'
     ),
     (
         4,
-        '2021-10-26T08:00:00EST',
+        'Oct 26 2021 14:00:00 GMT',
         1.5,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
@@ -123,28 +123,28 @@ VALUES (
     --
     (
         5,
-        '2021-12-03T08:00:00EST',
+        'Dec 03 2021 13:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         5,
-        '2021-12-10T08:00:00EST',
+        'Dec 10 2021 13:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         5,
-        '2021-12-17T08:00:00EST',
+        'Dec 17 2021 13:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         5,
-        '2021-12-24T08:00:00EST',
+        'Dec 24 2021 11:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
@@ -152,28 +152,28 @@ VALUES (
     --
     (
         6,
-        '2021-11-03T14:00:00CET',
+        'Nov 03 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
         6,
-        '2021-11-10T14:00:00CET',
+        'Nov 10 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         6,
-        '2021-11-17T14:30:00CET',
+        'Nov 17 2021 12:30:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'REQUESTED'
     ),
     (
         6,
-        '2021-11-24T14:00:00CET',
+        'Nov 24 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
