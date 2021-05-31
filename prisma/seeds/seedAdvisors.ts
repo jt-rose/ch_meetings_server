@@ -13,10 +13,22 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       unavailable_days: {
         createMany: {
           data: [
-            { day_unavailable: '2021-10-22T01:00:00Z', note: 'On Vacation' },
-            { day_unavailable: '2021-10-23T01:00:00Z', note: 'On Vacation' },
-            { day_unavailable: '2021-10-24T01:00:00Z', note: 'On Vacation' },
-            { day_unavailable: '2021-10-25T01:00:00Z', note: 'On Vacation' },
+            {
+              day_unavailable: new Date('2021-10-22T01:00:00Z'),
+              note: 'On Vacation',
+            },
+            {
+              day_unavailable: new Date('2021-10-23T01:00:00Z'),
+              note: 'On Vacation',
+            },
+            {
+              day_unavailable: new Date('2021-10-24T01:00:00Z'),
+              note: 'On Vacation',
+            },
+            {
+              day_unavailable: new Date('2021-10-25T01:00:00Z'),
+              note: 'On Vacation',
+            },
           ],
         },
       },
@@ -44,8 +56,8 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       unavailable_days: {
         createMany: {
           data: [
-            { day_unavailable: '2021-06-22T01:00:00Z' },
-            { day_unavailable: '2021-12-25T01:00:00Z' },
+            { day_unavailable: new Date('2021-06-22T01:00:00Z') },
+            { day_unavailable: new Date('2021-12-25T01:00:00Z') },
           ],
         },
       },
@@ -75,7 +87,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       },
       unavailable_days: {
         create: {
-          day_unavailable: '2021-11-30T01:00:00Z',
+          day_unavailable: new Date('2021-11-30T01:00:00Z'),
           note: 'May be unavailable - best to avoid this date',
         },
       },
@@ -93,9 +105,5 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
   })
 
   const advisors = [advisor1, advisor2, advisor3, advisor4]
-  console.log(`Seeded the following advisors:
-  ${advisor1.email}
-  ${advisor2.email}
-  ${advisor3.email}
-  ${advisor4.email}`)
+  console.log(`All advisors seeded: ${advisors.every((x) => x)}`)
 }

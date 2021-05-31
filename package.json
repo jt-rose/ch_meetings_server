@@ -14,7 +14,9 @@
     "docker:migrate": "docker-compose -f docker-compose.yml run --rm test_server npx prisma migrate dev --name init",
     "seed": "prisma db seed --preview-feature",
     "docker:seed": "docker-compose -f docker-compose.yml run --rm test_server yarn prisma db seed --preview-feature",
-    "test": "mocha -r ts-node/register 'tests/**/*.ts'"
+    "test": "mocha -r ts-node/register 'tests/**/*.ts'",
+    "docker:test": " docker-compose -f docker-compose.yml run --rm test_server yarn mocha -r ts-node/register 'tests/**/*.ts'",
+    "docker:prep": "yarn docker:up && yarn docker:migrate && yarn docker:test"
   },
   "devDependencies": {
     "@types/argon2": "^0.15.0",
@@ -31,12 +33,12 @@
     "chai": "^4.3.4",
     "mocha": "^8.4.0",
     "nodemon": "^2.0.7",
-    "prisma": "2.22.1",
+    "prisma": "^2.23.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@prisma/client": "2.22.1",
+    "@prisma/client": "^2.23.0",
     "apollo-server-express": "^2.24.0",
     "argon2": "^0.27.2",
     "connect-redis": "^5.2.0",

@@ -84,23 +84,22 @@ model unavailable_days {
 }
 
 model workshop_notes {
-  notes_id            Int                @id @default(autoincrement())
-  workshop_id         Int
-  workshop_session_id Int?
-  note                String
-  workshops           workshops          @relation(fields: [workshop_id], references: [workshop_id])
-  workshop_sessions   workshop_sessions? @relation(fields: [workshop_session_id], references: [workshop_session_id])
+  note_id     Int       @id @default(autoincrement())
+  workshop_id Int
+  note        String
+  workshops   workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
 
 model workshop_sessions {
-  workshop_session_id Int                 @id @default(autoincrement())
-  workshop_id         Int
-  date_and_time       DateTime            @db.Timestamptz(6)
-  session_status      session_status_enum
-  duration_in_hours   Decimal             @db.Decimal(2, 1)
-  zoom_link           String?             @db.VarChar(255)
-  workshops           workshops           @relation(fields: [workshop_id], references: [workshop_id])
-  workshop_notes      workshop_notes[]
+  workshop_session_id   Int                     @id @default(autoincrement())
+  workshop_id           Int
+  date_and_time         DateTime?               @db.Timestamptz(6)
+  session_status        session_status_enum
+  duration_in_hours     Decimal                 @db.Decimal(2, 1)
+  zoom_link             String?                 @db.VarChar(255)
+  workshops             workshops               @relation(fields: [workshop_id], references: [workshop_id])
+  requested_start_times requested_start_times[]
+  session_notes         session_notes[]
 }
 
 model workshops {
@@ -110,14 +109,14 @@ model workshops {
   backup_requested_advisor                              String?               @db.VarChar(255)
   assigned_advisor                                      String?               @db.VarChar(255)
   workshop_location                                     String                @db.VarChar(255)
-  client                                                Int
+  client_id                                             Int
   open_air_id                                           String                @db.VarChar(255)
   time_zone                                             String                @db.VarChar(10)
   workshop_language                                     String                @db.VarChar(255)
   record_attendance                                     Boolean
   advisors_advisorsToworkshops_assigned_advisor         advisors?             @relation("advisorsToworkshops_assigned_advisor", fields: [assigned_advisor], references: [email])
   advisors_advisorsToworkshops_backup_requested_advisor advisors?             @relation("advisorsToworkshops_backup_requested_advisor", fields: [backup_requested_advisor], references: [email])
-  clients                                               clients               @relation(fields: [client], references: [client_id])
+  clients                                               clients               @relation(fields: [client_id], references: [client_id])
   courses                                               courses               @relation(fields: [course_type], references: [course_name])
   advisors_advisorsToworkshops_requested_advisor        advisors              @relation("advisorsToworkshops_requested_advisor", fields: [requested_advisor], references: [email])
   change_log                                            change_log[]
@@ -126,10 +125,25 @@ model workshops {
   workshop_sessions                                     workshop_sessions[]
 }
 
+model requested_start_times {
+  request_id          Int               @id @default(autoincrement())
+  workshop_session_id Int
+  earliest_start_time DateTime          @db.Timestamptz(6)
+  latest_start_time   DateTime          @db.Timestamptz(6)
+  workshop_sessions   workshop_sessions @relation(fields: [workshop_session_id], references: [workshop_session_id])
+}
+
+model session_notes {
+  note_id             Int               @id @default(autoincrement())
+  workshop_session_id Int
+  note                String
+  workshop_sessions   workshop_sessions @relation(fields: [workshop_session_id], references: [workshop_session_id])
+}
+
 enum session_status_enum {
   REQUESTED
   SCHEDULED
   COMPLETED
-  HOLD_A     @map("HOLD A")
-  HOLD_B     @map("HOLD B")
+  HOLD_A @map("HOLD A")
+  HOLD_B @map("HOLD B")
 }

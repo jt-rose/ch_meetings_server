@@ -12,56 +12,85 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       backup_requested_advisor: 'henri@email.net',
       assigned_advisor: 'john.doe@email.com',
       workshop_location: 'Zoom',
-      client: 1,
+      client_id: 1,
       open_air_id: 'OPID23560h-jk',
       time_zone: 'EST',
       workshop_language: 'English',
       record_attendance: true,
       workshop_sessions: {
-        createMany: {
-          data: [
-            {
-              date_and_time: '2021-7-22T08:00:00EST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+        create: [
+          {
+            date_and_time: new Date('July 22 2021 12:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('July 22 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('July 22 2021 12:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-7-23T08:00:00EST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('July 23 2021 12:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('July 23 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('July 23 2021 12:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-7-24T08:00:00EST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('July 24 2021 12:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('July 24 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('July 24 2021 12:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-7-25T08:00:00EST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('July 25 2021 12:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('July 25 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('July 25 2021 12:00:00 GMT'),
+                },
+              ],
             },
-          ],
-        },
+          },
+        ],
       },
       workshop_notes: {
-        createMany: {
-          data: [{ note: 'Client has requested translation of XYZ materials' }],
-        },
+        create: [{ note: 'Client has requested translation of XYZ materials' }],
       },
       change_log: {
-        createMany: {
-          data: [
-            {
-              note: 'workshop request created',
-              log_date: '2020-11-15T11:23:00EST',
-            },
-            { note: 'workshop assigned', log_date: '2020-11-17T15:44:00EST' },
-          ],
-        },
+        create: [
+          {
+            note: 'workshop request created',
+            log_date: new Date('Nov 15 2020 15:23:00 GMT'),
+          },
+          {
+            note: 'workshop assigned',
+            log_date: new Date('Nov 17 2020 17:44:00 GMT'),
+          },
+        ],
       },
     },
   })
@@ -72,65 +101,96 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       requested_advisor: 'henri@email.net',
       assigned_advisor: 'henri@email.net',
       workshop_location: 'Zoom',
-      client: 1,
+      client_id: 1,
       open_air_id: 'OPID23560h-jk',
       time_zone: 'CET',
       workshop_language: 'French',
       record_attendance: true,
       workshop_sessions: {
-        createMany: {
-          data: [
-            {
-              date_and_time: '2021-7-22T08:00:00CET',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+        create: [
+          {
+            date_and_time: new Date('July 22 2021 06:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('July 22 2021 06:00:00 GMT'),
+                  latest_start_time: new Date('July 22 2021 09:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-7-23T08:00:00CET',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('July 23 2021 06:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('July 23 2021 06:00:00 GMT'),
+                  latest_start_time: new Date('July 23 2021 09:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-7-24T08:00:00CET',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+            session_notes: {
+              create: [
+                {
+                  note: 'Managers John Doe and Jane Doe will be joining as observers',
+                },
+              ],
             },
-            {
-              date_and_time: '2021-7-25T08:00:00CET',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('July 24 2021 06:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('July 24 2021 06:00:00 GMT'),
+                  latest_start_time: new Date('July 24 2021 09:00:00 GMT'),
+                },
+              ],
             },
-          ],
-        },
-      },
-      workshop_notes: {
-        createMany: {
-          data: [
-            {
-              workshop_session_id: 6,
-              note: 'Managers John Doe and Jane Doe will be joining as observers',
+            session_notes: {
+              create: [
+                {
+                  note: 'Participants Phil Lowe and Stacy Adams will be unavailable and joining workshop 3/ session 3 to make up for it',
+                },
+              ],
             },
-            {
-              workshop_session_id: 7,
-              note: 'Participants Phil Lowe and Stacy Adams will be unavailable and joining workshop 3/ session 3 to make up for it',
+          },
+          {
+            date_and_time: new Date('July 25 2021 06:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('July 25 2021 06:00:00 GMT'),
+                  latest_start_time: new Date('July 25 2021 09:00:00 GMT'),
+                },
+              ],
             },
-          ],
-        },
+          },
+        ],
       },
       change_log: {
-        createMany: {
-          data: [
-            {
-              note: 'workshop request created',
-              log_date: '2021-01-22T12:18:00EST',
-            },
-            { note: 'workshop assigned', log_date: '2021-01-29T16:02:00EST' },
-          ],
-        },
+        create: [
+          {
+            note: 'workshop request created',
+            log_date: new Date('Jan 12 2021 15:23:00 GMT'),
+          },
+          {
+            note: 'workshop assigned',
+            log_date: new Date('Jan 29 2021 15:23:00 GMT'),
+          },
+        ],
       },
     },
   })
@@ -141,61 +201,89 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       requested_advisor: 'yusuke@tokyo.co.jp',
       assigned_advisor: 'yusuke@tokyo.co.jp',
       workshop_location: 'Teams',
-      client: 1,
+      client_id: 1,
       open_air_id: 'OPID23560h-jk',
       time_zone: 'PT',
       workshop_language: 'Japanese',
       record_attendance: false,
       workshop_sessions: {
-        createMany: {
-          data: [
-            {
-              date_and_time: '2021-8-01T08:00:00PST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'REQUESTED',
+        create: [
+          {
+            date_and_time: null,
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'REQUESTED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Aug 01 2021 07:00:00 GMT'),
+                  latest_start_time: new Date('Aug 02 2021 6:59:59 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-8-08T08:00:00PST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'REQUESTED',
+          },
+          {
+            date_and_time: null,
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'REQUESTED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Aug 08 2021 07:00:00 GMT'),
+                  latest_start_time: new Date('Aug 09 2021 6:59:59 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-8-15T08:00:00PST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'REQUESTED',
+          },
+          {
+            date_and_time: null,
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'REQUESTED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Aug 15 2021 07:00:00 GMT'),
+                  latest_start_time: new Date('Aug 16 2021 6:59:59 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-8-22T08:00:00PST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'REQUESTED',
+            session_notes: {
+              create: [
+                {
+                  note: 'Phil Lowe and Stacy Adams will be joining from workshop 2, session 3',
+                },
+              ],
             },
-          ],
-        },
-      },
-      workshop_notes: {
-        createMany: {
-          data: [
-            {
-              workshop_session_id: 11,
-              note: 'Phil Lowe and Stacy Adams will be joining from workshop 2, session 3',
+          },
+          {
+            date_and_time: null,
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'REQUESTED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Aug 22 2021 07:00:00 GMT'),
+                  latest_start_time: new Date('Aug 23 2021 6:59:59 GMT'),
+                },
+              ],
             },
-          ],
-        },
+          },
+        ],
       },
       change_log: {
-        createMany: {
-          data: [
-            {
-              note: 'workshop request created',
-              log_date: '2021-02-03T09:01:00EST',
-            },
-            { note: 'workshop assigned', log_date: '2021-02-10T12:56:00EST' },
-          ],
-        },
+        create: [
+          {
+            note: 'workshop request created',
+            log_date: new Date('Feb 03 2021 13:01:00 GMT'),
+          },
+          {
+            note: 'workshop assigned',
+            log_date: new Date('Feb 10 2021 16:56:00 GMT'),
+          },
+        ],
       },
     },
   })
@@ -207,55 +295,94 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       backup_requested_advisor: 'john.doe@email.com',
       assigned_advisor: 'john.doe@email.com',
       workshop_location: 'Zoom',
-      client: 3,
+      client_id: 3,
       open_air_id: 'OPID236789',
       time_zone: 'EST',
       workshop_language: 'English',
       record_attendance: false,
       workshop_sessions: {
-        createMany: {
-          data: [
-            {
-              date_and_time: '2021-10-20T08:00:00EST',
-              duration_in_hours: 1.5,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+        create: [
+          {
+            date_and_time: new Date('Oct 20 2021 14:00:00 GMT'),
+            duration_in_hours: 1.5,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Oct 20 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('Oct 20 2021 12:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-10-22T08:00:00EST',
-              duration_in_hours: 1.5,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('Oct 22 2021 14:00:00 GMT'),
+            duration_in_hours: 1.5,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Oct 22 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('Oct 22 2021 12:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-10-24T08:00:00EST',
-              duration_in_hours: 1.5,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'HOLD_A',
+          },
+          {
+            date_and_time: new Date('Oct 24 2021 14:00:00 GMT'),
+            duration_in_hours: 1.5,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'HOLD_A',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Oct 24 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('Oct 24 2021 12:00:00 GMT'),
+                },
+                {
+                  earliest_start_time: new Date('Oct 25 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('Oct 25 2021 12:00:00 GMT'),
+                },
+                {
+                  earliest_start_time: new Date('Oct 25 2021 16:00:00 GMT'),
+                  latest_start_time: new Date('Oct 25 2021 16:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-10-26T08:00:00EST',
-              duration_in_hours: 1.5,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('Oct 26 2021 14:00:00 GMT'),
+            duration_in_hours: 1.5,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Oct 26 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('Oct 26 2021 12:00:00 GMT'),
+                },
+              ],
             },
-          ],
-        },
+          },
+        ],
       },
       change_log: {
-        createMany: {
-          data: [
-            {
-              note: 'workshop request created',
-              log_date: '2021-11-01T10:03:00EST',
-            },
-            { note: 'workshop assigned', log_date: '2021-11-17T15:34:00EST' },
-            {
-              note: 'session 3 timing conflict for client. Placed in Hold while gathering new dates',
-              log_date: '2021-11-18T07:34:00EST',
-            },
-          ],
-        },
+        create: [
+          {
+            note: 'workshop request created',
+            log_date: new Date('Nov 01 2020 14:03:00 GMT'),
+          },
+          {
+            note: 'workshop assigned',
+            log_date: new Date('Nov 17 2020 16:16:00 GMT'),
+          },
+          {
+            note: 'session 3 timing conflict for client. Placed in Hold while gathering new dates',
+            log_date: new Date('Nov 18 2020 11:34:00 GMT'),
+          },
+        ],
       },
     },
   })
@@ -266,51 +393,82 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       requested_advisor: 'jorge@advisor.net',
       assigned_advisor: 'jorge@advisor.net',
       workshop_location: 'Sao Paulo, Brazil',
-      client: 4,
+      client_id: 4,
       open_air_id: 'OPID23560h-jk',
       time_zone: 'EST',
       workshop_language: 'Spanish',
       record_attendance: true,
       workshop_sessions: {
-        createMany: {
-          data: [
-            {
-              date_and_time: '2021-12-03T08:00:00EST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+        create: [
+          {
+            date_and_time: new Date('Dec 03 2021 13:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Dec 03 2021 10:00:00 GMT'),
+                  latest_start_time: new Date('Dec 03 2021 15:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-12-10T08:00:00EST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('Dec 10 2021 13:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Dec 10 2021 10:00:00 GMT'),
+                  latest_start_time: new Date('Dec 10 2021 15:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-12-17T08:00:00EST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('Dec 17 2021 13:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Dec 17 2021 10:00:00 GMT'),
+                  latest_start_time: new Date('Dec 17 2021 15:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-12-24T08:00:00EST',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: new Date('Dec 24 2021 11:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Dec 24 2021 10:00:00 GMT'),
+                  latest_start_time: new Date('Dec 24 2021 15:00:00 GMT'),
+                },
+              ],
             },
-          ],
-        },
+          },
+        ],
       },
       change_log: {
-        createMany: {
-          data: [
-            {
-              note: 'workshop request created',
-              log_date: '2020-12-20T08:24:00EST',
-            },
-            { note: 'workshop assigned', log_date: '2020-12-22T15:54:00EST' },
-          ],
-        },
+        create: [
+          {
+            note: 'workshop request created',
+            log_date: new Date('Dec 20 2020 12:24:00 GMT'),
+          },
+          {
+            note: 'workshop assigned',
+            log_date: new Date('Dec 22 2020 18:24:00 GMT'),
+          },
+        ],
       },
     },
   })
@@ -322,67 +480,104 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       backup_requested_advisor: 'john.doe@email.com',
       assigned_advisor: 'henri@email.net',
       workshop_location: 'Zoom',
-      client: 5,
+      client_id: 5,
       open_air_id: 'OPID2354688',
       time_zone: 'CET',
       workshop_language: 'English',
       record_attendance: true,
       workshop_sessions: {
-        createMany: {
-          data: [
-            {
-              date_and_time: '2021-11-03T14:00:00CET',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+        create: [
+          {
+            date_and_time: new Date('Nov 03 2021 12:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Nov 03 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('Nov 03 2021 12:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-11-10T14:00:00CET',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'REQUESTED',
+            session_notes: {
+              create: [
+                {
+                  note: 'Head of Sales Andrea Slonik will be joining to observe process',
+                },
+              ],
             },
-            {
-              date_and_time: '2021-11-17T14:30:00CET',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'REQUESTED',
+          },
+          {
+            date_and_time: null,
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'REQUESTED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Nov 10 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('Nov 10 2021 12:00:00 GMT'),
+                },
+                {
+                  earliest_start_time: new Date('Nov 10 2021 14:00:00 GMT'),
+                  latest_start_time: new Date('Nov 10 2021 14:00:00 GMT'),
+                },
+              ],
             },
-            {
-              date_and_time: '2021-11-24T14:00:00CET',
-              duration_in_hours: 2,
-              zoom_link: 'www.zoom.com/user/abcdef1234',
-              session_status: 'SCHEDULED',
+          },
+          {
+            date_and_time: null,
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'REQUESTED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Nov 17 2021 12:30:00 GMT'),
+                  latest_start_time: new Date('Nov 17 2021 12:30:00 GMT'),
+                },
+                {
+                  earliest_start_time: new Date('Nov 17 2021 14:30:00 GMT'),
+                  latest_start_time: new Date('Nov 17 2021 14:30:00 GMT'),
+                },
+              ],
             },
-          ],
-        },
+          },
+          {
+            date_and_time: new Date('Nov 24 2021 12:00:00 GMT'),
+            duration_in_hours: 2,
+            zoom_link: 'www.zoom.com/user/abcdef1234',
+            session_status: 'SCHEDULED',
+            requested_start_times: {
+              create: [
+                {
+                  earliest_start_time: new Date('Nov 24 2021 12:00:00 GMT'),
+                  latest_start_time: new Date('Nov 24 2021 12:00:00 GMT'),
+                },
+              ],
+            },
+          },
+        ],
       },
       workshop_notes: {
-        createMany: {
-          data: [
-            {
-              note: 'Client has requested previous template of training materials ABC be used',
-            },
-            {
-              workshop_session_id: 21,
-              note: 'Head of Sales Andrea Slonik will be joining to observe process',
-            },
-          ],
-        },
+        create: [
+          {
+            note: 'Client has requested previous template of training materials ABC be used',
+          },
+        ],
       },
       change_log: {
-        createMany: {
-          data: [
-            {
-              note: 'workshop request created',
-              log_date: '2021-03-24T09:39:00EST',
-            },
-            {
-              note: 'session 1 and 4 confirmed, waiting for confirmation on 2 and 3',
-              log_date: '2021-03-28T16:47:00EST',
-            },
-          ],
-        },
+        create: [
+          {
+            note: 'workshop request created',
+            log_date: new Date('Mar 03 2021 13:39:00 GMT'),
+          },
+          {
+            note: 'session 1 and 4 confirmed, waiting for confirmation on 2 and 3',
+            log_date: new Date('Mar 28 2021 20:47:00 GMT'),
+          },
+        ],
       },
     },
   })
@@ -396,5 +591,5 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     workshop6,
   ]
 
-  console.log(`Workshops seeded in database: ${workshops.every((x) => x)}`)
+  console.log(`All workshops seeded: ${workshops.every((x) => x)}`)
 }
