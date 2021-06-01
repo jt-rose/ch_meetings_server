@@ -16,7 +16,8 @@
     "docker:seed": "docker-compose -f docker-compose.yml run --rm test_server yarn prisma db seed --preview-feature",
     "test": "mocha -r ts-node/register 'tests/**/*.ts'",
     "docker:test": " docker-compose -f docker-compose.yml run --rm test_server yarn mocha -r ts-node/register 'tests/**/*.ts'",
-    "docker:prep": "yarn docker:up && yarn docker:migrate && yarn docker:test"
+    "docker:prep": "yarn docker:up && yarn docker:migrate && yarn docker:test",
+    "docker:redis-local": "docker run --name redis_ch_meetings -p 6379:6379 -d redis"
   },
   "devDependencies": {
     "@types/argon2": "^0.15.0",
