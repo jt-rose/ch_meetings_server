@@ -8,24 +8,28 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       email: 'john.doe@email.com',
       first_name: 'John',
       last_name: 'Doe',
-      languages: { create: { advisor_language: 'English' } },
-      regions: { create: { advisor_region: 'North America' } },
+      languages: { create: { language_id: 1, advisor_language: 'English' } },
+      regions: { create: { region_id: 1, advisor_region: 'North America' } },
       unavailable_days: {
         createMany: {
           data: [
             {
+              unavailable_id: 1,
               day_unavailable: new Date('2021-10-22T01:00:00Z'),
               note: 'On Vacation',
             },
             {
+              unavailable_id: 2,
               day_unavailable: new Date('2021-10-23T01:00:00Z'),
               note: 'On Vacation',
             },
             {
+              unavailable_id: 3,
               day_unavailable: new Date('2021-10-24T01:00:00Z'),
               note: 'On Vacation',
             },
             {
+              unavailable_id: 4,
               day_unavailable: new Date('2021-10-25T01:00:00Z'),
               note: 'On Vacation',
             },
@@ -43,21 +47,30 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       languages: {
         createMany: {
           data: [
-            { advisor_language: 'English' },
-            { advisor_language: 'French' },
+            { language_id: 2, advisor_language: 'English' },
+            { language_id: 3, advisor_language: 'French' },
           ],
         },
       },
       regions: {
         createMany: {
-          data: [{ advisor_region: 'EMEA' }, { advisor_region: 'Africa' }],
+          data: [
+            { region_id: 2, advisor_region: 'EMEA' },
+            { region_id: 3, advisor_region: 'Africa' },
+          ],
         },
       },
       unavailable_days: {
         createMany: {
           data: [
-            { day_unavailable: new Date('2021-06-22T01:00:00Z') },
-            { day_unavailable: new Date('2021-12-25T01:00:00Z') },
+            {
+              unavailable_id: 5,
+              day_unavailable: new Date('2021-06-22T01:00:00Z'),
+            },
+            {
+              unavailable_id: 6,
+              day_unavailable: new Date('2021-12-25T01:00:00Z'),
+            },
           ],
         },
       },
@@ -72,21 +85,22 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       languages: {
         createMany: {
           data: [
-            { advisor_language: 'Japanese' },
-            { advisor_language: 'Chinese' },
+            { language_id: 4, advisor_language: 'Japanese' },
+            { language_id: 5, advisor_language: 'Chinese' },
           ],
         },
       },
       regions: {
         createMany: {
           data: [
-            { advisor_region: 'APAC' },
-            { advisor_region: 'North America' },
+            { region_id: 4, advisor_region: 'APAC' },
+            { region_id: 5, advisor_region: 'North America' },
           ],
         },
       },
       unavailable_days: {
         create: {
+          unavailable_id: 7,
           day_unavailable: new Date('2021-11-30T01:00:00Z'),
           note: 'May be unavailable - best to avoid this date',
         },
@@ -99,11 +113,14 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       email: 'jorge@advisor.net',
       first_name: 'Jorge',
       last_name: 'Esteban',
-      languages: { create: { advisor_language: 'Spanish' } },
-      regions: { create: { advisor_region: 'South America' } },
+      languages: { create: { language_id: 6, advisor_language: 'Spanish' } },
+      regions: { create: { region_id: 6, advisor_region: 'South America' } },
     },
   })
 
   const advisors = [advisor1, advisor2, advisor3, advisor4]
-  console.log(`All advisors seeded: ${advisors.every((x) => x)}`)
+  const allAdvisorsSeeded = advisors.every((x) => x)
+  if (!allAdvisorsSeeded) {
+    console.log(`All advisors seeded: false`)
+  }
 }

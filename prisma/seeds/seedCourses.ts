@@ -36,5 +36,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
     ],
   })
 
-  console.log(`All courses seeded: ${courses.count === 5}`)
+  if (courses.count !== 5) {
+    console.log(`All courses seeded: false`)
+  }
 }

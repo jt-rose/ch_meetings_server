@@ -38,6 +38,14 @@ export class ClientResolver {
     @Arg('business_unit', () => String, { nullable: true })
     business_unit?: string
   ) {
+    const nameInUse = await ctx.prisma.clients.findFirst({
+      where: { client_name, business_unit },
+    })
+    if (nameInUse) {
+      throw Error(
+        `client "${client_name}" with business unit "${business_unit}" is already registered in the system`
+      )
+    }
     return ctx.prisma.clients.update({
       where: { client_id },
       data: { client_name, business_unit },
@@ -74,12 +82,12 @@ export class ClientResolver {
 
     // reject if no client found
     if (!clientAndWorkshops) {
-      throw new Error(`Client ${client_id} not found in database`)
+      throw Error(`Client not found in database`)
     }
     // reject if client has workshops scheduled, past or present
     if (clientAndWorkshops.workshops.length > 0) {
       throw Error(
-        `Client #${client_id} cannot be deleted because this client currently has past or present workshops assigned`
+        'Cannot remove client with past or present workshops assigned'
       )
     }
     // safe to delete if client present but without workshops
