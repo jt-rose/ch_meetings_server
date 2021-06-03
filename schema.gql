@@ -9,17 +9,43 @@ type Client {
   client_name: String!
 }
 
+type Course {
+  active: Boolean!
+  course_description: String!
+  course_name: String!
+  created_at: Timestamp!
+  updated_at: Timestamp!
+  virtual_course: Boolean!
+}
+
+input CourseInput {
+  active: Boolean!
+  course_description: String!
+  course_name: String!
+  virtual_course: Boolean!
+}
+
 type Mutation {
   addClient(business_unit: String, client_name: String!): Client!
+  addCourse(courseData: CourseInput!): Course!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
+  editCourse(courseData: CourseInput!, uneditedCourseName: String!): Course!
   removeClient(client_id: Int!): Client!
+  removeCourse(course_name: String!): Course!
 }
 
 type Query {
   getAllClients: [Client!]
+  getAllCourses: [Course!]!
   getClient(client_id: Int!): Client
+  getCourse(course_name: String!): Course
   getSession(sessionID: Float!): [WorkshopSession!]!
 }
+
+"""
+The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
 
 type WorkshopSession {
   duration_in_hours: Float!

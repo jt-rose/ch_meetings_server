@@ -9,15 +9,11 @@ import { seedManagers } from './seeds/seedManagers'
 // some tables are set up with PK / FK constraints
 // so the order here matters
 export async function seed() {
-  try {
-    await seedCourses(prisma)
-    await seedClients(prisma)
-    await seedAdvisors(prisma)
-    await seedWorkshops(prisma)
-    await seedManagers(prisma)
-  } catch (e) {
-    console.log('Error: Seeding not completed ')
-  }
+  await seedCourses(prisma)
+  await seedClients(prisma)
+  await seedAdvisors(prisma)
+  await seedWorkshops(prisma)
+  await seedManagers(prisma)
 }
 
 /*
