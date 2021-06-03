@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:8378/graphql'
+const API_URL = `http://localhost:5000/graphql`
 
 // run a graphql query against the testing environment
 export const testQuery = async (graphqlRequest: string, variables?: any) =>
