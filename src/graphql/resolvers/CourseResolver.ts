@@ -4,8 +4,10 @@ import { Course, CourseInput } from '../objects/Course'
 
 @Resolver(Course)
 export class CourseResolver {
+  // confirm nullable returns?
+
   // getCourse
-  @Query(() => Course)
+  @Query(() => Course, { nullable: true })
   async getCourse(
     @Ctx() ctx: Context,
     @Arg('course_name', () => String) course_name: string
@@ -53,12 +55,12 @@ export class CourseResolver {
     @Arg('course_name', () => String) course_name: string
   ) {
     // check for current workshops
-    const hasWorkshops = await ctx.prisma.courses.count({
-      where: { course_name },
+    const hasWorkshops = await ctx.prisma.workshops.count({
+      where: { course_type: course_name },
     })
     if (hasWorkshops) {
       throw Error(
-        `Course ${course_name} cannot be deleted because this course currently has past or present workshops assigned`
+        `Cannot delete course with past or present workshops assigned`
       )
     }
 
