@@ -4,20 +4,27 @@ import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
 
-before('clear any data at the start', async () => {
-  await clear()
-})
+describe('Client Resolvers', async function () {
+  /* --------------------- seed and clear DB for each test -------------------- */
 
-beforeEach('seed database', async () => {
-  await seed()
-})
+  before('clear any data at the start', async function () {
+    await clear()
+  })
 
-afterEach('clear database', async () => {
-  await clear()
-})
+  beforeEach('seed database', async function () {
+    await seed()
+  })
 
-describe('Client Resolvers', () => {
-  it('create client', async () => {
+  afterEach('clear database', async function () {
+    await clear()
+  })
+
+  after('restore database for local testing', async function () {
+    await seed()
+  })
+
+  /* ------------------------ test CRUD with validation ----------------------- */
+  it('create client', async function () {
     const result = await testQuery(`#graphql
       mutation {
         addClient(client_name: "test_client", business_unit: "test_BU") {
@@ -37,7 +44,7 @@ describe('Client Resolvers', () => {
     }
     expect(result.data).to.eql(expectedResult)
   })
-  it('reject creating client when client name + business unit already registered', async () => {
+  it('reject creating client when client name + business unit already registered', async function () {
     const result = await testQuery(`#graphql
       mutation {
         addClient(client_name: "Acme Corp", business_unit: "Chemical Engineering") {
@@ -53,7 +60,7 @@ describe('Client Resolvers', () => {
     expect(result.data.data).to.eql(null)
     expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
   })
-  it('retrieve client', async () => {
+  it('retrieve client', async function () {
     const result = await testQuery(`#graphql
      query {
             getClient(client_id: 1) {
@@ -76,7 +83,7 @@ describe('Client Resolvers', () => {
 
     expect(result.data).to.eql(expectedResult)
   })
-  it('retrieve all clients', async () => {
+  it('retrieve all clients', async function () {
     const result = await testQuery(`#graphql
     {
         getAllClients {
@@ -120,7 +127,7 @@ describe('Client Resolvers', () => {
     }
     expect(result.data).to.eql(expectedResult)
   })
-  it('update client', async () => {
+  it('update client', async function () {
     const result = await testQuery(`#graphql
       mutation {
   editClient(
@@ -146,7 +153,7 @@ describe('Client Resolvers', () => {
     }
     expect(result.data).to.eql(expectedResult)
   })
-  it('reject update when new client name + BU combination already registered for other user', async () => {
+  it('reject update when new client name + BU combination already registered for other user', async function () {
     const result = await testQuery(`#graphql
     mutation {
   editClient(
@@ -166,7 +173,7 @@ describe('Client Resolvers', () => {
     expect(result.data.data).to.be.null
     expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
   })
-  it('delete client without workshops', async () => {
+  it('delete client without workshops', async function () {
     const result = await testQuery(`#graphql
       mutation {
   removeClient(
@@ -190,7 +197,7 @@ describe('Client Resolvers', () => {
     }
     expect(result.data).to.eql(expectedResult)
   })
-  it('reject deleting client when client not found', async () => {
+  it('reject deleting client when client not found', async function () {
     const result = await testQuery(`#graphql
     mutation {
         removeClient(
@@ -206,7 +213,7 @@ describe('Client Resolvers', () => {
     expect(result.data.data).to.be.null
     expect(result.data.errors[0].message).to.eql(`Client not found in database`)
   })
-  it('reject deleting client when workshops have been scheduled to them', async () => {
+  it('reject deleting client when workshops have been scheduled to them', async function () {
     const result = await testQuery(`#graphql
     mutation {
   removeClient(
