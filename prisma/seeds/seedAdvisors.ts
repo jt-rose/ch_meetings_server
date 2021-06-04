@@ -118,7 +118,22 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
     },
   })
 
-  const advisors = [advisor1, advisor2, advisor3, advisor4]
+  const advisor5 = await prisma.advisors.create({
+    data: {
+      email: 'nathan.jameson@email.com',
+      first_name: 'Nathan',
+      last_name: 'Jameson',
+      languages: {
+        create: [
+          { language_id: 7, advisor_language: 'English' },
+          { language_id: 8, advisor_language: 'Vietnamese' },
+        ],
+      },
+      regions: { create: { region_id: 7, advisor_region: 'APAC' } },
+    },
+  })
+
+  const advisors = [advisor1, advisor2, advisor3, advisor4, advisor5]
   const allAdvisorsSeeded = advisors.every((x) => x)
   if (!allAdvisorsSeeded) {
     console.log(`All advisors seeded: false`)

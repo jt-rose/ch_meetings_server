@@ -3,6 +3,12 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type Advisor {
+  email: String!
+  first_name: String!
+  last_name: String!
+}
+
 type Client {
   business_unit: String
   client_id: Int!
@@ -26,15 +32,20 @@ input CourseInput {
 }
 
 type Mutation {
+  addAdvisor(email: String!, first_name: String!, last_name: String!): Advisor!
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
+  editAdvisor(currentEmail: String!, first_name: String, last_name: String, updatedEmail: String): Advisor!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, uneditedCourseName: String!): Course!
+  removeAdvisor(advisorEmail: String!): Advisor!
   removeClient(client_id: Int!): Client!
   removeCourse(course_name: String!): Course!
 }
 
 type Query {
+  getAdvisor(advisorEmail: String!): Advisor!
+  getAllAdvisors: [Advisor!]!
   getAllClients: [Client!]
   getAllCourses: [Course!]!
   getClient(client_id: Int!): Client

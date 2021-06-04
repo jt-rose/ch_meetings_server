@@ -93,7 +93,28 @@ export class AdvisorResolver {
         `Advisor ${advisorEmail} cannot be deleted because this advisor currently has past or present workshops assigned`
       )
     }
-    // test delete reltions as well?
-    return ctx.prisma.advisors.delete({ where: { email: advisorEmail } })
+
+    // set up parts of a transaction to run a cascading delete
+    const removeLanguages = ctx.prisma.languages.deleteMany({
+      where: { advisor: advisorEmail },
+    })
+    const removeRegions = ctx.prisma.regions.deleteMany({
+      where: { advisor: advisorEmail },
+    })
+    const removeUnavailableDays = ctx.prisma.unavailable_days.deleteMany({
+      where: { advisor: advisorEmail },
+    })
+    const removeTheAdvisor = ctx.prisma.advisors.delete({
+      where: { email: advisorEmail },
+    })
+
+    // run the transaction
+    const transaction = await ctx.prisma.$transaction([
+      removeLanguages,
+      removeRegions,
+      removeUnavailableDays,
+      removeTheAdvisor,
+    ]) //ctx.prisma.advisors.delete({ where: { email: advisorEmail } })
+    return transaction[3]
   }
 }
