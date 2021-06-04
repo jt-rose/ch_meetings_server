@@ -1,4 +1,4 @@
-INSERT INTO unavailable_days (advisor, day_unavailable, note)
+INSERT INTO unavailable_days (advisor_email, day_unavailable, note)
 VALUES (
         'john.doe@email.com',
         '2021-10-22T01:00:00Z',

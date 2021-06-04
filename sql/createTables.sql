@@ -5,6 +5,13 @@ CREATE TYPE SESSION_STATUS_ENUM AS ENUM (
     'HOLD A',
     'HOLD B' -- possible extras: PAID, REJECTED, REQUEST_NEW_DATES, REQUEST_INFO, etc.
 );
+CREATE TYPE REGION_ENUM AS ENUM (
+    'NAM',
+    'LATAM',
+    'EMEA',
+    'APAC',
+    'ANZ'
+);
 CREATE TABLE clients (
     client_id SERIAL PRIMARY KEY,
     client_name VARCHAR(255) NOT NULL,
@@ -14,7 +21,7 @@ CREATE TABLE managers (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) PRIMARY KEY,
-    email_password VARCHAR(255) NOT NULL
+    email_password VARCHAR(255) NOT NULL -- may add regions for managers later if needed
 );
 CREATE TABLE advisors (
     email VARCHAR(255) PRIMARY KEY,
@@ -23,19 +30,24 @@ CREATE TABLE advisors (
 );
 CREATE TABLE unavailable_days (
     unavailable_id SERIAL PRIMARY KEY,
-    advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
+    advisor_email VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     day_unavailable DATE NOT NULL,
     note TEXT
 );
 CREATE TABLE languages (
     language_id SERIAL PRIMARY KEY,
-    advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
+    advisor_email VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     advisor_language VARCHAR(255) NOT NULL
 );
 CREATE TABLE regions (
     region_id SERIAL PRIMARY KEY,
-    advisor_region VARCHAR(255) NOT NULL,
-    advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL
+    advisor_region REGION_ENUM NOT NULL,
+    advisor_email VARCHAR(255) REFERENCES advisors (email) NOT NULL
+);
+CREATE TABLE advisor_notes (
+    note_id SERIAL PRIMARY KEY,
+    advisor_note TEXT NOT NULL,
+    advisor_email VARCHAR(255) REFERENCES advisors (email) NOT NULL
 );
 CREATE TABLE courses (
     course_name VARCHAR(255) PRIMARY KEY,
@@ -58,7 +70,9 @@ CREATE TABLE workshops (
     requested_advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
     backup_requested_advisor VARCHAR(255) REFERENCES advisors (email),
     assigned_advisor VARCHAR(255) REFERENCES advisors (email),
+    -- workshop_location can refer to a physical address or zoom/ teams
     workshop_location VARCHAR(255) NOT NULL,
+    workshop_region REGION_ENUM NOT NULL,
     client_id INT REFERENCES clients (client_id) NOT NULL,
     open_air_id VARCHAR(255) NOT NULL,
     time_zone VARCHAR(10) NOT NULL,
@@ -95,14 +109,14 @@ CREATE TABLE requested_start_times (
 );
 CREATE TABLE change_log (
     log_id SERIAL PRIMARY KEY,
-    workshop INT REFERENCES workshops (workshop_id) NOT NULL,
+    workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
     note TEXT NOT NULL,
     log_date TIMESTAMPTZ NOT NULL
 );
 CREATE TABLE manager_assignments (
     assignment_id SERIAL PRIMARY KEY,
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
-    manager VARCHAR(255) REFERENCES managers (email) NOT NULL,
+    manager_email VARCHAR(255) REFERENCES managers (email) NOT NULL,
     active BOOLEAN NOT NULL
 );
 CREATE TABLE workshop_notes (

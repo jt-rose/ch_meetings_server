@@ -34,22 +34,27 @@ INSERT INTO advisors (email, first_name, last_name)
 VALUES ('john.doe@email.com', 'John', 'Doe'),
     ('henri@email.net', 'Henri', 'Bonaparte'),
     ('yusuke@tokyo.co.jp', 'Yusuke', 'Suzumura'),
-    ('jorge@advisor.net', 'Jorge', 'Esteban');
-INSERT INTO languages (advisor, advisor_language)
+    ('jorge@advisor.net', 'Jorge', 'Esteban'),
+    ('nathan.jameson@email.com', 'Nathan', 'Jameson');
+INSERT INTO languages (advisor_email, advisor_language)
 VALUES ('john.doe@email.com', 'English'),
     ('henri@email.net', 'English'),
     ('henri@email.net', 'French'),
     ('yusuke@tokyo.co.jp', 'Japanese'),
     ('yusuke@tokyo.co.jp', 'Chinese'),
-    ('jorge@advisor.net', 'Spanish');
-INSERT INTO regions (advisor, advisor_region)
-VALUES ('john.doe@email.com', 'North America'),
+    ('jorge@advisor.net', 'Spanish'),
+    ('nathan.jameson@email.com', 'English'),
+    ('nathan.jameson@email.com', 'Vietnamese');
+INSERT INTO regions (advisor_email, advisor_region)
+VALUES ('john.doe@email.com', 'NAM'),
     ('henri@email.net', 'EMEA'),
-    ('henri@email.net', 'Africa'),
+    ('henri@email.net', 'NAM'),
     ('yusuke@tokyo.co.jp', 'APAC'),
-    ('yusuke@tokyo.co.jp', 'North America'),
-    ('jorge@advisor.net', 'South America');
-INSERT INTO unavailable_days (advisor, day_unavailable, note)
+    ('yusuke@tokyo.co.jp', 'NAM'),
+    ('jorge@advisor.net', 'LATAM'),
+    ('nathan.jameson@email.com', 'NAM'),
+    ('nathan.jameson@email.com', 'APAC');
+INSERT INTO unavailable_days (advisor_email, day_unavailable, note)
 VALUES (
         'john.doe@email.com',
         '2021-10-22T01:00:00Z',
@@ -77,12 +82,26 @@ VALUES (
         '2021-11-30T01:00:00Z',
         'May be unavailable - best to avoid this date'
     );
+INSERT INTO advisor_notes (advisor_email, advisor_note)
+VALUES (
+        'nathan.jameson@email.com',
+        'Regularly travels between US, Japan, and Vietnam'
+    ),
+    (
+        'john.doe@email.com',
+        'Can travel to EMEA occasionally with 3+ months notice'
+    ),
+    (
+        'john.doe@email.com',
+        'Has partnered with Henri in developing training materials for EMEA cohorts'
+    );
 INSERT INTO workshops (
         course_type,
         requested_advisor,
         backup_requested_advisor,
         assigned_advisor,
         workshop_location,
+        workshop_region,
         client_id,
         open_air_id,
         time_zone,
@@ -95,6 +114,7 @@ VALUES (
         'henri@email.net',
         'john.doe@email.com',
         'Zoom',
+        'NAM',
         1,
         'OPID23560h-jk',
         'EST',
@@ -107,6 +127,7 @@ VALUES (
         NULL,
         'henri@email.net',
         'Zoom',
+        'EMEA',
         1,
         'OPID23560h-jk',
         'CET',
@@ -119,9 +140,10 @@ VALUES (
         NULL,
         'yusuke@tokyo.co.jp',
         'Teams',
+        'APAC',
         1,
         'OPID23560h-jk',
-        'PT',
+        'JST',
         'Japanese',
         TRUE
     ),
@@ -131,6 +153,7 @@ VALUES (
         'john.doe@email.com',
         'john.doe@email.com',
         'Zoom',
+        'NAM',
         3,
         'OPID236789',
         'EST',
@@ -143,6 +166,7 @@ VALUES (
         NULL,
         'jorge@advisor.net',
         'Sao Paulo, Brazil',
+        'LATAM',
         4,
         'OPID23560h-jk',
         'EST',
@@ -155,6 +179,7 @@ VALUES (
         'john.doe@email.com',
         'henri@email.net',
         'Zoom',
+        'EMEA',
         5,
         'OPID2354688',
         'CET',
@@ -518,7 +543,7 @@ VALUES (
         21,
         'Head of Sales Andrea Slonik will be joining to observe process'
     );
-INSERT INTO change_log (workshop, note, log_date)
+INSERT INTO change_log (workshop_id, note, log_date)
 VALUES (
         1,
         'workshop request created',
@@ -603,7 +628,7 @@ VALUES (
         'gina.haskell@company.net',
         'noonewillguess12345'
     );
-INSERT INTO manager_assignments (workshop_id, manager, active)
+INSERT INTO manager_assignments (workshop_id, manager_email, active)
 VALUES (1, 'amy.firenzi@company.net', TRUE),
     (1, 'frank.low@company.net', TRUE),
     (2, 'amy.firenzi@company.net', TRUE),

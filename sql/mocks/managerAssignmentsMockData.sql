@@ -1,4 +1,4 @@
-INSERT INTO manager_assignments (workshop_id, manager, active)
+INSERT INTO manager_assignments (workshop_id, manager_email, active)
 VALUES (1, 'amy.firenzi@company.net', TRUE),
     (1, 'frank.low@company.net', TRUE),
     (2, 'amy.firenzi@company.net', TRUE),

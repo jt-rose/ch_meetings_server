@@ -1,4 +1,4 @@
-INSERT INTO change_log (workshop, note, log_date)
+INSERT INTO change_log (workshop_id, note, log_date)
 VALUES (
         1,
         'workshop request created',
