@@ -11,6 +11,7 @@ model advisors {
   email                                                  String             @id @db.VarChar(255)
   first_name                                             String             @db.VarChar(255)
   last_name                                              String             @db.VarChar(255)
+  advisor_notes                                          advisor_notes[]
   languages                                              languages[]
   regions                                                regions[]
   unavailable_days                                       unavailable_days[]
@@ -20,11 +21,11 @@ model advisors {
 }
 
 model change_log {
-  log_id    Int       @id @default(autoincrement())
-  workshop  Int
-  note      String
-  log_date  DateTime  @db.Timestamptz(6)
-  workshops workshops @relation(fields: [workshop], references: [workshop_id])
+  log_id      Int       @id @default(autoincrement())
+  workshop_id Int
+  note        String
+  log_date    DateTime  @db.Timestamptz(6)
+  workshops   workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
 
 model clients {
@@ -46,17 +47,17 @@ model courses {
 
 model languages {
   language_id      Int      @id @default(autoincrement())
-  advisor          String   @db.VarChar(255)
+  advisor_email    String   @db.VarChar(255)
   advisor_language String   @db.VarChar(255)
-  advisors         advisors @relation(fields: [advisor], references: [email])
+  advisors         advisors @relation(fields: [advisor_email], references: [email])
 }
 
 model manager_assignments {
   assignment_id Int       @id @default(autoincrement())
   workshop_id   Int
-  manager       String    @db.VarChar(255)
+  manager_email String    @db.VarChar(255)
   active        Boolean
-  managers      managers  @relation(fields: [manager], references: [email])
+  managers      managers  @relation(fields: [manager_email], references: [email])
   workshops     workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
 
@@ -69,18 +70,18 @@ model managers {
 }
 
 model regions {
-  region_id      Int      @id @default(autoincrement())
-  advisor_region String   @db.VarChar(255)
-  advisor        String   @db.VarChar(255)
-  advisors       advisors @relation(fields: [advisor], references: [email])
+  region_id      Int         @id @default(autoincrement())
+  advisor_region region_enum
+  advisor_email  String      @db.VarChar(255)
+  advisors       advisors    @relation(fields: [advisor_email], references: [email])
 }
 
 model unavailable_days {
   unavailable_id  Int      @id @default(autoincrement())
-  advisor         String   @db.VarChar(255)
+  advisor_email   String   @db.VarChar(255)
   day_unavailable DateTime @db.Date
   note            String?
-  advisors        advisors @relation(fields: [advisor], references: [email])
+  advisors        advisors @relation(fields: [advisor_email], references: [email])
 }
 
 model workshop_notes {
@@ -109,6 +110,7 @@ model workshops {
   backup_requested_advisor                              String?               @db.VarChar(255)
   assigned_advisor                                      String?               @db.VarChar(255)
   workshop_location                                     String                @db.VarChar(255)
+  workshop_region                                       region_enum
   client_id                                             Int
   open_air_id                                           String                @db.VarChar(255)
   time_zone                                             String                @db.VarChar(10)
@@ -140,10 +142,25 @@ model session_notes {
   workshop_sessions   workshop_sessions @relation(fields: [workshop_session_id], references: [workshop_session_id])
 }
 
+model advisor_notes {
+  note_id       Int      @id @default(autoincrement())
+  advisor_note  String
+  advisor_email String   @db.VarChar(255)
+  advisors      advisors @relation(fields: [advisor_email], references: [email])
+}
+
 enum session_status_enum {
   REQUESTED
   SCHEDULED
   COMPLETED
   HOLD_A @map("HOLD A")
   HOLD_B @map("HOLD B")
+}
+
+enum region_enum {
+  NAM
+  LATAM
+  EMEA
+  APAC
+  ANZ
 }
