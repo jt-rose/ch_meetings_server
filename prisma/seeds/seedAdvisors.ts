@@ -9,7 +9,21 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       first_name: 'John',
       last_name: 'Doe',
       languages: { create: { language_id: 1, advisor_language: 'English' } },
-      regions: { create: { region_id: 1, advisor_region: 'North America' } },
+      regions: { create: { region_id: 1, advisor_region: 'NAM' } },
+      advisor_notes: {
+        create: [
+          {
+            note_id: 2,
+            advisor_note:
+              'Can travel to EMEA occasionally with 3+ months notice',
+          },
+          {
+            note_id: 3,
+            advisor_note:
+              'Has partnered with Henri in developing training materials for EMEA cohorts',
+          },
+        ],
+      },
       unavailable_days: {
         createMany: {
           data: [
@@ -56,7 +70,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
         createMany: {
           data: [
             { region_id: 2, advisor_region: 'EMEA' },
-            { region_id: 3, advisor_region: 'Africa' },
+            { region_id: 3, advisor_region: 'NAM' },
           ],
         },
       },
@@ -94,7 +108,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
         createMany: {
           data: [
             { region_id: 4, advisor_region: 'APAC' },
-            { region_id: 5, advisor_region: 'North America' },
+            { region_id: 5, advisor_region: 'NAM' },
           ],
         },
       },
@@ -114,7 +128,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       first_name: 'Jorge',
       last_name: 'Esteban',
       languages: { create: { language_id: 6, advisor_language: 'Spanish' } },
-      regions: { create: { region_id: 6, advisor_region: 'South America' } },
+      regions: { create: { region_id: 6, advisor_region: 'LATAM' } },
     },
   })
 
@@ -129,7 +143,18 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
           { language_id: 8, advisor_language: 'Vietnamese' },
         ],
       },
-      regions: { create: { region_id: 7, advisor_region: 'APAC' } },
+      regions: {
+        create: [
+          { region_id: 7, advisor_region: 'NAM' },
+          { region_id: 8, advisor_region: 'APAC' },
+        ],
+      },
+      advisor_notes: {
+        create: {
+          note_id: 1,
+          advisor_note: 'Regularly travels between US, Japan, and Vietnam',
+        },
+      },
     },
   })
 
