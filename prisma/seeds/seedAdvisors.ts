@@ -13,12 +13,12 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       advisor_notes: {
         create: [
           {
-            note_id: 2,
+            note_id: 1,
             advisor_note:
               'Can travel to EMEA occasionally with 3+ months notice',
           },
           {
-            note_id: 3,
+            note_id: 2,
             advisor_note:
               'Has partnered with Henri in developing training materials for EMEA cohorts',
           },
@@ -151,7 +151,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       },
       advisor_notes: {
         create: {
-          note_id: 1,
+          note_id: 3,
           advisor_note: 'Regularly travels between US, Japan, and Vietnam',
         },
       },

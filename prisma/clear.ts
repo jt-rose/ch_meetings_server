@@ -15,6 +15,7 @@ export async function clear() {
 
   // remove advisors and related data
   await prisma.unavailable_days.deleteMany()
+  await prisma.advisor_notes.deleteMany()
   await prisma.languages.deleteMany()
   await prisma.regions.deleteMany()
   await prisma.advisors.deleteMany()

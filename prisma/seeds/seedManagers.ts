@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client'
 export const seedManagers = async (prisma: PrismaClient) => {
   const manager1 = await prisma.managers.create({
     data: {
+      manager_id: 1,
       first_name: 'Amy',
       last_name: 'Firenzi',
       email: 'amy.firenzi@company.net',
@@ -26,6 +27,7 @@ export const seedManagers = async (prisma: PrismaClient) => {
 
   const manager2 = await prisma.managers.create({
     data: {
+      manager_id: 2,
       first_name: 'Frank',
       last_name: 'Low',
       email: 'frank.low@company.net',
@@ -46,6 +48,7 @@ export const seedManagers = async (prisma: PrismaClient) => {
 
   const manager3 = await prisma.managers.create({
     data: {
+      manager_id: 3,
       first_name: 'Gina',
       last_name: 'Haskell',
       email: 'gina.haskell@company.net',
