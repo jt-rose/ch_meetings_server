@@ -1,9 +1,9 @@
-INSERT INTO regions (advisor_email, advisor_region)
-VALUES ('john.doe@email.com', 'North America'),
-    ('henri@email.net', 'EMEA'),
-    ('henri@email.net', 'Africa'),
-    ('yusuke@tokyo.co.jp', 'APAC'),
-    ('yusuke@tokyo.co.jp', 'North America'),
-    ('jorge@advisor.net', 'South AMerica'),
-    ('nathan.jameson@email.com', 'NAM'),
-    ('nathan.jameson@email.com', 'APAC')
+INSERT INTO regions (region_id, advisor_id, advisor_region)
+VALUES (1, 1, 'NAM'),
+    (2, 2, 'EMEA'),
+    (3, 2, 'NAM'),
+    (4, 3, 'APAC'),
+    (5, 3, 'NAM'),
+    (6, 4, 'LATAM'),
+    (7, 5, 'NAM'),
+    (8, 5, 'APAC');

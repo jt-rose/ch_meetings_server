@@ -1,4 +1,5 @@
 INSERT INTO workshop_sessions (
+        workshop_session_id,
         workshop_id,
         date_and_time,
         duration_in_hours,
@@ -7,12 +8,14 @@ INSERT INTO workshop_sessions (
     )
 VALUES (
         1,
+        1,
         'July 22 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
     (
+        2,
         1,
         'July 23 2021 12:00:00 GMT',
         2,
@@ -20,6 +23,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        3,
         1,
         'July 24 2021 12:00:00 GMT',
         2,
@@ -27,6 +31,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        4,
         1,
         'July 25 2021 12:00:00 GMT',
         2,
@@ -35,6 +40,7 @@ VALUES (
     ),
     --
     (
+        5,
         2,
         'July 22 2021 06:00:00 GMT',
         2,
@@ -42,6 +48,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        6,
         2,
         'July 23 2021 06:00:00 GMT',
         2,
@@ -49,6 +56,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        7,
         2,
         'July 24 2021 06:00:00 GMT',
         2,
@@ -56,6 +64,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        8,
         2,
         'July 25 2021 06:00:00 GMT',
         2,
@@ -64,6 +73,7 @@ VALUES (
     ),
     --
     (
+        9,
         3,
         NULL,
         2,
@@ -71,6 +81,7 @@ VALUES (
         'REQUESTED'
     ),
     (
+        10,
         3,
         NULL,
         2,
@@ -78,6 +89,7 @@ VALUES (
         'REQUESTED'
     ),
     (
+        11,
         3,
         NULL,
         2,
@@ -85,6 +97,7 @@ VALUES (
         'REQUESTED'
     ),
     (
+        12,
         3,
         NULL,
         2,
@@ -93,6 +106,7 @@ VALUES (
     ),
     --
     (
+        13,
         4,
         'Oct 20 2021 14:00:00 GMT',
         1.5,
@@ -100,6 +114,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        14,
         4,
         'Oct 22 2021 14:00:00 GMT',
         1.5,
@@ -107,6 +122,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        15,
         4,
         'Oct 24 2021 14:00:00 GMT',
         1.5,
@@ -114,6 +130,7 @@ VALUES (
         'HOLD A'
     ),
     (
+        16,
         4,
         'Oct 26 2021 14:00:00 GMT',
         1.5,
@@ -122,6 +139,7 @@ VALUES (
     ),
     --
     (
+        17,
         5,
         'Dec 03 2021 13:00:00 GMT',
         2,
@@ -129,6 +147,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        18,
         5,
         'Dec 10 2021 13:00:00 GMT',
         2,
@@ -136,6 +155,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        19,
         5,
         'Dec 17 2021 13:00:00 GMT',
         2,
@@ -143,6 +163,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        20,
         5,
         'Dec 24 2021 11:00:00 GMT',
         2,
@@ -151,6 +172,7 @@ VALUES (
     ),
     --
     (
+        21,
         6,
         'Nov 03 2021 12:00:00 GMT',
         2,
@@ -158,6 +180,7 @@ VALUES (
         'SCHEDULED'
     ),
     (
+        22,
         6,
         NULL,
         2,
@@ -165,6 +188,7 @@ VALUES (
         'REQUESTED'
     ),
     (
+        23,
         6,
         NULL,
         2,
@@ -172,9 +196,10 @@ VALUES (
         'REQUESTED'
     ),
     (
+        24,
         6,
         'Nov 24 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
-    )
+    );

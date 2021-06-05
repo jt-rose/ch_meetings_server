@@ -18,39 +18,42 @@ CREATE TABLE clients (
     business_unit VARCHAR(255)
 );
 CREATE TABLE managers (
+    manager_id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
     email_password VARCHAR(255) NOT NULL -- may add regions for managers later if needed
 );
 CREATE TABLE advisors (
-    email VARCHAR(255) PRIMARY KEY,
+    advisor_id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL
 );
 CREATE TABLE unavailable_days (
     unavailable_id SERIAL PRIMARY KEY,
-    advisor_email VARCHAR(255) REFERENCES advisors (email) NOT NULL,
+    advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
     day_unavailable DATE NOT NULL,
     note TEXT
 );
 CREATE TABLE languages (
     language_id SERIAL PRIMARY KEY,
-    advisor_email VARCHAR(255) REFERENCES advisors (email) NOT NULL,
+    advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
     advisor_language VARCHAR(255) NOT NULL
 );
 CREATE TABLE regions (
     region_id SERIAL PRIMARY KEY,
-    advisor_region REGION_ENUM NOT NULL,
-    advisor_email VARCHAR(255) REFERENCES advisors (email) NOT NULL
+    advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
+    advisor_region REGION_ENUM NOT NULL
 );
 CREATE TABLE advisor_notes (
     note_id SERIAL PRIMARY KEY,
-    advisor_note TEXT NOT NULL,
-    advisor_email VARCHAR(255) REFERENCES advisors (email) NOT NULL
+    advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
+    advisor_note TEXT NOT NULL
 );
 CREATE TABLE courses (
-    course_name VARCHAR(255) PRIMARY KEY,
+    course_id SERIAL PRIMARY KEY,
+    course_name VARCHAR(255) UNIQUE NOT NULL,
     course_description TEXT NOT NULL,
     active BOOLEAN NOT NULL,
     virtual_course BOOLEAN NOT NULL,
@@ -66,10 +69,10 @@ CREATE TABLE courses (
 -- the scheduling status of the work shop (see note below)
 CREATE TABLE workshops (
     workshop_id SERIAL PRIMARY KEY,
-    course_type VARCHAR(255) REFERENCES courses (course_name) NOT NULL,
-    requested_advisor VARCHAR(255) REFERENCES advisors (email) NOT NULL,
-    backup_requested_advisor VARCHAR(255) REFERENCES advisors (email),
-    assigned_advisor VARCHAR(255) REFERENCES advisors (email),
+    course_id INT REFERENCES courses (course_id) NOT NULL,
+    requested_advisor INT REFERENCES advisors (advisor_id) NOT NULL,
+    backup_requested_advisor INT REFERENCES advisors (advisor_id),
+    assigned_advisor INT REFERENCES advisors (advisor_id),
     -- workshop_location can refer to a physical address or zoom/ teams
     workshop_location VARCHAR(255) NOT NULL,
     workshop_region REGION_ENUM NOT NULL,
@@ -116,7 +119,7 @@ CREATE TABLE change_log (
 CREATE TABLE manager_assignments (
     assignment_id SERIAL PRIMARY KEY,
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
-    manager_email VARCHAR(255) REFERENCES managers (email) NOT NULL,
+    manager_id INT REFERENCES managers (manager_id) NOT NULL,
     active BOOLEAN NOT NULL
 );
 CREATE TABLE workshop_notes (

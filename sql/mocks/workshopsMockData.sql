@@ -1,5 +1,6 @@
 INSERT INTO workshops (
-        course_type,
+        workshop_id,
+        course_id,
         requested_advisor,
         backup_requested_advisor,
         assigned_advisor,
@@ -12,10 +13,11 @@ INSERT INTO workshops (
         record_attendance
     )
 VALUES (
-        'Course 101',
-        'john.doe@email.com',
-        'henri@email.net',
-        'john.doe@email.com',
+        1,
+        1,
+        1,
+        2,
+        1,
         'Zoom',
         'NAM',
         1,
@@ -25,10 +27,11 @@ VALUES (
         TRUE
     ),
     (
-        'Course 101',
-        'henri@email.net',
+        2,
+        1,
+        2,
         NULL,
-        'henri@email.net',
+        2,
         'Zoom',
         'EMEA',
         1,
@@ -38,10 +41,11 @@ VALUES (
         TRUE
     ),
     (
-        'Course 101',
-        'yusuke@tokyo.co.jp',
+        3,
+        1,
+        3,
         NULL,
-        'yusuke@tokyo.co.jp',
+        3,
         'Teams',
         'APAC',
         1,
@@ -51,10 +55,11 @@ VALUES (
         TRUE
     ),
     (
-        'Course 101',
-        'henri@email.net',
-        'john.doe@email.com',
-        'john.doe@email.com',
+        4,
+        1,
+        2,
+        1,
+        1,
         'Zoom',
         'NAM',
         3,
@@ -64,10 +69,11 @@ VALUES (
         FALSE
     ),
     (
-        'Course 301',
-        'jorge@advisor.net',
+        5,
+        4,
+        4,
         NULL,
-        'jorge@advisor.net',
+        4,
         'Sao Paulo, Brazil',
         'LATAM',
         4,
@@ -77,10 +83,11 @@ VALUES (
         TRUE
     ),
     (
-        'Course 201',
-        'henri@email.net',
-        'john.doe@email.com',
-        'henri@email.net',
+        6,
+        3,
+        2,
+        1,
+        2,
         'Zoom',
         'EMEA',
         5,

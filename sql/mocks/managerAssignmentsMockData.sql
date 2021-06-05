@@ -1,14 +1,19 @@
-INSERT INTO manager_assignments (workshop_id, manager_email, active)
-VALUES (1, 'amy.firenzi@company.net', TRUE),
-    (1, 'frank.low@company.net', TRUE),
-    (2, 'amy.firenzi@company.net', TRUE),
-    (2, 'frank.low@company.net', TRUE),
-    (3, 'amy.firenzi@company.net', FALSE),
-    (3, 'frank.low@company.net', TRUE),
-    (4, 'gina.haskell@company.net', TRUE),
-    (4, 'amy.firenzi@company.net', FALSE),
-    (5, 'gina.haskell@company.net', TRUE),
-    (5, 'frank.low@company.net', TRUE),
-    (6, 'frank.low@company.net', TRUE),
-    (6, 'amy.firenzi@company.net', TRUE),
-    (6, 'gina.haskell@company.net', FALSE)
+INSERT INTO manager_assignments (
+        assignment_id,
+        workshop_id,
+        manager_id,
+        active
+    )
+VALUES (1, 1, 1, TRUE),
+    (2, 1, 2, TRUE),
+    (3, 2, 1, TRUE),
+    (4, 2, 2, TRUE),
+    (5, 3, 1, FALSE),
+    (6, 3, 2, TRUE),
+    (7, 4, 3, TRUE),
+    (8, 4, 1, FALSE),
+    (9, 5, 3, TRUE),
+    (10, 5, 2, TRUE),
+    (11, 6, 2, TRUE),
+    (12, 6, 1, TRUE),
+    (13, 6, 1, FALSE);
