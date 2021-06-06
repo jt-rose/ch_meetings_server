@@ -21,6 +21,7 @@ import { WorkshopSessionResolver } from './graphql/resolvers/SessionResolver'
 import { ClientResolver } from './graphql/resolvers/ClientResolver'
 import { CourseResolver } from './graphql/resolvers/CourseResolver'
 import { AdvisorResolver } from './graphql/resolvers/AdvisorResolver'
+import { LanguageResolver } from './graphql/resolvers/LanguageResolver'
 
 /* --------------------------- init main function --------------------------- */
 
@@ -69,6 +70,7 @@ const main = async () => {
       ClientResolver,
       CourseResolver,
       AdvisorResolver,
+      LanguageResolver,
     ],
     dateScalarMode: 'timestamp',
     validate: false,
