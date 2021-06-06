@@ -4,9 +4,35 @@
 # -----------------------------------------------
 
 type Advisor {
+  advisor_id: Int!
   email: String!
   first_name: String!
+  languages: [AdvisorLanguage!]!
   last_name: String!
+  regions: [AdvisorRegion!]!
+  unavailable_days: [AdvisorUnavailableDays!]!
+}
+
+type AdvisorLanguage {
+  advisor: Advisor!
+  advisor_id: Int!
+  advisor_language: String!
+  language_id: Int!
+}
+
+type AdvisorRegion {
+  advisor: Advisor!
+  advisor_id: Int!
+  advisor_region: String!
+  region_id: Int!
+}
+
+type AdvisorUnavailableDays {
+  advisor: Advisor!
+  advisor_id: Int!
+  day_unavailable: Timestamp!
+  note: String
+  unavailable_id: Int!
 }
 
 type Client {
@@ -18,6 +44,7 @@ type Client {
 type Course {
   active: Boolean!
   course_description: String!
+  course_id: Int!
   course_name: String!
   created_at: Timestamp!
   updated_at: Timestamp!
@@ -33,24 +60,28 @@ input CourseInput {
 
 type Mutation {
   addAdvisor(email: String!, first_name: String!, last_name: String!): Advisor!
+  addAdvisorLanguage(advisor_id: Float!, language: String!): AdvisorLanguage!
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
-  editAdvisor(currentEmail: String!, first_name: String, last_name: String, updatedEmail: String): Advisor!
+  editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
-  editCourse(courseData: CourseInput!, uneditedCourseName: String!): Course!
-  removeAdvisor(advisorEmail: String!): Advisor!
+  editCourse(courseData: CourseInput!, course_id: Int!): Course!
+  removeAdvisor(advisor_id: Int!): Advisor!
+  removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
   removeClient(client_id: Int!): Client!
-  removeCourse(course_name: String!): Course!
+  removeCourse(course_id: Int!): Course!
 }
 
 type Query {
-  getAdvisor(advisorEmail: String!): Advisor!
+  getAdvisor(advisor_id: Int!): Advisor!
+  getAllAdvisorLanguages(language: String): [AdvisorLanguage!]!
   getAllAdvisors: [Advisor!]!
   getAllClients: [Client!]
   getAllCourses: [Course!]!
   getClient(client_id: Int!): Client
-  getCourse(course_name: String!): Course
+  getCourse(course_id: Int!): Course
   getSession(sessionID: Float!): [WorkshopSession!]!
+  getUniqueAdvisorLanguages: [AdvisorLanguage!]!
 }
 
 """

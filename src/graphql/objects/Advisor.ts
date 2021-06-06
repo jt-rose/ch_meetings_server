@@ -1,10 +1,13 @@
-import { ObjectType, Field } from 'type-graphql'
+import { ObjectType, Field, Int } from 'type-graphql'
 import { AdvisorLanguage } from './Languages'
 import { AdvisorRegion } from './Region'
 import { AdvisorUnavailableDays } from './UnavailableDays'
 
 @ObjectType()
 export class Advisor {
+  @Field(() => Int)
+  advisor_id: number
+
   @Field()
   email: string
 
@@ -22,4 +25,6 @@ export class Advisor {
 
   @Field(() => [AdvisorUnavailableDays])
   unavailable_days: AdvisorUnavailableDays[]
+
+  //advisor_notes
 }

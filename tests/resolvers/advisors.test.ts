@@ -48,7 +48,7 @@ describe('Advisor Resolvers', async function () {
 
     expect(result.data).to.eql(expectedResult)
   })
-  it('reject creating advisor when email (PK) already registered', async function () {
+  it('reject creating advisor when email already registered', async function () {
     const result = await testQuery(`#graphql
     mutation {
   addAdvisor(first_name: "John", last_name: "Doe", email: "john.doe@email.com") {
@@ -66,13 +66,22 @@ describe('Advisor Resolvers', async function () {
   })
   it('retrieve advisor', async function () {
     const result = await testQuery(`#graphql
-    query {
-  getAdvisor(advisorEmail: "john.doe@email.com") {
+     query {
+  getAdvisor(advisor_id: 1) {
     first_name
     last_name
     email
-  }
-}
+    languages {
+      advisor_language
+      }
+    regions {
+      advisor_region
+    }
+    unavailable_days {
+      day_unavailable
+    }
+    }
+  } 
     `)
 
     const expectedResult = {
@@ -81,12 +90,37 @@ describe('Advisor Resolvers', async function () {
           first_name: 'John',
           last_name: 'Doe',
           email: 'john.doe@email.com',
+          languages: [
+            {
+              advisor_language: 'English',
+            },
+          ],
+          regions: [
+            {
+              advisor_region: 'NAM',
+            },
+          ],
+          unavailable_days: [
+            {
+              day_unavailable: 1634860800000,
+            },
+            {
+              day_unavailable: 1634947200000,
+            },
+            {
+              day_unavailable: 1635033600000,
+            },
+            {
+              day_unavailable: 1635120000000,
+            },
+          ],
         },
       },
     }
 
     expect(result.data).to.eql(expectedResult)
   })
+
   it('retrieve all advisors', async function () {
     const result = await testQuery(`#graphql
     query {
@@ -132,10 +166,11 @@ describe('Advisor Resolvers', async function () {
 
     expect(result.data).to.eql(expectedResult)
   })
+  /* ------------------------ test updating an advisor ------------------------ */
   it('update advisor', async function () {
     const result = await testQuery(`#graphql
     mutation {
-  editAdvisor(currentEmail: "john.doe@email.com", updatedEmail: "jane.doe@email.com", first_name: "Jane", last_name: "Doe") {
+  editAdvisor(advisor_id: 1, email: "jane.doe@email.com", first_name: "Jane", last_name: "Doe") {
     first_name
     last_name
     email
@@ -158,7 +193,7 @@ describe('Advisor Resolvers', async function () {
   it('reject update when new email already registered for other user', async function () {
     const result = await testQuery(`#graphql
     mutation {
-  editAdvisor(currentEmail: "john.doe@email.com", updatedEmail: "henri@email.net", first_name: "John", last_name: "Doe") {
+  editAdvisor(advisor_id: 1, email: "henri@email.net", first_name: "John", last_name: "Doe") {
     first_name
     last_name
     email
@@ -167,14 +202,14 @@ describe('Advisor Resolvers', async function () {
     `)
 
     const expectedErrorMessage =
-      'Email "henri@email.net" is already registered as an advisor in our system'
+      'Email "henri@email.net" is already registered with an advisor in our system'
     expect(result.data.data).to.eql(null)
     expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
   })
   it.skip('delete advisor and remove related languages, regions, and unavailable_days', async function () {
     const result = await testQuery(`#graphql
     mutation {
-  removeAdvisor(advisorEmail: "nathan.jameson@email.com") {
+  removeAdvisor(advisor_id: 5) {
     email
   }
 }
@@ -193,41 +228,19 @@ describe('Advisor Resolvers', async function () {
   it('reject deleting advisor when workshops have been scheduled to them', async function () {
     const result = await testQuery(`#graphql
     mutation {
-  removeAdvisor(advisorEmail: "john.doe@email.com") {
+  removeAdvisor(advisor_id: 1) {
     email
   }
 }
     `)
 
     const expectedErrorMessage =
-      'Advisor john.doe@email.com cannot be deleted because this advisor currently has past or present workshops assigned'
+      'Advisor #1 cannot be deleted because this advisor currently has past or present workshops assigned'
     expect(result.data.data).to.eql(null)
     expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
   })
 
-  /* -------------------- test adjusting advisor languages -------------------- */
-
-  it('retrieve advisor languages')
-  it('add language to advisor')
-  it('reject if invalid language entered')
-  it('remove language from advisor')
-
-  /* --------------------- test adjusting advisor regions --------------------- */
-
-  it('retrieve advisor regions')
-  it('add region to advisor')
-  it('reject if invalid region selected')
-  it('remove region from advisor')
-
-  /* ----------------- test adjusting advisor unavailable days ---------------- */
-
-  it('add unavailable day')
-  it('retrieve unavailable days')
-  it('edit unavailable day')
-  it(
-    'reject if unavailable day conflicts with currently scheduled workshop sessions'
-  )
-  it('remove unavailable day')
+  it('reject deleting advisor when they have been requested for workshops')
 
   /* ---------------------- test adjusting advisor notes ---------------------- */
 

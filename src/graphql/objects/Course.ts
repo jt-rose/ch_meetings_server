@@ -1,7 +1,10 @@
-import { ObjectType, Field, InputType } from 'type-graphql'
+import { ObjectType, Field, Int, InputType } from 'type-graphql'
 
 @ObjectType()
 export class Course {
+  @Field(() => Int)
+  course_id: number
+
   @Field()
   course_name: string
 

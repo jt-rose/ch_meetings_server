@@ -64,7 +64,7 @@ describe('Course Resolvers', function () {
 
     expect(
       result.data.errors[0].message.includes(
-        'Unique constraint failed on the fields: (`course_name`)'
+        'Error: Course name "Course 301" is already in use'
       )
     ).to.be.true
   })
@@ -72,7 +72,7 @@ describe('Course Resolvers', function () {
   it('retrieve course', async function () {
     const result = await testQuery(`#graphql
         query {
-  getCourse(course_name: "Course 301") {
+  getCourse(course_id: 4) {
     course_name
     course_description
     active
@@ -149,7 +149,7 @@ describe('Course Resolvers', function () {
   it('edit course and related workshops', async function () {
     const result = await testQuery(`#graphql
 mutation {
-  editCourse(uneditedCourseName: "Course 101", courseData: { course_name: "Course 901", course_description: "test", active: true, virtual_course: true}) {
+  editCourse(course_id: 1, courseData: { course_name: "Course 901", course_description: "test", active: true, virtual_course: true}) {
     course_name
   }
   }
@@ -169,7 +169,7 @@ mutation {
   it('reject updating course to a name already registered', async function () {
     const result = await testQuery(`#graphql
     mutation {
-  editCourse(uneditedCourseName: "Course 999", courseData: { course_name: "Course 101", course_description: "test", active: true, virtual_course: true}) {
+  editCourse(course_id: 5, courseData: { course_name: "Course 101", course_description: "test", active: true, virtual_course: true}) {
     course_name
   }
   }
@@ -177,7 +177,7 @@ mutation {
 
     expect(
       result.data.errors[0].message.includes(
-        'Unique constraint failed on the fields: (`course_name`)'
+        'Error: Course name "Course 101" is already in use'
       )
     ).to.be.true
   })
@@ -185,7 +185,7 @@ mutation {
   it('delete course', async function () {
     const result = await testQuery(`#graphql
           mutation {
-            removeCourse(course_name: "Course 999") {
+            removeCourse(course_id: 5) {
               course_name
             }
           }
@@ -204,7 +204,7 @@ mutation {
   it('reject deleting course when workshops already assigned to it', async function () {
     const result = await testQuery(`#graphql
           mutation {
-            removeCourse(course_name: "Course 101") {
+            removeCourse(course_id: 1) {
               course_name
             }
           }
