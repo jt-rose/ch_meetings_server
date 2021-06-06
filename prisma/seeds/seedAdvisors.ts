@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client'
 export const seedAdvisors = async (prisma: PrismaClient) => {
   const advisor1 = await prisma.advisors.create({
     data: {
+      advisor_id: 1,
       email: 'john.doe@email.com',
       first_name: 'John',
       last_name: 'Doe',
@@ -55,6 +56,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
 
   const advisor2 = await prisma.advisors.create({
     data: {
+      advisor_id: 2,
       email: 'henri@email.net',
       first_name: 'Henri',
       last_name: 'Bonaparte',
@@ -93,6 +95,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
 
   const advisor3 = await prisma.advisors.create({
     data: {
+      advisor_id: 3,
       email: 'yusuke@tokyo.co.jp',
       first_name: 'Yusuke',
       last_name: 'Suzumura',
@@ -124,6 +127,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
 
   const advisor4 = await prisma.advisors.create({
     data: {
+      advisor_id: 4,
       email: 'jorge@advisor.net',
       first_name: 'Jorge',
       last_name: 'Esteban',
@@ -134,6 +138,7 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
 
   const advisor5 = await prisma.advisors.create({
     data: {
+      advisor_id: 5,
       email: 'nathan.jameson@email.com',
       first_name: 'Nathan',
       last_name: 'Jameson',
