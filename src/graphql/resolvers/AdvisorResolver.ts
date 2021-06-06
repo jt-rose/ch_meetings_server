@@ -1,22 +1,43 @@
-import { Resolver, Query, Mutation, Arg, Ctx } from 'type-graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Int,
+  Arg,
+  Ctx,
+  FieldResolver,
+  Root,
+} from 'type-graphql'
 import { Advisor } from '../objects/Advisor'
 import { Context } from '../../utils/context'
 
 @Resolver(Advisor)
 export class AdvisorResolver {
+  /* ----------------------------- field resolvers ---------------------------- */
+
   // workshops - field resolver
   // unavailable_days - field resolver
   // regions - field resolver
   // languages - field resolver
+  @FieldResolver()
+  async languages(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+    return ctx.prisma.languages.findMany({
+      where: { advisor_id: advisor.advisor_id },
+    })
+  }
 
+  /* ----------------------------- CRUD operations ---------------------------- */
   // getAdvisor
   // refactor later with dataloader
   @Query(() => Advisor)
   async getAdvisor(
     @Ctx() ctx: Context,
-    @Arg('advisorEmail', () => String) advisorEmail: string
+    @Arg('advisor_id', () => Int) advisor_id: number
   ) {
-    return ctx.prisma.advisors.findFirst({ where: { email: advisorEmail } })
+    return ctx.prisma.advisors.findFirst({
+      where: { advisor_id },
+      include: { languages: true, regions: true, unavailable_days: true },
+    })
   }
 
   //getAllAdvisors
@@ -43,8 +64,6 @@ export class AdvisorResolver {
       )
     }
     // add languages, regions, unavailable days at same time?
-    // can prisma do it in one go?
-    // if so, that's pretty slick
     return ctx.prisma.advisors.create({
       data: { email, first_name, last_name },
     })
@@ -54,28 +73,26 @@ export class AdvisorResolver {
   @Mutation(() => Advisor)
   async editAdvisor(
     @Ctx() ctx: Context,
-    @Arg('currentEmail', () => String) currentEmail: string,
-    @Arg('updatedEmail', () => String, { nullable: true }) updatedEmail: string,
+    @Arg('advisor_id', () => Int) advisor_id: number,
+    @Arg('email', () => String, { nullable: true }) email: string,
     @Arg('first_name', () => String, { nullable: true }) first_name: string,
     @Arg('last_name', () => String, { nullable: true }) last_name: string
   ) {
     // check that new email not in use
-    if (updatedEmail) {
+    if (email) {
       const currentlyUsed = await ctx.prisma.advisors.count({
-        where: { email: updatedEmail },
+        where: { email },
       })
       if (currentlyUsed) {
         throw Error(
-          `Email "${updatedEmail}" is already registered as an advisor in our system`
+          `Email "${email}" is already registered with an advisor in our system`
         )
       }
     }
-    // cascade update if new email
-    // based on prisma docs, relations should update and undefined should be ignored
-    // but need to test
+    // update advisor data
     return ctx.prisma.advisors.update({
-      where: { email: currentEmail },
-      data: { email: updatedEmail, first_name, last_name },
+      where: { advisor_id },
+      data: { email, first_name, last_name },
     })
   }
 
@@ -83,29 +100,46 @@ export class AdvisorResolver {
   @Mutation(() => Advisor)
   async removeAdvisor(
     @Ctx() ctx: Context,
-    @Arg('advisorEmail', () => String) advisorEmail: string
+    @Arg('advisor_id', () => Int) advisor_id: number
   ) {
+    // reject if currently assigned workshops
     const hasWorkshops = await ctx.prisma.workshops.count({
-      where: { assigned_advisor: advisorEmail },
+      where: { assigned_advisor: advisor_id },
     })
     if (hasWorkshops) {
       throw Error(
-        `Advisor ${advisorEmail} cannot be deleted because this advisor currently has past or present workshops assigned`
+        `Advisor #${advisor_id} cannot be deleted because this advisor currently has past or present workshops assigned`
+      )
+    }
+
+    // reject if advisor has been requested
+    const hasBeenRequested = await ctx.prisma.workshops.findFirst({
+      where: {
+        OR: [
+          { requested_advisor: advisor_id },
+          { backup_requested_advisor: advisor_id },
+        ],
+      },
+    })
+    if (hasBeenRequested) {
+      throw Error(
+        `Advisor #${advisor_id} has been requested for workshops. Please clear this request before removing the advisor.`
       )
     }
 
     // set up parts of a transaction to run a cascading delete
     const removeLanguages = ctx.prisma.languages.deleteMany({
-      where: { advisor: advisorEmail },
+      where: { advisor_id },
     })
     const removeRegions = ctx.prisma.regions.deleteMany({
-      where: { advisor: advisorEmail },
+      where: { advisor_id },
     })
     const removeUnavailableDays = ctx.prisma.unavailable_days.deleteMany({
-      where: { advisor: advisorEmail },
+      where: { advisor_id },
     })
+
     const removeTheAdvisor = ctx.prisma.advisors.delete({
-      where: { email: advisorEmail },
+      where: { advisor_id },
     })
 
     // run the transaction

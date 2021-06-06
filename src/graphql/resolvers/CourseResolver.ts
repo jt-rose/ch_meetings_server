@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, Ctx } from 'type-graphql'
+import { Resolver, Query, Mutation, Arg, Ctx, Int } from 'type-graphql'
 import { Context } from '../../utils/context'
 import { Course, CourseInput } from '../objects/Course'
 
@@ -10,10 +10,10 @@ export class CourseResolver {
   @Query(() => Course, { nullable: true })
   async getCourse(
     @Ctx() ctx: Context,
-    @Arg('course_name', () => String) course_name: string
+    @Arg('course_id', () => Int) course_id: number
   ) {
     // use await internally?
-    return ctx.prisma.courses.findFirst({ where: { course_name } })
+    return ctx.prisma.courses.findFirst({ where: { course_id } })
   }
 
   // getAllCourses
@@ -29,8 +29,15 @@ export class CourseResolver {
     @Ctx() ctx: Context,
     @Arg('courseData', () => CourseInput) courseData: CourseInput
   ) {
-    // the course_name is a PK, so SQL will reject it
-    // if it is a duplicate - no backend vlidation needed
+    // reject if course name already in use
+    const nameAlreadyInUse = await ctx.prisma.courses.findFirst({
+      where: { course_name: courseData.course_name },
+    })
+    if (nameAlreadyInUse) {
+      throw Error(
+        `Error: Course name "${courseData.course_name}" is already in use`
+      )
+    }
     return ctx.prisma.courses.create({ data: courseData })
   }
 
@@ -38,12 +45,21 @@ export class CourseResolver {
   @Mutation(() => Course)
   async editCourse(
     @Ctx() ctx: Context,
-    @Arg('uneditedCourseName', () => String) uneditedCourseName: string,
+    @Arg('course_id', () => Int) course_id: number,
     @Arg('courseData', () => CourseInput) courseData: CourseInput
   ) {
-    // update to make input args option
+    // reject if course name already in use
+    const nameAlreadyInUse = await ctx.prisma.courses.findFirst({
+      where: { course_name: courseData.course_name, NOT: { course_id } },
+    })
+    if (nameAlreadyInUse) {
+      throw Error(
+        `Error: Course name "${courseData.course_name}" is already in use`
+      )
+    }
+
     return ctx.prisma.courses.update({
-      where: { course_name: uneditedCourseName },
+      where: { course_id },
       data: courseData,
     })
   }
@@ -52,11 +68,11 @@ export class CourseResolver {
   @Mutation(() => Course)
   async removeCourse(
     @Ctx() ctx: Context,
-    @Arg('course_name', () => String) course_name: string
+    @Arg('course_id', () => Int) course_id: number
   ) {
     // check for current workshops
     const hasWorkshops = await ctx.prisma.workshops.count({
-      where: { course_type: course_name },
+      where: { course_id },
     })
     if (hasWorkshops) {
       throw Error(
@@ -64,7 +80,7 @@ export class CourseResolver {
       )
     }
 
-    return ctx.prisma.courses.delete({ where: { course_name } })
+    return ctx.prisma.courses.delete({ where: { course_id } })
   }
 
   // workshops // field resolver
