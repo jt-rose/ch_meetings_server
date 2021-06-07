@@ -9,6 +9,10 @@ import {
   Root,
 } from 'type-graphql'
 import { Advisor } from '../objects/Advisor'
+import { AdvisorLanguage } from '../objects/Languages'
+import { AdvisorRegion } from '../objects/Region'
+import { AdvisorUnavailableDays } from '../objects/UnavailableDays'
+import { AdvisorNote } from '../objects/AdvisorNotes'
 import { Context } from '../../utils/context'
 
 @Resolver(Advisor)
@@ -19,12 +23,41 @@ export class AdvisorResolver {
   // unavailable_days - field resolver
   // regions - field resolver
   // languages - field resolver
-  @FieldResolver()
+  @FieldResolver(() => [AdvisorLanguage])
   async languages(@Ctx() ctx: Context, @Root() advisor: Advisor) {
     return ctx.prisma.languages.findMany({
       where: { advisor_id: advisor.advisor_id },
     })
   }
+
+  @FieldResolver(() => [AdvisorRegion])
+  async regions(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+    return ctx.prisma.regions.findMany({
+      where: { advisor_id: advisor.advisor_id },
+    })
+  }
+
+  @FieldResolver(() => [AdvisorUnavailableDays])
+  async unavailable_days(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+    return ctx.prisma.unavailable_days.findMany({
+      where: { advisor_id: advisor.advisor_id },
+    })
+  }
+
+  @FieldResolver(() => [AdvisorNote])
+  async advisor_notes(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+    return ctx.prisma.advisor_notes.findMany({
+      where: { advisor_id: advisor.advisor_id },
+    })
+  }
+  /*
+  @FieldResolver()
+  async assigned_workshops(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+    return ctx.prisma.workshops.findMany({
+      where: { assigned_advisor: advisor.advisor_id },
+    })
+  }
+  */
 
   /* ----------------------------- CRUD operations ---------------------------- */
   // getAdvisor

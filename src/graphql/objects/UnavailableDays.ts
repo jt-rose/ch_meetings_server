@@ -2,18 +2,19 @@ import { Advisor } from './Advisor'
 import { ObjectType, Field, Int } from 'type-graphql'
 
 @ObjectType()
-export class AdvisorLanguage {
+export class AdvisorUnavailableDays {
   @Field(() => Int)
-  language_id: number
+  unavailable_id: number
 
   @Field(() => Int)
   advisor_id: number
 
-  @Field()
-  advisor_language: string
+  @Field(() => Date)
+  day_unavailable: Date
+
+  @Field(() => String, { nullable: true })
+  note?: string
 
   @Field(() => Advisor)
   advisor: Advisor
-
-  // workshops field resolver
 }

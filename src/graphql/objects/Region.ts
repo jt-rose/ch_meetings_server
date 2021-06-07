@@ -2,18 +2,16 @@ import { Advisor } from './Advisor'
 import { ObjectType, Field, Int } from 'type-graphql'
 
 @ObjectType()
-export class AdvisorLanguage {
+export class AdvisorRegion {
   @Field(() => Int)
-  language_id: number
+  region_id: number
 
   @Field(() => Int)
   advisor_id: number
 
   @Field()
-  advisor_language: string
+  advisor_region: string
 
   @Field(() => Advisor)
   advisor: Advisor
-
-  // workshops field resolver
 }
