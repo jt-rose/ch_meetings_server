@@ -120,16 +120,17 @@ VALUES (
 INSERT INTO workshops (
         workshop_id,
         course_id,
-        requested_advisor,
-        backup_requested_advisor,
-        assigned_advisor,
+        requested_advisor_id,
+        backup_requested_advisor_id,
+        assigned_advisor_id,
         workshop_location,
         workshop_region,
         client_id,
         open_air_id,
         time_zone,
         workshop_language,
-        record_attendance
+        record_attendance,
+        deleted
     )
 VALUES (
         1,
@@ -143,7 +144,8 @@ VALUES (
         'OPID23560h-jk',
         'EST',
         'English',
-        TRUE
+        TRUE,
+        FALSE
     ),
     (
         2,
@@ -157,7 +159,8 @@ VALUES (
         'OPID23560h-jk',
         'CET',
         'French',
-        TRUE
+        TRUE,
+        FALSE
     ),
     (
         3,
@@ -171,7 +174,8 @@ VALUES (
         'OPID23560h-jk',
         'JST',
         'Japanese',
-        TRUE
+        TRUE,
+        FALSE
     ),
     (
         4,
@@ -185,6 +189,7 @@ VALUES (
         'OPID236789',
         'EST',
         'English',
+        FALSE,
         FALSE
     ),
     (
@@ -199,7 +204,8 @@ VALUES (
         'OPID23560h-jk',
         'EST',
         'Spanish',
-        TRUE
+        TRUE,
+        FALSE
     ),
     (
         6,
@@ -213,6 +219,22 @@ VALUES (
         'OPID2354688',
         'CET',
         'English',
+        TRUE,
+        FALSE
+    ),
+    (
+        7,
+        1,
+        1,
+        NULL,
+        NULL,
+        'Ontario',
+        'NAM',
+        1,
+        'OPID123456',
+        'EST',
+        'English',
+        FALSE,
         TRUE
     );
 INSERT INTO workshop_sessions (

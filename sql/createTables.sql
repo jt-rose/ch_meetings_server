@@ -70,9 +70,9 @@ CREATE TABLE courses (
 CREATE TABLE workshops (
     workshop_id SERIAL PRIMARY KEY,
     course_id INT REFERENCES courses (course_id) NOT NULL,
-    requested_advisor INT REFERENCES advisors (advisor_id) NOT NULL,
-    backup_requested_advisor INT REFERENCES advisors (advisor_id),
-    assigned_advisor INT REFERENCES advisors (advisor_id),
+    requested_advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
+    backup_requested_advisor_id INT REFERENCES advisors (advisor_id),
+    assigned_advisor_id INT REFERENCES advisors (advisor_id),
     -- workshop_location can refer to a physical address or zoom/ teams
     workshop_location VARCHAR(255) NOT NULL,
     workshop_region REGION_ENUM NOT NULL,
@@ -80,7 +80,8 @@ CREATE TABLE workshops (
     open_air_id VARCHAR(255) NOT NULL,
     time_zone VARCHAR(10) NOT NULL,
     workshop_language VARCHAR(255) NOT NULL,
-    record_attendance BOOLEAN NOT NULL
+    record_attendance BOOLEAN NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 -- to determine the scheduling status of a workshop, a join will be used
 -- to query it's associated sessions

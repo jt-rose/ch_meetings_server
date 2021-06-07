@@ -9,9 +9,9 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 1,
       course_id: 1,
-      requested_advisor: 1,
-      backup_requested_advisor: 2,
-      assigned_advisor: 1,
+      requested_advisor_id: 1,
+      backup_requested_advisor_id: 2,
+      assigned_advisor_id: 1,
       workshop_location: 'Zoom',
       workshop_region: 'NAM',
       client_id: 1,
@@ -116,8 +116,8 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 2,
       course_id: 1,
-      requested_advisor: 2,
-      assigned_advisor: 2,
+      requested_advisor_id: 2,
+      assigned_advisor_id: 2,
       workshop_location: 'Zoom',
       workshop_region: 'EMEA',
       client_id: 1,
@@ -230,8 +230,8 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 3,
       course_id: 1,
-      requested_advisor: 3,
-      assigned_advisor: 3,
+      requested_advisor_id: 3,
+      assigned_advisor_id: 3,
       workshop_location: 'Teams',
       workshop_region: 'APAC',
       client_id: 1,
@@ -336,9 +336,9 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 4,
       course_id: 1,
-      requested_advisor: 2,
-      backup_requested_advisor: 1,
-      assigned_advisor: 1,
+      requested_advisor_id: 2,
+      backup_requested_advisor_id: 1,
+      assigned_advisor_id: 1,
       workshop_location: 'Zoom',
       workshop_region: 'NAM',
       client_id: 3,
@@ -450,8 +450,8 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 5,
       course_id: 4,
-      requested_advisor: 4,
-      assigned_advisor: 4,
+      requested_advisor_id: 4,
+      assigned_advisor_id: 4,
       workshop_location: 'Sao Paulo, Brazil',
       workshop_region: 'LATAM',
       client_id: 4,
@@ -548,9 +548,9 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 6,
       course_id: 3,
-      requested_advisor: 2,
-      backup_requested_advisor: 1,
-      assigned_advisor: 2,
+      requested_advisor_id: 2,
+      backup_requested_advisor_id: 1,
+      assigned_advisor_id: 2,
       workshop_location: 'Zoom',
       workshop_region: 'EMEA',
       client_id: 5,
@@ -669,6 +669,37 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     },
   })
 
+  const deletedWorkshop = await prisma.workshops.create({
+    data: {
+      workshop_id: 7,
+      course_id: 1,
+      requested_advisor_id: 1,
+      backup_requested_advisor_id: null,
+      assigned_advisor_id: null,
+      workshop_location: 'Ontario',
+      workshop_region: 'NAM',
+      client_id: 1,
+      open_air_id: 'OPID123456',
+      time_zone: 'EST',
+      workshop_language: 'English',
+      record_attendance: false,
+      change_log: {
+        create: [
+          {
+            log_id: 14,
+            note: 'workshop request created',
+            log_date: new Date('Mar 03 2021 13:39:00 GMT'),
+          },
+          {
+            log_id: 15,
+            note: 'workshop deleted',
+            log_date: new Date('Mar 28 2021 20:47:00 GMT'),
+          },
+        ],
+      },
+    },
+  })
+
   const workshops = [
     workshop1,
     workshop2,
@@ -676,6 +707,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     workshop4,
     workshop5,
     workshop6,
+    deletedWorkshop,
   ]
 
   const allWorkshopsSeeded = workshops.every((x) => x)
