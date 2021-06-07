@@ -1,6 +1,7 @@
 import { Resolver, FieldResolver, Root, Query, Arg, Ctx } from 'type-graphql'
 import { WorkshopSession } from '../objects/Session'
 import { RequestedStartTime } from './../objects/RequestedStartTime'
+import { SessionNote } from '../objects/SessionNote'
 import { Context } from '../../utils/context'
 
 @Resolver(WorkshopSession)
@@ -16,6 +17,19 @@ export class WorkshopSessionResolver {
       where: { workshop_session_id: workshopSession.workshop_session_id },
     })
   }
+
+  @FieldResolver(() => [SessionNote])
+  async session_notes(
+    @Ctx() ctx: Context,
+    @Root() workshopSession: WorkshopSession
+  ) {
+    return ctx.prisma.session_notes.findMany({
+      where: { workshop_session_id: workshopSession.workshop_session_id },
+    })
+  }
+
+  /* ------------ add resolvers for requested_start_times and notes ----------- */
+  // ....
 
   /* ------------------------------ session CRUD ------------------------------ */
   // rework with dataloader
