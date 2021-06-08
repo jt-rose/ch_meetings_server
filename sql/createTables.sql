@@ -76,6 +76,8 @@ CREATE TABLE workshops (
     -- workshop_location can refer to a physical address or zoom/ teams
     workshop_location VARCHAR(255) NOT NULL,
     workshop_region REGION_ENUM NOT NULL,
+    class_size INT,
+    -- nullable for situations where we don't yet know the number
     client_id INT REFERENCES clients (client_id) NOT NULL,
     open_air_id VARCHAR(255) NOT NULL,
     time_zone VARCHAR(10) NOT NULL,

@@ -683,6 +683,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       time_zone: 'EST',
       workshop_language: 'English',
       record_attendance: false,
+      deleted: true,
       change_log: {
         create: [
           {

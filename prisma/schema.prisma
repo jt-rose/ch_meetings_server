@@ -120,6 +120,7 @@ model workshops {
   workshop_language                                        String                @db.VarChar(255)
   record_attendance                                        Boolean
   deleted                                                  Boolean               @default(false)
+  class_size                                               Int?
   advisors_advisorsToworkshops_assigned_advisor_id         advisors?             @relation("advisorsToworkshops_assigned_advisor_id", fields: [assigned_advisor_id], references: [advisor_id])
   advisors_advisorsToworkshops_backup_requested_advisor_id advisors?             @relation("advisorsToworkshops_backup_requested_advisor_id", fields: [backup_requested_advisor_id], references: [advisor_id])
   clients                                                  clients               @relation(fields: [client_id], references: [client_id])
