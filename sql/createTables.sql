@@ -61,6 +61,18 @@ CREATE TABLE courses (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE TABLE coursework (
+    coursework_id SERIAL PRIMARY KEY,
+    coursework_name VARCHAR(255) UNIQUE NOT NULL,
+    coursework_description TEXT,
+    -- will leave nullable for now
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+CREATE TABLE courses_and_coursework (
+    course_and_coursework_id SERIAL PRIMARY KEY,
+    course_id INT REFERENCES courses(course_id) NOT NULL,
+    coursework_id INT REFERENCES coursework(coursework_id) NOT NULL
+);
 -- initially, separating a workshop request from the workshop entity
 -- was considered, but since much of the data is shared, this did not make sense
 -- these have been combined, with the requested advisor distinguished
@@ -84,6 +96,13 @@ CREATE TABLE workshops (
     workshop_language VARCHAR(255) NOT NULL,
     record_attendance BOOLEAN NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+-- different versions of coursework are available for each course
+-- this table will track which one has been chosen for each workshop
+CREATE TABLE workshop_coursework (
+    workshop_coursework_id SERIAL PRIMARY KEY,
+    workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
+    coursework_id INT REFERENCES coursework (coursework_id) NOT NULL
 );
 -- to determine the scheduling status of a workshop, a join will be used
 -- to query it's associated sessions

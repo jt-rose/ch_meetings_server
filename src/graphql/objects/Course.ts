@@ -22,6 +22,9 @@ export class Course {
 
   @Field()
   updated_at: Date
+
+  // workshops field resolver
+  // coursework field resolver
 }
 
 @InputType()

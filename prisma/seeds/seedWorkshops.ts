@@ -9,6 +9,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 1,
       course_id: 1,
+      workshop_coursework: {
+        create: [
+          { workshop_coursework_id: 1, coursework_id: 1 },
+          { workshop_coursework_id: 2, coursework_id: 2 },
+        ],
+      },
       requested_advisor_id: 1,
       backup_requested_advisor_id: 2,
       assigned_advisor_id: 1,
@@ -116,6 +122,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 2,
       course_id: 1,
+      workshop_coursework: {
+        create: [
+          { workshop_coursework_id: 3, coursework_id: 1 },
+          { workshop_coursework_id: 4, coursework_id: 2 },
+        ],
+      },
       requested_advisor_id: 2,
       assigned_advisor_id: 2,
       workshop_location: 'Zoom',
@@ -230,6 +242,9 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 3,
       course_id: 1,
+      workshop_coursework: {
+        create: [{ workshop_coursework_id: 5, coursework_id: 3 }],
+      },
       requested_advisor_id: 3,
       assigned_advisor_id: 3,
       workshop_location: 'Teams',
@@ -336,6 +351,9 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 4,
       course_id: 1,
+      workshop_coursework: {
+        create: [{ workshop_coursework_id: 6, coursework_id: 4 }],
+      },
       requested_advisor_id: 2,
       backup_requested_advisor_id: 1,
       assigned_advisor_id: 1,
@@ -450,6 +468,9 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 5,
       course_id: 4,
+      workshop_coursework: {
+        create: [{ workshop_coursework_id: 7, coursework_id: 5 }],
+      },
       requested_advisor_id: 4,
       assigned_advisor_id: 4,
       workshop_location: 'Sao Paulo, Brazil',
@@ -548,6 +569,9 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 6,
       course_id: 3,
+      workshop_coursework: {
+        create: [{ workshop_coursework_id: 8, coursework_id: 4 }],
+      },
       requested_advisor_id: 2,
       backup_requested_advisor_id: 1,
       assigned_advisor_id: 2,
@@ -673,6 +697,9 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 7,
       course_id: 1,
+      workshop_coursework: {
+        create: [{ workshop_coursework_id: 9, coursework_id: 3 }],
+      },
       requested_advisor_id: 1,
       backup_requested_advisor_id: null,
       assigned_advisor_id: null,

@@ -28,6 +28,61 @@ VALUES (1, 'Course 101', 'the basics', TRUE, TRUE),
         FALSE
     ),
     (5, 'Course 999', 'inactive course', FALSE, FALSE);
+INSERT INTO coursework (
+        coursework_id,
+        coursework_name,
+        coursework_description,
+        active
+    )
+VALUES (
+        1,
+        'Intro Prework',
+        'Foundation eLearning to introduce basic concepts. Recommended 2-4 weeks, before coursework.',
+        TRUE
+    ),
+    (
+        2,
+        'Intro Postwork',
+        'Reinforement exercises to be done after completing intro course. Recommended 2-4 weeks, after coursework.',
+        TRUE
+    ),
+    (
+        3,
+        'Learn and Apply Intro Coursework',
+        'Combined foundations introduction and reinforcement exercises. Recommended 4-8 weeks, before coursework.',
+        TRUE
+    ),
+    (
+        4,
+        '201 prework',
+        'Introduction to 201 concepts and quick refresher on 101 materials. Recommended 2-4 weeks.',
+        TRUE
+    ),
+    (
+        5,
+        'OLD - 201 prework',
+        'RETIRED - PLEASE USE THE CURRENT "201 prework"! Original description: Introduction to 201 concepts and quick refresher on 101 materials. Recommended 2-4 weeks.',
+        FALSE
+    ),
+    (
+        6,
+        '301 prework',
+        'Introduction to advanced 301 concepts, to be completed in conjunction with real-world work opportunities. Recommended 3-6 weeks.',
+        TRUE
+    );
+INSERT INTO courses_and_coursework (
+        course_and_coursework_id,
+        course_id,
+        coursework_id
+    )
+VALUES (1, 1, 1),
+    (2, 1, 2),
+    (3, 1, 3),
+    (4, 2, 1),
+    (5, 2, 2),
+    (6, 2, 3),
+    (7, 3, 4),
+    (8, 4, 5);
 INSERT INTO clients (client_id, client_name, business_unit)
 VALUES (1, 'Acme_Corp', 'Chemical Engineering'),
     (2, 'Acme_Corp', 'Software Integration'),
@@ -245,6 +300,20 @@ VALUES (
         FALSE,
         TRUE
     );
+INSERT INTO workshop_coursework (
+        workshop_coursework_id,
+        workshop_id,
+        coursework_id
+    )
+VALUES (1, 1, 1),
+    (2, 1, 2),
+    (3, 2, 1),
+    (4, 2, 2),
+    (5, 3, 3),
+    (6, 4, 4),
+    (7, 5, 5),
+    (8, 6, 4),
+    (9, 7, 3);
 INSERT INTO workshop_sessions (
         workshop_session_id,
         workshop_id,

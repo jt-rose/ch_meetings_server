@@ -37,14 +37,15 @@ model clients {
 }
 
 model courses {
-  course_id          Int         @id @default(autoincrement())
-  course_name        String      @unique @db.VarChar(255)
-  course_description String
-  active             Boolean
-  virtual_course     Boolean
-  created_at         DateTime    @default(now()) @db.Timestamptz(6)
-  updated_at         DateTime    @default(now()) @db.Timestamptz(6)
-  workshops          workshops[]
+  course_id              Int                      @id @default(autoincrement())
+  course_name            String                   @unique @db.VarChar(255)
+  course_description     String
+  active                 Boolean
+  virtual_course         Boolean
+  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  courses_and_coursework courses_and_coursework[]
+  workshops              workshops[]
 }
 
 model languages {
@@ -128,6 +129,7 @@ model workshops {
   advisors_advisorsToworkshops_requested_advisor_id        advisors              @relation("advisorsToworkshops_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
   change_log                                               change_log[]
   manager_assignments                                      manager_assignments[]
+  workshop_coursework                                      workshop_coursework[]
   workshop_notes                                           workshop_notes[]
   workshop_sessions                                        workshop_sessions[]
 }
@@ -152,6 +154,31 @@ model advisor_notes {
   advisor_id   Int
   advisor_note String
   advisors     advisors @relation(fields: [advisor_id], references: [advisor_id])
+}
+
+model courses_and_coursework {
+  course_and_coursework_id Int        @id @default(autoincrement())
+  course_id                Int
+  coursework_id            Int
+  courses                  courses    @relation(fields: [course_id], references: [course_id])
+  coursework               coursework @relation(fields: [coursework_id], references: [coursework_id])
+}
+
+model coursework {
+  coursework_id          Int                      @id @default(autoincrement())
+  coursework_name        String                   @unique @db.VarChar(255)
+  coursework_description String?
+  active                 Boolean                  @default(true)
+  courses_and_coursework courses_and_coursework[]
+  workshop_coursework    workshop_coursework[]
+}
+
+model workshop_coursework {
+  workshop_coursework_id Int        @id @default(autoincrement())
+  workshop_id            Int
+  coursework_id          Int
+  coursework             coursework @relation(fields: [coursework_id], references: [coursework_id])
+  workshops              workshops  @relation(fields: [workshop_id], references: [workshop_id])
 }
 
 enum session_status_enum {
