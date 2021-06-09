@@ -11,6 +11,15 @@ export const seedManagers = async (prisma: PrismaClient) => {
       email_password: 'password123',
       // these passwords are just for the mock data
       // real passwords will have character requirements + hashing
+      manager_clients: {
+        createMany: {
+          data: [
+            { manager_client_id: 1, client_id: 1 },
+            { manager_client_id: 4, client_id: 3 },
+            { manager_client_id: 8, client_id: 5 },
+          ],
+        },
+      },
       manager_assignments: {
         createMany: {
           data: [
@@ -32,6 +41,15 @@ export const seedManagers = async (prisma: PrismaClient) => {
       last_name: 'Low',
       email: 'frank.low@company.net',
       email_password: 'myunhashedpassword',
+      manager_clients: {
+        createMany: {
+          data: [
+            { manager_client_id: 2, client_id: 1 },
+            { manager_client_id: 6, client_id: 4 },
+            { manager_client_id: 7, client_id: 5 },
+          ],
+        },
+      },
       manager_assignments: {
         createMany: {
           data: [
@@ -53,6 +71,14 @@ export const seedManagers = async (prisma: PrismaClient) => {
       last_name: 'Haskell',
       email: 'gina.haskell@company.net',
       email_password: 'noonewillguess12345',
+      manager_clients: {
+        createMany: {
+          data: [
+            { manager_client_id: 3, client_id: 3 },
+            { manager_client_id: 5, client_id: 4 },
+          ],
+        },
+      },
       manager_assignments: {
         createMany: {
           data: [

@@ -144,6 +144,12 @@ CREATE TABLE manager_assignments (
     manager_id INT REFERENCES managers (manager_id) NOT NULL,
     active BOOLEAN NOT NULL
 );
+CREATE TABLE manager_clients (
+    manager_client_id SERIAL PRIMARY KEY,
+    manager_id INT REFERENCES managers(manager_id) NOT NULL,
+    client_id INT REFERENCES clients(client_id) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
 CREATE TABLE workshop_notes (
     note_id SERIAL PRIMARY KEY,
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,

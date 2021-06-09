@@ -30,10 +30,11 @@ model change_log {
 }
 
 model clients {
-  client_id     Int         @id @default(autoincrement())
-  client_name   String      @db.VarChar(255)
-  business_unit String?     @db.VarChar(255)
-  workshops     workshops[]
+  client_id       Int               @id @default(autoincrement())
+  client_name     String            @db.VarChar(255)
+  business_unit   String?           @db.VarChar(255)
+  manager_clients manager_clients[]
+  workshops       workshops[]
 }
 
 model courses {
@@ -71,6 +72,7 @@ model managers {
   email               String                @unique @db.VarChar(255)
   email_password      String                @db.VarChar(255)
   manager_assignments manager_assignments[]
+  manager_clients     manager_clients[]
 }
 
 model regions {
@@ -179,6 +181,15 @@ model workshop_coursework {
   coursework_id          Int
   coursework             coursework @relation(fields: [coursework_id], references: [coursework_id])
   workshops              workshops  @relation(fields: [workshop_id], references: [workshop_id])
+}
+
+model manager_clients {
+  manager_client_id Int      @id @default(autoincrement())
+  manager_id        Int
+  client_id         Int
+  active            Boolean  @default(true)
+  clients           clients  @relation(fields: [client_id], references: [client_id])
+  managers          managers @relation(fields: [manager_id], references: [manager_id])
 }
 
 enum session_status_enum {
