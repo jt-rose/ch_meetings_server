@@ -5,6 +5,7 @@
 
 type Advisor {
   advisor_id: Int!
+  advisor_notes: [AdvisorNote!]!
   email: String!
   first_name: String!
   languages: [AdvisorLanguage!]!
@@ -20,10 +21,15 @@ type AdvisorLanguage {
   language_id: Int!
 }
 
-type AdvisorRegion {
-  advisor: Advisor!
+type AdvisorNote {
   advisor_id: Int!
-  advisor_region: String!
+  advisor_note: String!
+  note_id: Int!
+}
+
+type AdvisorRegion {
+  advisor_id: Int!
+  advisor_region: REGION!
   region_id: Int!
 }
 
@@ -61,6 +67,7 @@ input CourseInput {
 type Mutation {
   addAdvisor(email: String!, first_name: String!, last_name: String!): Advisor!
   addAdvisorLanguage(advisor_id: Float!, language: String!): AdvisorLanguage!
+  addAdvisorRegion(advisor_id: Int!, advisor_region: REGION!): AdvisorRegion!
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
@@ -68,6 +75,7 @@ type Mutation {
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
   removeAdvisor(advisor_id: Int!): Advisor!
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
+  removeAdvisorRegion(region_id: Int!): AdvisorRegion!
   removeClient(client_id: Int!): Client!
   removeCourse(course_id: Int!): Course!
 }
@@ -84,6 +92,28 @@ type Query {
   getUniqueAdvisorLanguages: [AdvisorLanguage!]!
 }
 
+"""international business regions"""
+enum REGION {
+  ANZ
+  APAC
+  EMEA
+  LATAM
+  NAM
+}
+
+type RequestedStartTime {
+  earliest_start_time: Timestamp!
+  latest_start_time: Timestamp!
+  request_id: Int!
+  workshop_session_id: Int!
+}
+
+type SessionNote {
+  note: String!
+  note_id: Int!
+  workshop_session_id: Int!
+}
+
 """
 The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
@@ -91,7 +121,9 @@ scalar Timestamp
 
 type WorkshopSession {
   duration_in_hours: Float!
-  session_date: String!
+  requested_start_times: [RequestedStartTime!]!
+  session_date: Timestamp!
+  session_notes: [SessionNote!]!
   session_status: String!
   start_time: String!
   workshop_id: Float!

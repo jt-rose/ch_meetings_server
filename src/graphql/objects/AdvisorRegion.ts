@@ -1,5 +1,5 @@
-import { Advisor } from './Advisor'
 import { ObjectType, Field, Int } from 'type-graphql'
+import { REGION } from '../enums/REGION'
 
 @ObjectType()
 export class AdvisorRegion {
@@ -9,9 +9,6 @@ export class AdvisorRegion {
   @Field(() => Int)
   advisor_id: number
 
-  @Field()
-  advisor_region: string
-
-  @Field(() => Advisor)
-  advisor: Advisor
+  @Field(() => REGION)
+  advisor_region: REGION
 }
