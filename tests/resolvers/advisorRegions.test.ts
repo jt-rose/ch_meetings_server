@@ -32,7 +32,6 @@ describe('Region Resolvers', async function () {
     mutation {
   addAdvisorRegion(advisor_id: 1, advisor_region: APAC) {
     advisor_id
-    region_id
     advisor_region
   }
 }
@@ -42,7 +41,6 @@ describe('Region Resolvers', async function () {
       data: {
         addAdvisorRegion: {
           advisor_id: 1,
-          region_id: 9,
           advisor_region: 'APAC',
         },
       },
