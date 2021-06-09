@@ -67,14 +67,17 @@ input CourseInput {
 type Mutation {
   addAdvisor(email: String!, first_name: String!, last_name: String!): Advisor!
   addAdvisorLanguage(advisor_id: Float!, language: String!): AdvisorLanguage!
+  addAdvisorNote(advisor_id: Int!, advisor_note: String!): AdvisorNote!
   addAdvisorRegion(advisor_id: Int!, advisor_region: REGION!): AdvisorRegion!
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
+  editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
   removeAdvisor(advisor_id: Int!): Advisor!
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
+  removeAdvisorNote(note_id: Int!): AdvisorNote!
   removeAdvisorRegion(region_id: Int!): AdvisorRegion!
   removeClient(client_id: Int!): Client!
   removeCourse(course_id: Int!): Course!

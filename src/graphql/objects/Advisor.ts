@@ -1,8 +1,8 @@
 import { ObjectType, Field, Int } from 'type-graphql'
-import { AdvisorLanguage } from './Languages'
-import { AdvisorRegion } from './Region'
-import { AdvisorUnavailableDays } from './UnavailableDays'
-import { AdvisorNote } from './AdvisorNotes'
+import { AdvisorLanguage } from './AdvisorLanguage'
+import { AdvisorRegion } from './AdvisorRegion'
+import { AdvisorUnavailableDays } from './AdvisorUnavailableDays'
+import { AdvisorNote } from './AdvisorNote'
 
 @ObjectType()
 export class Advisor {

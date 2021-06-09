@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from 'type-graphql'
 
-ObjectType()
+@ObjectType()
 export class AdvisorNote {
   @Field(() => Int)
   note_id: number
@@ -8,6 +8,6 @@ export class AdvisorNote {
   @Field(() => Int)
   advisor_id: number
 
-  @Field()
+  @Field(() => String)
   advisor_note: string
 }

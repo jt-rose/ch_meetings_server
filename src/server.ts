@@ -23,6 +23,7 @@ import { CourseResolver } from './graphql/resolvers/CourseResolver'
 import { AdvisorResolver } from './graphql/resolvers/AdvisorResolver'
 import { LanguageResolver } from './graphql/resolvers/LanguageResolver'
 import { RegionResolver } from './graphql/resolvers/AdvisorRegionResolver'
+import { AdvisorNoteResolver } from './graphql/resolvers/AdvisorNoteResolver'
 
 /* --------------------------- init main function --------------------------- */
 
@@ -73,6 +74,7 @@ const main = async () => {
       AdvisorResolver,
       LanguageResolver,
       RegionResolver,
+      AdvisorNoteResolver,
     ],
     dateScalarMode: 'timestamp',
     validate: false,
