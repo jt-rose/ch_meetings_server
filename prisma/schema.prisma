@@ -112,18 +112,19 @@ model workshop_sessions {
 model workshops {
   workshop_id                                              Int                   @id @default(autoincrement())
   course_id                                                Int
+  cohort_name                                              String                @db.VarChar(255)
   requested_advisor_id                                     Int
   backup_requested_advisor_id                              Int?
   assigned_advisor_id                                      Int?
   workshop_location                                        String                @db.VarChar(255)
   workshop_region                                          region_enum
+  class_size                                               Int?
   client_id                                                Int
   open_air_id                                              String                @db.VarChar(255)
   time_zone                                                String                @db.VarChar(10)
   workshop_language                                        String                @db.VarChar(255)
   record_attendance                                        Boolean
   deleted                                                  Boolean               @default(false)
-  class_size                                               Int?
   advisors_advisorsToworkshops_assigned_advisor_id         advisors?             @relation("advisorsToworkshops_assigned_advisor_id", fields: [assigned_advisor_id], references: [advisor_id])
   advisors_advisorsToworkshops_backup_requested_advisor_id advisors?             @relation("advisorsToworkshops_backup_requested_advisor_id", fields: [backup_requested_advisor_id], references: [advisor_id])
   clients                                                  clients               @relation(fields: [client_id], references: [client_id])

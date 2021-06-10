@@ -9,6 +9,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 1,
       course_id: 1,
+      cohort_name: 'NAM Cohort 1',
       workshop_coursework: {
         create: [
           { workshop_coursework_id: 1, coursework_id: 1 },
@@ -122,6 +123,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 2,
       course_id: 1,
+      cohort_name: 'EMEA Cohort 1',
       workshop_coursework: {
         create: [
           { workshop_coursework_id: 3, coursework_id: 1 },
@@ -242,6 +244,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 3,
       course_id: 1,
+      cohort_name: 'APAC Cohort 6',
       workshop_coursework: {
         create: [{ workshop_coursework_id: 5, coursework_id: 3 }],
       },
@@ -351,6 +354,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 4,
       course_id: 1,
+      cohort_name: 'NAM 2021 Training',
       workshop_coursework: {
         create: [{ workshop_coursework_id: 6, coursework_id: 4 }],
       },
@@ -468,6 +472,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 5,
       course_id: 4,
+      cohort_name: 'LATAM Follow-up Cohort 8SE',
       workshop_coursework: {
         create: [{ workshop_coursework_id: 7, coursework_id: 5 }],
       },
@@ -569,6 +574,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 6,
       course_id: 3,
+      cohort_name: 'EMEA Crossover Group B',
       workshop_coursework: {
         create: [{ workshop_coursework_id: 8, coursework_id: 4 }],
       },
@@ -697,6 +703,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
     data: {
       workshop_id: 7,
       course_id: 1,
+      cohort_name: 'Canada Advance Team 2020-2021',
       workshop_coursework: {
         create: [{ workshop_coursework_id: 9, coursework_id: 3 }],
       },
