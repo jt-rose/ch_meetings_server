@@ -1,6 +1,7 @@
 INSERT INTO workshops (
         workshop_id,
         course_id,
+        cohort_name,
         requested_advisor_id,
         backup_requested_advisor_id,
         assigned_advisor_id,
@@ -17,6 +18,7 @@ INSERT INTO workshops (
 VALUES (
         1,
         1,
+        'NAM Cohort 1',
         1,
         2,
         1,
@@ -33,6 +35,7 @@ VALUES (
     (
         2,
         1,
+        'EMEA Cohort 1',
         2,
         NULL,
         2,
@@ -49,6 +52,7 @@ VALUES (
     (
         3,
         1,
+        'APAC Cohort 6',
         3,
         NULL,
         3,
@@ -65,6 +69,7 @@ VALUES (
     (
         4,
         1,
+        'NAM 2021 Training',
         2,
         1,
         1,
@@ -81,6 +86,7 @@ VALUES (
     (
         5,
         4,
+        'LATAM Follow-up Cohort 8SE',
         4,
         NULL,
         4,
@@ -97,6 +103,7 @@ VALUES (
     (
         6,
         3,
+        'EMEA Crossover Group B',
         2,
         1,
         2,
@@ -113,6 +120,7 @@ VALUES (
     (
         7,
         1,
+        'Canada Advance Team 2020-2021',
         1,
         NULL,
         NULL,

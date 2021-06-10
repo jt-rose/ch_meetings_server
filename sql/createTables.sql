@@ -82,6 +82,7 @@ CREATE TABLE courses_and_coursework (
 CREATE TABLE workshops (
     workshop_id SERIAL PRIMARY KEY,
     course_id INT REFERENCES courses (course_id) NOT NULL,
+    cohort_name VARCHAR(255) NOT NULL,
     requested_advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
     backup_requested_advisor_id INT REFERENCES advisors (advisor_id),
     assigned_advisor_id INT REFERENCES advisors (advisor_id),
