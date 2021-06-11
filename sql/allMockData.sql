@@ -83,6 +83,32 @@ VALUES (1, 1, 1),
     (6, 2, 3),
     (7, 3, 4),
     (8, 4, 5);
+INSERT INTO workshop_session_sets (
+        session_set_id,
+        course_id,
+        session_name,
+        session_order
+    )
+VALUES (1, 1, 'Orientation', 1),
+    (2, 1, 'Managers Meeting', 2),
+    (3, 1, 'Session 1', 3),
+    (4, 1, 'Session 2', 4),
+    (5, 1, 'Session 3', 5),
+    (6, 1, 'Session 4', 6),
+    (7, 1, 'Managers Meeting', 7),
+    --
+    (8, 2, 'Course 101 In-Person: Day 1', 1),
+    (9, 2, 'Course 101 In-Person: Day 2', 2),
+    --
+    (10, 3, 'Orientation', 1),
+    (11, 3, 'Session 1', 2),
+    (12, 3, 'Session 2', 3),
+    (13, 3, 'Session 3', 4),
+    (14, 3, 'Session 4', 5),
+    (15, 3, 'Managers Meeting', 6),
+    --
+    (16, 4, 'Master Class In-Person: Day 1', 1),
+    (17, 4, 'Master Class In-Person: Day 2', 2);
 INSERT INTO clients (client_id, client_name, business_unit)
 VALUES (1, 'Acme_Corp', 'Chemical Engineering'),
     (2, 'Acme_Corp', 'Software Integration'),
@@ -324,6 +350,7 @@ VALUES (1, 1, 1),
     (9, 7, 3);
 INSERT INTO workshop_sessions (
         workshop_session_id,
+        session_name,
         workshop_id,
         date_and_time,
         duration_in_hours,
@@ -332,6 +359,25 @@ INSERT INTO workshop_sessions (
     )
 VALUES (
         1,
+        'Orientation',
+        1,
+        'July 21 2021 11:00:00 GMT',
+.5,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
+    (
+        2,
+        'Managers Meeting',
+        1,
+        'July 21 2021 12:00:00 GMT',
+        1,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
+    (
+        3,
+        'Session 1',
         1,
         'July 22 2021 12:00:00 GMT',
         2,
@@ -339,7 +385,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        2,
+        4,
+        'Session 2',
         1,
         'July 23 2021 12:00:00 GMT',
         2,
@@ -347,7 +394,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        3,
+        5,
+        'Session 3',
         1,
         'July 24 2021 12:00:00 GMT',
         2,
@@ -355,16 +403,36 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        4,
+        6,
+        'Session 4',
         1,
         'July 25 2021 12:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
+    (
+        7,
+        'Managers Meeting',
+        1,
+        'July 28 2021 11:00:00 GMT',
+        1,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
     --
     (
-        5,
+        8,
+        'Orientation',
+        2,
+        'July 18 2021 6:00:00 GMT',
+.5,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
+    (
+        9,
+        'Session 1',
         2,
         'July 22 2021 06:00:00 GMT',
         2,
@@ -372,7 +440,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        6,
+        10,
+        'Session 2',
         2,
         'July 23 2021 06:00:00 GMT',
         2,
@@ -380,7 +449,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        7,
+        11,
+        'Session 3',
         2,
         'July 24 2021 06:00:00 GMT',
         2,
@@ -388,7 +458,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        8,
+        12,
+        'Session 4',
         2,
         'July 25 2021 06:00:00 GMT',
         2,
@@ -397,7 +468,8 @@ VALUES (
     ),
     --
     (
-        9,
+        13,
+        'Foundational Concepts: Intro',
         3,
         NULL,
         2,
@@ -405,7 +477,8 @@ VALUES (
         'REQUESTED'
     ),
     (
-        10,
+        14,
+        'Foundational Concepts: Explore Further',
         3,
         NULL,
         2,
@@ -413,7 +486,8 @@ VALUES (
         'REQUESTED'
     ),
     (
-        11,
+        15,
+        'Foundational Concepts: Real-World Applications',
         3,
         NULL,
         2,
@@ -421,7 +495,8 @@ VALUES (
         'REQUESTED'
     ),
     (
-        12,
+        16,
+        'Foundational Concepts: Summary & Recap',
         3,
         NULL,
         2,
@@ -430,7 +505,17 @@ VALUES (
     ),
     --
     (
-        13,
+        17,
+        'Orientation',
+        4,
+        'Oct 19 2021 14:00:00 GMT',
+.5,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
+    (
+        18,
+        'Session 1',
         4,
         'Oct 20 2021 14:00:00 GMT',
         1.5,
@@ -438,7 +523,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        14,
+        19,
+        'Session 2',
         4,
         'Oct 22 2021 14:00:00 GMT',
         1.5,
@@ -446,7 +532,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        15,
+        20,
+        'Session 3',
         4,
         'Oct 24 2021 14:00:00 GMT',
         1.5,
@@ -454,16 +541,27 @@ VALUES (
         'HOLD A'
     ),
     (
-        16,
+        21,
+        'Session 4',
         4,
         'Oct 26 2021 14:00:00 GMT',
         1.5,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     ),
+    (
+        22,
+        'Managers Meeting',
+        4,
+        'Oct 30 2021 14:00:00 GMT',
+        1,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
     --
     (
-        17,
+        23,
+        'Session 1',
         5,
         'Dec 03 2021 13:00:00 GMT',
         2,
@@ -471,7 +569,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        18,
+        24,
+        'Session 2',
         5,
         'Dec 10 2021 13:00:00 GMT',
         2,
@@ -479,7 +578,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        19,
+        25,
+        'Session 3',
         5,
         'Dec 17 2021 13:00:00 GMT',
         2,
@@ -487,7 +587,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        20,
+        26,
+        'Session 4',
         5,
         'Dec 24 2021 11:00:00 GMT',
         2,
@@ -496,7 +597,26 @@ VALUES (
     ),
     --
     (
-        21,
+        27,
+        'Orientation',
+        6,
+        'Nov 01 2021 12:00:00 GMT',
+.5,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
+    (
+        28,
+        'Managers Meeting',
+        6,
+        'Nov 02 2021 12:00:00 GMT',
+        1,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
+    (
+        29,
+        'Part 1: Teach',
         6,
         'Nov 03 2021 12:00:00 GMT',
         2,
@@ -504,7 +624,8 @@ VALUES (
         'SCHEDULED'
     ),
     (
-        22,
+        30,
+        'Part 2: Tailor',
         6,
         NULL,
         2,
@@ -512,7 +633,8 @@ VALUES (
         'REQUESTED'
     ),
     (
-        23,
+        31,
+        'Part 3: Take Control',
         6,
         NULL,
         2,
@@ -520,10 +642,20 @@ VALUES (
         'REQUESTED'
     ),
     (
-        24,
+        32,
+        'Part 4: Constructive Tension',
         6,
         'Nov 24 2021 12:00:00 GMT',
         2,
+        'www.zoom.com/user/abcdef1234',
+        'SCHEDULED'
+    ),
+    (
+        33,
+        'Managers Meeting 2',
+        6,
+        'Nov 26 2021 12:00:00 GMT',
+        1,
         'www.zoom.com/user/abcdef1234',
         'SCHEDULED'
     );

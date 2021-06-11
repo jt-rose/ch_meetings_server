@@ -105,6 +105,13 @@ CREATE TABLE workshop_coursework (
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
     coursework_id INT REFERENCES coursework (coursework_id) NOT NULL
 );
+-- store session templates linked to courses
+CREATE TABLE workshop_session_sets (
+    session_set_id SERIAL PRIMARY KEY,
+    course_id INT REFERENCES courses(course_id) NOT NULL,
+    session_name VARCHAR(255) NOT NULL,
+    session_order INT NOT NULL
+);
 -- to determine the scheduling status of a workshop, a join will be used
 -- to query it's associated sessions
 -- this allows us to store detailed info about each session
@@ -112,6 +119,7 @@ CREATE TABLE workshop_coursework (
 CREATE TABLE workshop_sessions (
     workshop_session_id SERIAL PRIMARY KEY,
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
+    session_name VARCHAR(255) NOT NULL,
     date_and_time TIMESTAMPTZ,
     -- date and time are set to nullable
     -- to accomodate requests where the date is not set yet
