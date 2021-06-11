@@ -23,6 +23,7 @@ export async function clear() {
   await prisma.advisors.deleteMany()
 
   // remove courses and clients
+  await prisma.workshop_session_sets.deleteMany()
   await prisma.courses_and_coursework.deleteMany()
   await prisma.coursework.deleteMany()
   await prisma.courses.deleteMany()
