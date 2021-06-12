@@ -9,6 +9,6 @@ export enum REGION {
 }
 
 registerEnumType(REGION, {
-  name: 'REGION', // this one is mandatory
-  description: 'international business regions', // this one is optional
+  name: 'REGION',
+  description: 'international business regions',
 })
