@@ -11,7 +11,7 @@ type Advisor {
   languages: [AdvisorLanguage!]!
   last_name: String!
   regions: [AdvisorRegion!]!
-  unavailable_days: [AdvisorUnavailableDays!]!
+  unavailable_days: [AdvisorUnavailableDay!]!
 }
 
 type AdvisorLanguage {
@@ -33,10 +33,9 @@ type AdvisorRegion {
   region_id: Int!
 }
 
-type AdvisorUnavailableDays {
-  advisor: Advisor!
+type AdvisorUnavailableDay {
   advisor_id: Int!
-  day_unavailable: Timestamp!
+  day_unavailable: DateTime!
   note: String
   unavailable_id: Int!
 }
@@ -52,8 +51,8 @@ type Course {
   course_description: String!
   course_id: Int!
   course_name: String!
-  created_at: Timestamp!
-  updated_at: Timestamp!
+  created_at: DateTime!
+  updated_at: DateTime!
   virtual_course: Boolean!
 }
 
@@ -64,21 +63,29 @@ input CourseInput {
   virtual_course: Boolean!
 }
 
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
 type Mutation {
   addAdvisor(email: String!, first_name: String!, last_name: String!): Advisor!
   addAdvisorLanguage(advisor_id: Float!, language: String!): AdvisorLanguage!
   addAdvisorNote(advisor_id: Int!, advisor_note: String!): AdvisorNote!
   addAdvisorRegion(advisor_id: Int!, advisor_region: REGION!): AdvisorRegion!
+  addAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfo!): AdvisorUnavailableDay!
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
+  editAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfoWithID!): AdvisorUnavailableDay!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
   removeAdvisor(advisor_id: Int!): Advisor!
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
   removeAdvisorNote(note_id: Int!): AdvisorNote!
   removeAdvisorRegion(region_id: Int!): AdvisorRegion!
+  removeAdvisorUnavailableDay(unavailable_id: Int!): AdvisorUnavailableDay!
   removeClient(client_id: Int!): Client!
   removeCourse(course_id: Int!): Course!
 }
@@ -105,8 +112,8 @@ enum REGION {
 }
 
 type RequestedStartTime {
-  earliest_start_time: Timestamp!
-  latest_start_time: Timestamp!
+  earliest_start_time: DateTime!
+  latest_start_time: DateTime!
   request_id: Int!
   workshop_session_id: Int!
 }
@@ -117,15 +124,24 @@ type SessionNote {
   workshop_session_id: Int!
 }
 
-"""
-The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
+input UnavailableDayInfo {
+  advisor_id: Int!
+  day_unavailable: DateTime!
+  note: String
+}
+
+input UnavailableDayInfoWithID {
+  advisor_id: Int!
+  day_unavailable: DateTime!
+  note: String
+  unavailable_id: Int!
+}
 
 type WorkshopSession {
   duration_in_hours: Float!
   requested_start_times: [RequestedStartTime!]!
-  session_date: Timestamp!
+  session_date: DateTime!
+  session_name: String!
   session_notes: [SessionNote!]!
   session_status: String!
   start_time: String!
