@@ -13,7 +13,6 @@ import { Client } from '../objects/Client'
 export class ClientResolver {
   //@FieldResolver() workshops
 
-  //use dataloader
   @Query(() => Client, { nullable: true })
   async getClient(
     @Arg('client_id', () => Int) client_id: number,

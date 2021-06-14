@@ -20,35 +20,40 @@ export class AdvisorResolver {
   /* ----------------------------- field resolvers ---------------------------- */
 
   // workshops - field resolver
-  // unavailable_days - field resolver
-  // regions - field resolver
-  // languages - field resolver
   @FieldResolver(() => [AdvisorLanguage])
   async languages(@Ctx() ctx: Context, @Root() advisor: Advisor) {
-    return ctx.prisma.languages.findMany({
-      where: { advisor_id: advisor.advisor_id },
-    })
+    return ctx.prisma.advisors
+      .findUnique({
+        where: { advisor_id: advisor.advisor_id },
+      })
+      .languages()
   }
 
   @FieldResolver(() => [AdvisorRegion])
   async regions(@Ctx() ctx: Context, @Root() advisor: Advisor) {
-    return ctx.prisma.regions.findMany({
-      where: { advisor_id: advisor.advisor_id },
-    })
+    return ctx.prisma.advisors
+      .findUnique({
+        where: { advisor_id: advisor.advisor_id },
+      })
+      .regions()
   }
 
   @FieldResolver(() => [AdvisorUnavailableDay])
   async unavailable_days(@Ctx() ctx: Context, @Root() advisor: Advisor) {
-    return ctx.prisma.unavailable_days.findMany({
-      where: { advisor_id: advisor.advisor_id },
-    })
+    return ctx.prisma.advisors
+      .findUnique({
+        where: { advisor_id: advisor.advisor_id },
+      })
+      .unavailable_days()
   }
 
   @FieldResolver(() => [AdvisorNote])
   async advisor_notes(@Ctx() ctx: Context, @Root() advisor: Advisor) {
-    return ctx.prisma.advisor_notes.findMany({
-      where: { advisor_id: advisor.advisor_id },
-    })
+    return ctx.prisma.advisors
+      .findUnique({
+        where: { advisor_id: advisor.advisor_id },
+      })
+      .advisor_notes()
   }
   /*
   @FieldResolver()
@@ -69,13 +74,13 @@ export class AdvisorResolver {
   ) {
     return ctx.prisma.advisors.findFirst({
       where: { advisor_id },
-      include: { languages: true, regions: true, unavailable_days: true },
     })
   }
 
   //getAllAdvisors
   @Query(() => [Advisor])
   async getAllAdvisors(@Ctx() ctx: Context) {
+    // add pagination later
     return ctx.prisma.advisors.findMany()
   }
 

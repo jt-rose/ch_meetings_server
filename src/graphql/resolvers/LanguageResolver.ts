@@ -8,18 +8,22 @@ import {
   Ctx,
   Root,
 } from 'type-graphql'
-import { AdvisorLanguage } from '../objects/Languages'
+import { AdvisorLanguage } from '../objects/AdvisorLanguage'
 import { Advisor } from '../objects/Advisor'
 import { Context } from './../../utils/context'
 
 @Resolver(AdvisorLanguage)
 export class LanguageResolver {
+  /* ----------------------------- field resolvers ---------------------------- */
   @FieldResolver(() => Advisor)
   async advisor(@Ctx() ctx: Context, @Root() advisorLanguage: AdvisorLanguage) {
-    return ctx.prisma.advisors.findFirst({
-      where: { advisor_id: advisorLanguage.advisor_id },
-    })
+    return ctx.prisma.languages
+      .findUnique({
+        where: { language_id: advisorLanguage.language_id },
+      })
+      .advisors()
   }
+  /* ------------------------- Advisor_languages CRUD ------------------------- */
 
   // addAdvisorLanguage
   @Mutation(() => AdvisorLanguage)
