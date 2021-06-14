@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
+import { prisma } from '../../src/prisma'
 
 describe('Region Resolvers', async function () {
   /* ------------------- seed and clear DB before each test ------------------- */
@@ -47,6 +48,12 @@ describe('Region Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.regions.count({
+      where: { advisor_id: 1, advisor_region: 'APAC' },
+    })
+    expect(checkDB).to.eql(1)
   })
   it('return current listing if advisor / region combination already registered', async function () {
     const result = await testQuery(`#graphql
@@ -70,6 +77,12 @@ describe('Region Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.regions.count({
+      where: { advisor_id: 1, region_id: 1, advisor_region: 'NAM' },
+    })
+    expect(checkDB).to.eql(1)
   })
 
   it('remove region from advisor', async function () {
@@ -94,5 +107,11 @@ describe('Region Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.regions.count({
+      where: { region_id: 1 },
+    })
+    expect(checkDB).to.eql(0)
   })
 })

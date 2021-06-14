@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
+import { prisma } from '../../src/prisma'
 
 describe('Client Resolvers', async function () {
   /* --------------------- seed and clear DB for each test -------------------- */
@@ -43,6 +44,12 @@ describe('Client Resolvers', async function () {
       },
     }
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.clients.count({
+      where: { client_name: 'test_client', business_unit: 'test_BU' },
+    })
+    expect(checkDB).to.eql(1)
   })
   it('reject creating client when client name + business unit already registered', async function () {
     const result = await testQuery(`#graphql
@@ -152,6 +159,16 @@ describe('Client Resolvers', async function () {
       },
     }
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.clients.count({
+      where: {
+        client_id: 1,
+        client_name: 'updated_test_client',
+        business_unit: 'updated_test_BU',
+      },
+    })
+    expect(checkDB).to.eql(1)
   })
   it('reject update when new client name + BU combination already registered for other user', async function () {
     const result = await testQuery(`#graphql
@@ -196,6 +213,12 @@ describe('Client Resolvers', async function () {
       },
     }
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.clients.count({
+      where: { client_id: 2 },
+    })
+    expect(checkDB).to.eql(0)
   })
   it('reject deleting client when client not found', async function () {
     const result = await testQuery(`#graphql

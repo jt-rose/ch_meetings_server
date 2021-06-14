@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
+import { prisma } from '../../src/prisma'
 
 describe('Unavailable Days Resolvers', async function () {
   /* ------------------- seed and clear DB before each test ------------------- */
@@ -51,6 +52,16 @@ describe('Unavailable Days Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.unavailable_days.count({
+      where: {
+        advisor_id: 1,
+        day_unavailable: '2017-12-25T00:00:00.000Z',
+        note: 'testing 123',
+      },
+    })
+    expect(checkDB).to.eql(1)
   })
   it('reject adding if unavailable day conflicts with currently scheduled workshop sessions', async function () {
     const result = await testQuery(`#graphql
@@ -102,6 +113,17 @@ describe('Unavailable Days Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.unavailable_days.count({
+      where: {
+        unavailable_id: 1,
+        advisor_id: 1,
+        day_unavailable: '2017-12-25T00:00:00.000Z',
+        note: 'edit 123',
+      },
+    })
+    expect(checkDB).to.eql(1)
   })
   it('reject editing if unavailable day conflicts with currently scheduled workshop sessions', async function () {
     const result = await testQuery(`#graphql
@@ -147,5 +169,11 @@ describe('Unavailable Days Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.unavailable_days.count({
+      where: { unavailable_id: 1 },
+    })
+    expect(checkDB).to.eql(0)
   })
 })

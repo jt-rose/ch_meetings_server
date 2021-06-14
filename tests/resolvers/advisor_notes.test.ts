@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
+import { prisma } from '../../src/prisma'
 
 describe('Advisor Notes Resolvers', async function () {
   /* ------------------- seed and clear DB before each test ------------------- */
@@ -35,6 +36,7 @@ describe('Advisor Notes Resolvers', async function () {
 }
     `)
 
+    // confirm response object as expected
     const expectedResult = {
       data: {
         addAdvisorNote: {
@@ -45,6 +47,12 @@ describe('Advisor Notes Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.advisor_notes.count({
+      where: { advisor_id: 1, advisor_note: 'This is a new note' },
+    })
+    expect(checkDB).to.eql(1)
   })
   // advisor notes will be retrieved via the Advisor field resolver
   it('edit advisor note', async function () {
@@ -58,6 +66,7 @@ describe('Advisor Notes Resolvers', async function () {
 }
     `)
 
+    // confirm response object as expected
     const expectedResult = {
       data: {
         editAdvisorNote: {
@@ -69,6 +78,16 @@ describe('Advisor Notes Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.advisor_notes.count({
+      where: {
+        advisor_id: 1,
+        note_id: 1,
+        advisor_note: 'This is an edited note',
+      },
+    })
+    expect(checkDB).to.eql(1)
   })
   it('remove advisor note', async function () {
     const result = await testQuery(`#graphql
@@ -81,6 +100,7 @@ describe('Advisor Notes Resolvers', async function () {
 }
     `)
 
+    // confirm response object as expected
     const expectedResult = {
       data: {
         removeAdvisorNote: {
@@ -92,5 +112,9 @@ describe('Advisor Notes Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.advisor_notes.count({ where: { note_id: 1 } })
+    expect(checkDB).to.eql(0)
   })
 })

@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
+import { prisma } from '../../src/prisma'
 
 describe('Advisor Resolvers', async function () {
   /* ------------------- seed and clear DB before each test ------------------- */
@@ -47,6 +48,12 @@ describe('Advisor Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.advisors.count({
+      where: { first_name: 'first', last_name: 'last', email: 'test@test.com' },
+    })
+    expect(checkDB).to.eql(1)
   })
   it('reject creating advisor when email already registered', async function () {
     const result = await testQuery(`#graphql
@@ -189,6 +196,17 @@ describe('Advisor Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.advisors.count({
+      where: {
+        advisor_id: 1,
+        first_name: 'Jane',
+        last_name: 'Doe',
+        email: 'jane.doe@email.com',
+      },
+    })
+    expect(checkDB).to.eql(1)
   })
   it('reject update when new email already registered for other user', async function () {
     const result = await testQuery(`#graphql
@@ -206,7 +224,7 @@ describe('Advisor Resolvers', async function () {
     expect(result.data.data).to.eql(null)
     expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
   })
-  it.skip('delete advisor and remove related languages, regions, and unavailable_days', async function () {
+  it('delete advisor and remove related languages, regions, and unavailable_days', async function () {
     const result = await testQuery(`#graphql
     mutation {
   removeAdvisor(advisor_id: 5) {
@@ -224,6 +242,32 @@ describe('Advisor Resolvers', async function () {
     }
     // need to add check for removing related data once field resolvers are built
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDBAdvisor = await prisma.advisors.count({
+      where: { advisor_id: 5 },
+    })
+    expect(checkDBAdvisor).to.eql(0)
+
+    const checkDBLanguages = await prisma.languages.count({
+      where: { advisor_id: 5 },
+    })
+    expect(checkDBLanguages).to.eql(0)
+
+    const checkDBRegions = await prisma.regions.count({
+      where: { advisor_id: 5 },
+    })
+    expect(checkDBRegions).to.eql(0)
+
+    const checkDBAdvisorNotes = await prisma.advisor_notes.count({
+      where: { advisor_id: 5 },
+    })
+    expect(checkDBAdvisorNotes).to.eql(0)
+
+    const checkDBUnavailableDays = await prisma.unavailable_days.count({
+      where: { advisor_id: 5 },
+    })
+    expect(checkDBUnavailableDays).to.eql(0)
   })
   it('reject deleting advisor when workshops have been scheduled to them', async function () {
     const result = await testQuery(`#graphql
@@ -240,12 +284,18 @@ describe('Advisor Resolvers', async function () {
     expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
   })
 
-  it('reject deleting advisor when they have been requested for workshops')
+  it('reject deleting advisor when they have been requested for workshops', async function () {
+    const result = await testQuery(`#graphql
+    mutation {
+  removeAdvisor(advisor_id: 4) {
+    email
+  }
+}
+    `)
 
-  /* ---------------------- test adjusting advisor notes ---------------------- */
-
-  it('add new advisor note')
-  it('retrieve advisor notes')
-  it('edit advisor note')
-  it('remove advisor note')
+    const expectedErrorMessage =
+      'Advisor #4 has been requested for workshops. Please clear this request before removing the advisor.'
+    expect(result.data.data).to.eql(null)
+    expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
+  })
 })

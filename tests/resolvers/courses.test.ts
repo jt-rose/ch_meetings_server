@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
+import { prisma } from '../../src/prisma'
 
 describe('Course Resolvers', function () {
   /* --------------------- seed and clear DB for each test -------------------- */
@@ -48,6 +49,17 @@ describe('Course Resolvers', function () {
       },
     }
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.courses.count({
+      where: {
+        course_name: 'test_course',
+        course_description: 'course_description',
+        active: true,
+        virtual_course: true,
+      },
+    })
+    expect(checkDB).to.eql(1)
   })
   /* ---------------- reject creating course -> already exisits --------------- */
   it('reject creating course when course name already exists', async function () {
@@ -164,6 +176,12 @@ mutation {
     }
 
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.courses.count({
+      where: { course_name: 'Course 901' },
+    })
+    expect(checkDB).to.eql(1)
   })
   /* -------------- reject update to course -> name already used -------------- */
   it('reject updating course to a name already registered', async function () {
@@ -199,6 +217,12 @@ mutation {
       },
     }
     expect(result.data).to.eql(expectedResult)
+
+    // confirm database updated as expected
+    const checkDB = await prisma.courses.count({
+      where: { course_id: 5 },
+    })
+    expect(checkDB).to.eql(0)
   })
   /* ---------- reject deleting course -> workshops already assigned ---------- */
   it('reject deleting course when workshops already assigned to it', async function () {
