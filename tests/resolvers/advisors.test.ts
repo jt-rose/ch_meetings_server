@@ -102,16 +102,16 @@ describe('Advisor Resolvers', async function () {
           ],
           unavailable_days: [
             {
-              day_unavailable: 1634860800000,
+              day_unavailable: '2021-10-22T00:00:00.000Z',
             },
             {
-              day_unavailable: 1634947200000,
+              day_unavailable: '2021-10-23T00:00:00.000Z',
             },
             {
-              day_unavailable: 1635033600000,
+              day_unavailable: '2021-10-24T00:00:00.000Z',
             },
             {
-              day_unavailable: 1635120000000,
+              day_unavailable: '2021-10-25T00:00:00.000Z',
             },
           ],
         },
