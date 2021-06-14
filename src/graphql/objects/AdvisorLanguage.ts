@@ -1,5 +1,5 @@
-import { Advisor } from './Advisor'
 import { ObjectType, Field, Int } from 'type-graphql'
+import { Advisor } from './Advisor'
 
 @ObjectType()
 export class AdvisorLanguage {
