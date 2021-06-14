@@ -287,7 +287,7 @@ VALUES (
         5,
         4,
         'LATAM Follow-up Cohort 8SE',
-        4,
+        NULL,
         NULL,
         4,
         'Sao Paulo, Brazil',
@@ -566,7 +566,7 @@ VALUES (
         'Dec 03 2021 13:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
-        'SCHEDULED'
+        'REQUESTED'
     ),
     (
         24,
@@ -575,7 +575,7 @@ VALUES (
         'Dec 10 2021 13:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
-        'SCHEDULED'
+        'REQUESTED'
     ),
     (
         25,
@@ -584,7 +584,7 @@ VALUES (
         'Dec 17 2021 13:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
-        'SCHEDULED'
+        'REQUESTED'
     ),
     (
         26,
@@ -593,7 +593,7 @@ VALUES (
         'Dec 24 2021 11:00:00 GMT',
         2,
         'www.zoom.com/user/abcdef1234',
-        'SCHEDULED'
+        'REQUESTED'
     ),
     --
     (
@@ -935,7 +935,7 @@ VALUES (
     (
         11,
         5,
-        'workshop assigned',
+        'workshop location changed',
         'Dec 22 2020 18:24:00 GMT'
     ),
     (

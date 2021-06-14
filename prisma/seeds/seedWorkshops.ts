@@ -595,7 +595,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
         create: [{ workshop_coursework_id: 7, coursework_id: 5 }],
       },
       requested_advisor_id: 4,
-      assigned_advisor_id: 4,
+      assigned_advisor_id: null,
       workshop_location: 'Sao Paulo, Brazil',
       workshop_region: 'LATAM',
       client_id: 4,
@@ -611,7 +611,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             date_and_time: new Date('Dec 03 2021 13:00:00 GMT'),
             duration_in_hours: 2,
             zoom_link: 'www.zoom.com/user/abcdef1234',
-            session_status: 'SCHEDULED',
+            session_status: 'REQUESTED',
             requested_start_times: {
               create: [
                 {
@@ -628,7 +628,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             date_and_time: new Date('Dec 10 2021 13:00:00 GMT'),
             duration_in_hours: 2,
             zoom_link: 'www.zoom.com/user/abcdef1234',
-            session_status: 'SCHEDULED',
+            session_status: 'REQUESTED',
             requested_start_times: {
               create: [
                 {
@@ -645,7 +645,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             date_and_time: new Date('Dec 17 2021 13:00:00 GMT'),
             duration_in_hours: 2,
             zoom_link: 'www.zoom.com/user/abcdef1234',
-            session_status: 'SCHEDULED',
+            session_status: 'REQUESTED',
             requested_start_times: {
               create: [
                 {
@@ -662,7 +662,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             date_and_time: new Date('Dec 24 2021 11:00:00 GMT'),
             duration_in_hours: 2,
             zoom_link: 'www.zoom.com/user/abcdef1234',
-            session_status: 'SCHEDULED',
+            session_status: 'REQUESTED',
             requested_start_times: {
               create: [
                 {
@@ -684,7 +684,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
           {
             log_id: 11,
-            note: 'workshop assigned',
+            note: 'workshop location changed',
             log_date: new Date('Dec 22 2020 18:24:00 GMT'),
           },
         ],

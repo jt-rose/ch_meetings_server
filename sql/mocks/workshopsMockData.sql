@@ -89,7 +89,7 @@ VALUES (
         'LATAM Follow-up Cohort 8SE',
         4,
         NULL,
-        4,
+        NULL,
         'Sao Paulo, Brazil',
         'LATAM',
         25,

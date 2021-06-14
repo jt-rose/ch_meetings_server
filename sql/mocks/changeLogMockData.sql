@@ -62,7 +62,7 @@ VALUES (
     (
         11,
         5,
-        'workshop assigned',
+        'workshop location changed',
         'Dec 22 2020 18:24:00 GMT'
     ),
     (
