@@ -9,10 +9,10 @@ import {
   Root,
 } from 'type-graphql'
 import { Advisor } from '../objects/Advisor'
-import { AdvisorLanguage } from '../objects/Languages'
-import { AdvisorRegion } from '../objects/Region'
-import { AdvisorUnavailableDays } from '../objects/UnavailableDays'
-import { AdvisorNote } from '../objects/AdvisorNotes'
+import { AdvisorLanguage } from '../objects/AdvisorLanguage'
+import { AdvisorRegion } from '../objects/AdvisorRegion'
+import { AdvisorUnavailableDay } from '../objects/AdvisorUnavailableDay'
+import { AdvisorNote } from '../objects/AdvisorNote'
 import { Context } from '../../utils/context'
 
 @Resolver(Advisor)
@@ -37,7 +37,7 @@ export class AdvisorResolver {
     })
   }
 
-  @FieldResolver(() => [AdvisorUnavailableDays])
+  @FieldResolver(() => [AdvisorUnavailableDay])
   async unavailable_days(@Ctx() ctx: Context, @Root() advisor: Advisor) {
     return ctx.prisma.unavailable_days.findMany({
       where: { advisor_id: advisor.advisor_id },
@@ -137,7 +137,7 @@ export class AdvisorResolver {
   ) {
     // reject if currently assigned workshops
     const hasWorkshops = await ctx.prisma.workshops.count({
-      where: { assigned_advisor: advisor_id },
+      where: { assigned_advisor_id: advisor_id },
     })
     if (hasWorkshops) {
       throw Error(
@@ -149,8 +149,8 @@ export class AdvisorResolver {
     const hasBeenRequested = await ctx.prisma.workshops.findFirst({
       where: {
         OR: [
-          { requested_advisor: advisor_id },
-          { backup_requested_advisor: advisor_id },
+          { requested_advisor_id: advisor_id },
+          { backup_requested_advisor_id: advisor_id },
         ],
       },
     })

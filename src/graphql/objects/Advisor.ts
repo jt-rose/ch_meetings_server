@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from 'type-graphql'
 import { AdvisorLanguage } from './AdvisorLanguage'
 import { AdvisorRegion } from './AdvisorRegion'
-import { AdvisorUnavailableDays } from './AdvisorUnavailableDays'
+import { AdvisorUnavailableDay } from './AdvisorUnavailableDay'
 import { AdvisorNote } from './AdvisorNote'
 
 @ObjectType()
@@ -24,8 +24,8 @@ export class Advisor {
   @Field(() => [AdvisorLanguage])
   languages: AdvisorLanguage[]
 
-  @Field(() => [AdvisorUnavailableDays])
-  unavailable_days: AdvisorUnavailableDays[]
+  @Field(() => [AdvisorUnavailableDay])
+  unavailable_days: AdvisorUnavailableDay[]
 
   @Field(() => [AdvisorNote])
   advisor_notes: AdvisorNote[]
