@@ -135,6 +135,14 @@ export class AdvisorResolver {
     @Ctx() ctx: Context,
     @Arg('advisor_id', () => Int) advisor_id: number
   ) {
+    // NOTE: deleting an advisor will be rejected if they are currently assigned
+    // or requested for a workshop
+    // this even applies to workshops with a 'deleted' status
+    // as such workshops can be recovered and would need to retain a valid advisor reference
+    // in this circumstance the workshop would need to be permanently deleted
+    // or the advisor reference would need to be changed
+    // before the advisor could be deleted
+
     // reject if currently assigned workshops
     const hasWorkshops = await ctx.prisma.workshops.count({
       where: { assigned_advisor_id: advisor_id },
@@ -164,10 +172,16 @@ export class AdvisorResolver {
     const removeLanguages = ctx.prisma.languages.deleteMany({
       where: { advisor_id },
     })
+
     const removeRegions = ctx.prisma.regions.deleteMany({
       where: { advisor_id },
     })
+
     const removeUnavailableDays = ctx.prisma.unavailable_days.deleteMany({
+      where: { advisor_id },
+    })
+
+    const removeAdvisorNotes = ctx.prisma.advisor_notes.deleteMany({
       where: { advisor_id },
     })
 
@@ -180,8 +194,9 @@ export class AdvisorResolver {
       removeLanguages,
       removeRegions,
       removeUnavailableDays,
+      removeAdvisorNotes,
       removeTheAdvisor,
-    ]) //ctx.prisma.advisors.delete({ where: { email: advisorEmail } })
-    return transaction[3]
+    ])
+    return transaction[4]
   }
 }
