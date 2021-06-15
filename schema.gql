@@ -99,7 +99,6 @@ type Query {
   getClient(client_id: Int!): Client
   getCourse(course_id: Int!): Course
   getSession(sessionID: Float!): [WorkshopSession!]!
-  getUniqueAdvisorLanguages: [AdvisorLanguage!]!
 }
 
 """international business regions"""

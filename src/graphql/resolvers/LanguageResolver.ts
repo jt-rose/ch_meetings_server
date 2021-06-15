@@ -11,6 +11,7 @@ import {
 import { AdvisorLanguage } from '../objects/AdvisorLanguage'
 import { Advisor } from '../objects/Advisor'
 import { Context } from './../../utils/context'
+import { languageList } from '../../utils/languageList'
 
 @Resolver(AdvisorLanguage)
 export class LanguageResolver {
@@ -32,7 +33,9 @@ export class LanguageResolver {
     @Arg('advisor_id') advisor_id: number,
     @Arg('language') language: string
   ) {
-    //add validation
+    if (!languageList.includes(language)) {
+      throw Error('Please submit a valid language')
+    }
     return ctx.prisma.languages.create({
       data: { advisor_id, advisor_language: language },
     })
@@ -55,16 +58,10 @@ export class LanguageResolver {
     @Ctx() ctx: Context,
     @Arg('language', { nullable: true }) language?: string
   ) {
+    // prisma accepts undefined, not null
+    // for 'where' properties, so this will be adjusted
     return ctx.prisma.languages.findMany({
-      where: { advisor_language: language },
+      where: { advisor_language: language || undefined },
     })
   }
-  // getUniqueLanguages
-  @Query(() => [AdvisorLanguage])
-  async getUniqueAdvisorLanguages(@Ctx() ctx: Context) {
-    return ctx.prisma.$queryRaw(`
-        SELECT DISTINCT advisor_language FROM languages
-        `)
-  }
-  //
 }
