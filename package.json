@@ -45,7 +45,6 @@
     "argon2": "^0.27.2",
     "connect-redis": "^5.2.0",
     "cros": "^1.0.1",
-    "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
