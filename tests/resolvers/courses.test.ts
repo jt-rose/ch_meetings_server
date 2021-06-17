@@ -23,6 +23,8 @@ describe('Course Resolvers', function () {
   after('restore database for local testing', async function () {
     await seed()
   })
+  /* --------------------- test coursework field resolver --------------------- */
+  it('access related coursework through field resolver')
 
   /* ------------------------------ create course ----------------------------- */
 

@@ -1,10 +1,26 @@
-import { Resolver, Query, Mutation, Arg, Ctx, Int } from 'type-graphql'
+import {
+  Resolver,
+  FieldResolver,
+  Query,
+  Mutation,
+  Root,
+  Arg,
+  Ctx,
+  Int,
+} from 'type-graphql'
 import { Context } from '../../utils/context'
 import { Course, CourseInput } from '../objects/Course'
+import { Coursework } from '../objects/Coursework'
 
 @Resolver(Course)
 export class CourseResolver {
-  // confirm nullable returns?
+  @FieldResolver(() => [Coursework])
+  coursework(@Ctx() ctx: Context, @Root() root: Course) {
+    // check for n+1
+    return ctx.prisma.courses
+      .findUnique({ where: { course_id: root.course_id } })
+      .courses_and_coursework({ include: { coursework: true } })
+  }
 
   // getCourse
   @Query(() => Course, { nullable: true })

@@ -25,6 +25,7 @@ import { LanguageResolver } from './graphql/resolvers/LanguageResolver'
 import { RegionResolver } from './graphql/resolvers/AdvisorRegionResolver'
 import { AdvisorNoteResolver } from './graphql/resolvers/AdvisorNoteResolver'
 import { UnavailableDayResolver } from './graphql/resolvers/AdvisorUnavailableDayResolver'
+import { CourseworkResolver } from './graphql/resolvers/CourseworkResolver'
 
 /* --------------------------- init main function --------------------------- */
 
@@ -77,8 +78,8 @@ const main = async () => {
       RegionResolver,
       AdvisorNoteResolver,
       UnavailableDayResolver,
+      CourseworkResolver,
     ],
-    //dateScalarMode: 'timestamp',
     validate: false,
     // automatically create `schema.gql` file with schema definition in project's working directory
     emitSchemaFile: true,
