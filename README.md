@@ -1,6 +1,6 @@
 # ch_meetings_server
 
-A graphql server/ Postgres database managing the scheduling process for business training workshops
+A graphql server/ Postgres database for managing the scheduling process of business training workshops
 
 ### Core Dependencies
 
