@@ -64,4 +64,8 @@ describe('Manager Resolvers', async function () {
   it('assign client to manager')
   it('remove client from manager')
   it('change active status of client relationship')
+
+  /* ----------------------- manage workshop assignments ---------------------- */
+  it('add workshop assignment')
+  it('remove workshop assignment')
 })
