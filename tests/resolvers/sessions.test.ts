@@ -35,4 +35,10 @@ describe('Session Resolvers', async function () {
   /* ----------------------------- remove session ----------------------------- */
   it('remove session')
   it('reject removing session if status already completed')
+
+  /* -------------------------- manage session notes -------------------------- */
+  it('create session note')
+  it('retrieve session notes via field resolver')
+  it('edit session note')
+  it('remove session note')
 })
