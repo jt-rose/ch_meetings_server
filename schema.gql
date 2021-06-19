@@ -51,6 +51,7 @@ type Course {
   course_description: String!
   course_id: Int!
   course_name: String!
+  coursework: [Coursework!]!
   created_at: DateTime!
   updated_at: DateTime!
   virtual_course: Boolean!
@@ -61,6 +62,27 @@ input CourseInput {
   course_description: String!
   course_name: String!
   virtual_course: Boolean!
+}
+
+type CoursesToCoursework {
+  course_and_coursework_id: Int!
+  course_id: Int!
+  coursework_id: Int!
+}
+
+type Coursework {
+  active: Boolean!
+  courses: [Course!]!
+  coursework_description: String
+  coursework_id: Int!
+  coursework_name: String!
+}
+
+input CourseworkInput {
+  active: Boolean!
+  coursework_description: String
+  coursework_id: Int!
+  coursework_name: String!
 }
 
 """
@@ -76,11 +98,14 @@ type Mutation {
   addAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfo!): AdvisorUnavailableDay!
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
+  addCoursework(description: String, name: String!): Coursework!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
   editAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfoWithID!): AdvisorUnavailableDay!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
+  editCoursework(courseworkInput: CourseworkInput!): Coursework!
+  registerAsCourseMaterial(course_id: Int!, coursework_id: Int!): CoursesToCoursework!
   removeAdvisor(advisor_id: Int!): Advisor!
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
   removeAdvisorNote(note_id: Int!): AdvisorNote!
@@ -88,6 +113,8 @@ type Mutation {
   removeAdvisorUnavailableDay(unavailable_id: Int!): AdvisorUnavailableDay!
   removeClient(client_id: Int!): Client!
   removeCourse(course_id: Int!): Course!
+  removeCoursework(coursework_id: Int!): Coursework!
+  removeFromCourseMaterial(course_and_coursework_id: Int!): CoursesToCoursework!
 }
 
 type Query {
@@ -96,6 +123,7 @@ type Query {
   getAllAdvisors: [Advisor!]!
   getAllClients: [Client!]
   getAllCourses: [Course!]!
+  getAllCoursework: [Coursework!]!
   getClient(client_id: Int!): Client
   getCourse(course_id: Int!): Course
   getSession(sessionID: Float!): [WorkshopSession!]!
@@ -115,6 +143,15 @@ type RequestedStartTime {
   latest_start_time: DateTime!
   request_id: Int!
   workshop_session_id: Int!
+}
+
+"""status of workshops and individual session requests"""
+enum SESSION_STATUS {
+  COMPLETED
+  HOLD_A
+  HOLD_B
+  REQUESTED
+  SCHEDULED
 }
 
 type SessionNote {
@@ -137,14 +174,13 @@ input UnavailableDayInfoWithID {
 }
 
 type WorkshopSession {
+  date_and_time: DateTime
   duration_in_hours: Float!
   requested_start_times: [RequestedStartTime!]!
-  session_date: DateTime!
   session_name: String!
   session_notes: [SessionNote!]!
-  session_status: String!
-  start_time: String!
+  session_status: SESSION_STATUS!
   workshop_id: Float!
   workshop_session_id: Int!
-  zoom_link: String!
+  zoom_link: String
 }

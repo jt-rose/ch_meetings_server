@@ -24,8 +24,8 @@ class CourseworkInput {
   @Field()
   coursework_name: string
 
-  @Field()
-  coursework_description: string | null
+  @Field({ nullable: true })
+  coursework_description?: string
 
   @Field()
   active: boolean
@@ -34,11 +34,12 @@ class CourseworkInput {
 @Resolver(Coursework)
 export class CourseworkResolver {
   @FieldResolver(() => [Course])
-  courses(@Ctx() ctx: Context, @Root() root: Coursework) {
-    // check for n+1
-    return ctx.prisma.coursework
+  async courses(@Ctx() ctx: Context, @Root() root: Coursework) {
+    const courses = await ctx.prisma.coursework
       .findUnique({ where: { coursework_id: root.coursework_id } })
       .courses_and_coursework({ include: { courses: true } })
+
+    return courses.map((x) => x.courses)
   }
 
   // retrieve all coursework

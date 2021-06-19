@@ -15,11 +15,12 @@ import { Coursework } from '../objects/Coursework'
 @Resolver(Course)
 export class CourseResolver {
   @FieldResolver(() => [Coursework])
-  coursework(@Ctx() ctx: Context, @Root() root: Course) {
-    // check for n+1
-    return ctx.prisma.courses
+  async coursework(@Ctx() ctx: Context, @Root() root: Course) {
+    const coursework = await ctx.prisma.courses
       .findUnique({ where: { course_id: root.course_id } })
       .courses_and_coursework({ include: { coursework: true } })
+    // remove many to many relationship and return coursework directly
+    return coursework.map((x) => x.coursework)
   }
 
   // getCourse
