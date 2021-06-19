@@ -41,4 +41,11 @@ describe('Session Resolvers', async function () {
   it('retrieve session notes via field resolver')
   it('edit session note')
   it('remove session note')
+
+  /* ---------------------- manage requested start times ---------------------- */
+  it('add requested start time')
+  it('reject if invalid time range')
+  it('retrieve requested start times via field resolver')
+  it('edit requested start time')
+  it('remove requested start time')
 })
