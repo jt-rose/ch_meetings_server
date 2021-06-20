@@ -1,8 +1,9 @@
 import { describe } from 'mocha'
-//import { expect } from 'chai'
-//import { testQuery } from '../queryTester'
+import { expect } from 'chai'
+import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
+import { prisma } from '../../src/prisma'
 
 describe('Manager Resolvers', async function () {
   /* ------------------- seed and clear DB before each test ------------------- */
@@ -66,7 +67,161 @@ describe('Manager Resolvers', async function () {
   it('change active status of client relationship')
 
   /* ----------------------- manage workshop assignments ---------------------- */
-  it('add workshop assignment')
-  it('remove workshop assignment')
-  it('change active status of manager assignment')
+  it('add workshop assignment', async function () {
+    const result = await testQuery(`#graphql
+    mutation {
+  addManagerToWorkshop(manager_id: 3, workshop_id: 1) {
+    manager_id
+    workshop_id
+  }
+}
+    `)
+
+    const expectedResult = {
+      data: {
+        addManagerToWorkshop: {
+          manager_id: 3,
+          workshop_id: 1,
+        },
+      },
+    }
+
+    expect(result.data).to.eql(expectedResult)
+
+    const checkDB = await prisma.manager_assignments.count({
+      where: {
+        manager_id: 3,
+        workshop_id: 1,
+      },
+    })
+
+    expect(checkDB).to.eql(1)
+  })
+  it('return current assignment instead of creating duplicate', async function () {
+    const result = await testQuery(`#graphql
+    mutation {
+  addManagerToWorkshop(manager_id: 1, workshop_id: 1) {
+    assignment_id
+    manager_id
+    workshop_id
+  }
+}
+    `)
+
+    const expectedResult = {
+      data: {
+        addManagerToWorkshop: {
+          assignment_id: 1,
+          manager_id: 1,
+          workshop_id: 1,
+        },
+      },
+    }
+
+    expect(result.data).to.eql(expectedResult)
+
+    const checkDB = await prisma.manager_assignments.count({
+      where: {
+        manager_id: 1,
+        workshop_id: 1,
+      },
+    })
+
+    expect(checkDB).to.eql(1)
+  })
+  it('if creating duplicate of inactive assignment, switch current assignment to active', async function () {
+    const result = await testQuery(`#graphql
+      mutation {
+    addManagerToWorkshop(manager_id: 3, workshop_id: 6) {
+      assignment_id
+      manager_id
+      workshop_id
+      active
+    }
+  }
+      `)
+
+    const expectedResult = {
+      data: {
+        addManagerToWorkshop: {
+          assignment_id: 13,
+          manager_id: 3,
+          workshop_id: 6,
+          active: true,
+        },
+      },
+    }
+
+    expect(result.data).to.eql(expectedResult)
+
+    const checkDB = await prisma.manager_assignments.count({
+      where: {
+        manager_id: 3,
+        workshop_id: 6,
+      },
+    })
+
+    expect(checkDB).to.eql(1)
+  })
+  it('remove workshop assignment', async function () {
+    const result = await testQuery(`#graphql
+    mutation {
+  removeManagerFromWorkshop(assignment_id: 1) {
+    assignment_id
+    manager_id
+    active
+  }
+}
+    `)
+
+    const expectedResult = {
+      data: {
+        removeManagerFromWorkshop: {
+          assignment_id: 1,
+          manager_id: 1,
+          active: true,
+        },
+      },
+    }
+
+    expect(result.data).to.eql(expectedResult)
+
+    const checkDB = await prisma.manager_assignments.count({
+      where: {
+        assignment_id: 1,
+      },
+    })
+
+    expect(checkDB).to.eql(0)
+  })
+  it('change active status of manager assignment', async function () {
+    const result = await testQuery(`#graphql
+    mutation {
+  changeManagerAssignmentStatus(assignment_id: 13, active: true) {
+    assignment_id
+    active
+  }
+}
+    `)
+
+    const expectedResult = {
+      data: {
+        changeManagerAssignmentStatus: {
+          assignment_id: 13,
+          active: true,
+        },
+      },
+    }
+
+    expect(result.data).to.eql(expectedResult)
+
+    const checkDB = await prisma.manager_assignments.count({
+      where: {
+        assignment_id: 13,
+        active: true,
+      },
+    })
+
+    expect(checkDB).to.eql(1)
+  })
 })
