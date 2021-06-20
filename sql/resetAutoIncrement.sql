@@ -10,3 +10,4 @@ ALTER SEQUENCE advisors_advisor_id_seq RESTART WITH 6;
 ALTER SEQUENCE languages_language_id_seq RESTART WITH 9;
 ALTER SEQUENCE coursework_coursework_id_seq RESTART WITH 7;
 ALTER SEQUENCE courses_and_coursework_course_and_coursework_id_seq RESTART WITH 9;
+ALTER SEQUENCE manager_assignments_assignment_id_seq RESTART WITH 14;
