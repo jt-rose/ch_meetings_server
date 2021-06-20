@@ -68,4 +68,5 @@ describe('Manager Resolvers', async function () {
   /* ----------------------- manage workshop assignments ---------------------- */
   it('add workshop assignment')
   it('remove workshop assignment')
+  it('change active status of manager assignment')
 })
