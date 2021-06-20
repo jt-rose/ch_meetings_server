@@ -126,7 +126,7 @@ describe('Coursework Resolvers', function () {
     })
     expect(checkDB).to.eql(1)
   })
-  it(' retrieve all coursework', async function () {
+  it('retrieve all coursework', async function () {
     const result = await testQuery(`#graphql
     query {
   getAllCourses {
