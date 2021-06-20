@@ -13,8 +13,14 @@ export class ManagerAssignmentsResolver {
     const alreadyAssigned = await ctx.prisma.manager_assignments.findFirst({
       where: { manager_id, workshop_id },
     })
-    if (alreadyAssigned) {
+    if (alreadyAssigned?.active) {
       return alreadyAssigned
+    }
+    if (alreadyAssigned) {
+      return ctx.prisma.manager_assignments.update({
+        where: { assignment_id: alreadyAssigned.assignment_id },
+        data: { active: true },
+      })
     }
     return ctx.prisma.manager_assignments.create({
       data: {

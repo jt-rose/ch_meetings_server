@@ -10,4 +10,7 @@ export class ManagerAssignment {
 
   @Field(() => Int)
   workshop_id: number
+
+  @Field()
+  active: boolean
 }
