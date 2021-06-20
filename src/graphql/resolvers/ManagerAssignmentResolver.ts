@@ -1,9 +1,10 @@
-import { Resolver, Ctx, Arg, Int } from 'type-graphql'
+import { Resolver, Ctx, Arg, Int, Mutation } from 'type-graphql'
 import { ManagerAssignment } from '../objects/ManagerAssignment'
 import { Context } from '../../utils/context'
 
 @Resolver(ManagerAssignment)
 export class ManagerAssignmentsResolver {
+  @Mutation(() => ManagerAssignment)
   addManagerToWorkshop(
     @Ctx() ctx: Context,
     @Arg('manager_id', () => Int) manager_id: number,
@@ -18,6 +19,7 @@ export class ManagerAssignmentsResolver {
     })
   }
 
+  @Mutation(() => ManagerAssignment)
   removeManagerFromWorkshop(
     @Ctx() ctx: Context,
     @Arg('assignment_id', () => Int) assignment_id: number
@@ -25,6 +27,7 @@ export class ManagerAssignmentsResolver {
     return ctx.prisma.manager_assignments.delete({ where: { assignment_id } })
   }
 
+  @Mutation(() => ManagerAssignment)
   changeManagerAssignmentStatus(
     @Ctx() ctx: Context,
     @Arg('assignment_id', () => Int) assignment_id: number,

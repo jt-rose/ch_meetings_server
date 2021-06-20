@@ -90,6 +90,12 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+type ManagerAssignment {
+  assignment_id: Int!
+  manager_id: Int!
+  workshop_id: Int!
+}
+
 type Mutation {
   addAdvisor(email: String!, first_name: String!, last_name: String!): Advisor!
   addAdvisorLanguage(advisor_id: Float!, language: String!): AdvisorLanguage!
@@ -99,6 +105,8 @@ type Mutation {
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
   addCoursework(description: String, name: String!): Coursework!
+  addManagerToWorkshop(manager_id: Int!, workshop_id: Int!): ManagerAssignment!
+  changeManagerAssignmentStatus(active: Boolean!, assignment_id: Int!): ManagerAssignment!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
   editAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfoWithID!): AdvisorUnavailableDay!
@@ -115,6 +123,7 @@ type Mutation {
   removeCourse(course_id: Int!): Course!
   removeCoursework(coursework_id: Int!): Coursework!
   removeFromCourseMaterial(course_and_coursework_id: Int!): CoursesToCoursework!
+  removeManagerFromWorkshop(assignment_id: Int!): ManagerAssignment!
 }
 
 type Query {
