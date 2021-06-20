@@ -5,11 +5,17 @@ import { Context } from '../../utils/context'
 @Resolver(ManagerAssignment)
 export class ManagerAssignmentsResolver {
   @Mutation(() => ManagerAssignment)
-  addManagerToWorkshop(
+  async addManagerToWorkshop(
     @Ctx() ctx: Context,
     @Arg('manager_id', () => Int) manager_id: number,
     @Arg('workshop_id', () => Int) workshop_id: number
   ) {
+    const alreadyAssigned = await ctx.prisma.manager_assignments.findFirst({
+      where: { manager_id, workshop_id },
+    })
+    if (alreadyAssigned) {
+      return alreadyAssigned
+    }
     return ctx.prisma.manager_assignments.create({
       data: {
         manager_id,
