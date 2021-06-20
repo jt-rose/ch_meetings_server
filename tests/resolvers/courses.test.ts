@@ -24,7 +24,39 @@ describe('Course Resolvers', function () {
     await seed()
   })
   /* --------------------- test coursework field resolver --------------------- */
-  it('access related coursework through field resolver')
+  it('access related coursework through field resolver', async function () {
+    const result = await testQuery(`#graphql
+    query {
+  getCourse(course_id: 1) {
+    course_name
+    coursework {
+      coursework_name
+    }
+  }
+}
+    `)
+
+    const expectedResult = {
+      data: {
+        getCourse: {
+          course_name: 'Course 101',
+          coursework: [
+            {
+              coursework_name: 'Intro Prework',
+            },
+            {
+              coursework_name: 'Intro Postwork',
+            },
+            {
+              coursework_name: 'Learn and Apply Intro Coursework',
+            },
+          ],
+        },
+      },
+    }
+
+    expect(result.data).to.eql(expectedResult)
+  })
 
   /* ------------------------------ create course ----------------------------- */
 
