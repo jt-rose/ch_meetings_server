@@ -23,13 +23,14 @@ describe('Coursework Resolvers', function () {
   after('restore database for local testing', async function () {
     await seed()
   })
-  /* ----------------------- test courses field resolver ---------------------- */
-  it('access related coursework through course field resolver', async function () {
+  /* ----------------------- test coursework field resolver ---------------------- */
+  it('access related courses through courses field resolver', async function () {
     const result = await testQuery(`#graphql
     query {
-  getCourse(course_id: 1) {
-    coursework {
-      coursework_name
+  getAllCoursework {
+    coursework_name
+    courses {
+      course_name
     }
   }
 }
@@ -37,19 +38,61 @@ describe('Coursework Resolvers', function () {
 
     const expectedResult = {
       data: {
-        getCourse: {
-          coursework: [
-            {
-              coursework_name: 'Intro Prework',
-            },
-            {
-              coursework_name: 'Intro Postwork',
-            },
-            {
-              coursework_name: 'Learn and Apply Intro Coursework',
-            },
-          ],
-        },
+        getAllCoursework: [
+          {
+            coursework_name: 'Intro Prework',
+            courses: [
+              {
+                course_name: 'Course 101',
+              },
+              {
+                course_name: 'Course 102 - In-Person',
+              },
+            ],
+          },
+          {
+            coursework_name: 'Intro Postwork',
+            courses: [
+              {
+                course_name: 'Course 101',
+              },
+              {
+                course_name: 'Course 102 - In-Person',
+              },
+            ],
+          },
+          {
+            coursework_name: 'Learn and Apply Intro Coursework',
+            courses: [
+              {
+                course_name: 'Course 101',
+              },
+              {
+                course_name: 'Course 102 - In-Person',
+              },
+            ],
+          },
+          {
+            coursework_name: '201 prework',
+            courses: [
+              {
+                course_name: 'Course 201',
+              },
+            ],
+          },
+          {
+            coursework_name: 'OLD - 201 prework',
+            courses: [
+              {
+                course_name: 'Course 301',
+              },
+            ],
+          },
+          {
+            coursework_name: '301 prework',
+            courses: [],
+          },
+        ],
       },
     }
 
