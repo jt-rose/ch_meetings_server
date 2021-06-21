@@ -11,5 +11,5 @@ export type Context = {
 }
 
 interface IGetUserIDSession extends Session {
-  userId?: number
+  manager_id?: number
 }
