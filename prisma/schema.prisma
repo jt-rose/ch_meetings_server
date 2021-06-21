@@ -72,6 +72,7 @@ model managers {
   last_name           String                @db.VarChar(255)
   email               String                @unique @db.VarChar(255)
   email_password      String                @db.VarChar(255)
+  user_type           user_type_enum
   manager_assignments manager_assignments[]
   manager_clients     manager_clients[]
 }
@@ -217,4 +218,9 @@ enum region_enum {
   EMEA
   APAC
   ANZ
+}
+
+enum user_type_enum {
+  USER
+  ADMIN
 }

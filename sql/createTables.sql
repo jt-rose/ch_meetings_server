@@ -12,6 +12,10 @@ CREATE TYPE REGION_ENUM AS ENUM (
     'APAC',
     'ANZ'
 );
+CREATE TYPE USER_TYPE_ENUM AS ENUM (
+    'USER',
+    'ADMIN' -- 'CLIENT', if needed
+);
 CREATE TABLE clients (
     client_id SERIAL PRIMARY KEY,
     client_name VARCHAR(255) NOT NULL,
@@ -22,7 +26,8 @@ CREATE TABLE managers (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    email_password VARCHAR(255) NOT NULL -- may add regions for managers later if needed
+    email_password VARCHAR(255) NOT NULL,
+    user_type USER_TYPE_ENUM NOT NULL -- may add regions for managers later if needed
 );
 CREATE TABLE advisors (
     advisor_id SERIAL PRIMARY KEY,
