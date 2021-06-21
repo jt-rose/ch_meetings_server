@@ -1,10 +1,11 @@
 export const validatePassword = (unhashedPassword: string) => {
-  // confirm mimimum length, upper and lowercase, and special character
+  // confirm mimimum length, upper and lowercase, number, and special character
   const valid =
     unhashedPassword.length > 8 &&
     unhashedPassword.match(/[!%&@#$^*?_~]/) &&
     unhashedPassword.match(/[A-Z]/) &&
-    unhashedPassword.match(/[a-z]/)
+    unhashedPassword.match(/[a-z]/) &&
+    unhashedPassword.match(/\d/)
 
   return !!valid
 }
