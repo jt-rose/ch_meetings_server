@@ -30,6 +30,7 @@
     "@types/luxon": "^1.27.0",
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.0.2",
+    "@types/nodemailer": "^6.4.2",
     "@types/pg": "^7.14.11",
     "axios": "^0.21.1",
     "chai": "^4.3.4",
@@ -52,6 +53,7 @@
     "graphql-query-complexity": "^0.8.0",
     "ioredis": "^4.27.1",
     "luxon": "^1.27.0",
+    "nodemailer": "^6.6.2",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1"
