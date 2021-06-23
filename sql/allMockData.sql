@@ -956,7 +956,8 @@ INSERT INTO managers (
         last_name,
         email,
         email_password,
-        user_type
+        user_type,
+        active
     )
 VALUES (
         1,
@@ -964,7 +965,8 @@ VALUES (
         'Firenzi',
         'amy.firenzi@company.net',
         'Password123!',
-        'ADMIN'
+        'ADMIN',
+        TRUE
     ),
     (
         2,
@@ -972,7 +974,8 @@ VALUES (
         'Low',
         'frank.low@company.net',
         'My@Password789',
-        'USER'
+        'USER',
+        TRUE
     ),
     (
         3,
@@ -980,7 +983,8 @@ VALUES (
         'Haskell',
         'gina.haskell@company.net',
         'NoOneWillGuess12345!',
-        'USER'
+        'USER',
+        TRUE
     );
 INSERT INTO manager_assignments (
         assignment_id,

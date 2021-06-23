@@ -27,7 +27,8 @@ CREATE TABLE managers (
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     email_password VARCHAR(255) NOT NULL,
-    user_type USER_TYPE_ENUM NOT NULL -- may add regions for managers later if needed
+    user_type USER_TYPE_ENUM NOT NULL,
+    active BOOLEAN NOT NULL -- may add regions for managers later if needed
 );
 CREATE TABLE advisors (
     advisor_id SERIAL PRIMARY KEY,
