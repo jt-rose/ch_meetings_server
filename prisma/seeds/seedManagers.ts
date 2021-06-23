@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import argon2 from 'argon2'
 
 // seed managers and manager assignments into database
 export const seedManagers = async (prisma: PrismaClient) => {
@@ -8,7 +9,7 @@ export const seedManagers = async (prisma: PrismaClient) => {
       first_name: 'Amy',
       last_name: 'Firenzi',
       email: 'amy.firenzi@company.net',
-      email_password: 'Password123!',
+      email_password: await argon2.hash('Password123!'),
       // these passwords are just for the mock data
       // real passwords will have character requirements + hashing
       user_type: 'ADMIN',
@@ -41,7 +42,7 @@ export const seedManagers = async (prisma: PrismaClient) => {
       first_name: 'Frank',
       last_name: 'Low',
       email: 'frank.low@company.net',
-      email_password: 'My@Password789',
+      email_password: await argon2.hash('My@Password789'),
       user_type: 'USER',
       manager_clients: {
         createMany: {
@@ -72,7 +73,7 @@ export const seedManagers = async (prisma: PrismaClient) => {
       first_name: 'Gina',
       last_name: 'Haskell',
       email: 'gina.haskell@company.net',
-      email_password: 'NoOneWillGuess12345!',
+      email_password: await argon2.hash('NoOneWillGuess12345!'),
       user_type: 'USER',
       manager_clients: {
         createMany: {
