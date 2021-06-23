@@ -32,6 +32,7 @@
     "@types/node": "^15.0.2",
     "@types/nodemailer": "^6.4.2",
     "@types/pg": "^7.14.11",
+    "@types/uuid": "^8.3.0",
     "axios": "^0.21.1",
     "chai": "^4.3.4",
     "mocha": "^8.4.0",
@@ -56,6 +57,7 @@
     "nodemailer": "^6.6.2",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^1.1.1"
+    "type-graphql": "^1.1.1",
+    "uuid": "^8.3.2"
   }
 }
