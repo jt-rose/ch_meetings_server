@@ -12,6 +12,7 @@ model advisors {
   email                                                     String             @unique @db.VarChar(255)
   first_name                                                String             @db.VarChar(255)
   last_name                                                 String             @db.VarChar(255)
+  active                                                    Boolean            @default(true)
   advisor_notes                                             advisor_notes[]
   languages                                                 languages[]
   regions                                                   regions[]
@@ -25,7 +26,7 @@ model change_log {
   log_id      Int       @id @default(autoincrement())
   workshop_id Int
   note        String
-  log_date    DateTime  @db.Timestamptz(6)
+  log_date    DateTime  @default(now()) @db.Timestamptz(6)
   workshops   workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
 
@@ -33,6 +34,9 @@ model clients {
   client_id       Int               @id @default(autoincrement())
   client_name     String            @db.VarChar(255)
   business_unit   String?           @db.VarChar(255)
+  active          Boolean           @default(true)
+  client_notes    client_notes[]
+  licenses        licenses[]
   manager_clients manager_clients[]
   workshops       workshops[]
 }
@@ -41,11 +45,12 @@ model courses {
   course_id              Int                      @id @default(autoincrement())
   course_name            String                   @unique @db.VarChar(255)
   course_description     String
-  active                 Boolean
+  active                 Boolean                  @default(true)
   virtual_course         Boolean
   created_at             DateTime                 @default(now()) @db.Timestamptz(6)
   updated_at             DateTime                 @default(now()) @db.Timestamptz(6)
   courses_and_coursework courses_and_coursework[]
+  licenses               licenses[]
   workshop_session_sets  workshop_session_sets[]
   workshops              workshops[]
 }
@@ -61,7 +66,7 @@ model manager_assignments {
   assignment_id Int       @id @default(autoincrement())
   workshop_id   Int
   manager_id    Int
-  active        Boolean
+  active        Boolean   @default(true)
   managers      managers  @relation(fields: [manager_id], references: [manager_id])
   workshops     workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
@@ -73,6 +78,8 @@ model managers {
   email               String                @unique @db.VarChar(255)
   email_password      String                @db.VarChar(255)
   user_type           user_type_enum
+  active              Boolean               @default(true)
+  license_changes     license_changes[]
   manager_assignments manager_assignments[]
   manager_clients     manager_clients[]
 }
@@ -93,10 +100,11 @@ model unavailable_days {
 }
 
 model workshop_notes {
-  note_id     Int       @id @default(autoincrement())
-  workshop_id Int
-  note        String
-  workshops   workshops @relation(fields: [workshop_id], references: [workshop_id])
+  note_id      Int       @id @default(autoincrement())
+  workshop_id  Int
+  note         String
+  date_of_note DateTime  @default(now()) @db.Timestamptz(6)
+  workshops    workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
 
 model workshop_sessions {
@@ -134,6 +142,7 @@ model workshops {
   courses                                                  courses               @relation(fields: [course_id], references: [course_id])
   advisors_advisorsToworkshops_requested_advisor_id        advisors              @relation("advisorsToworkshops_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
   change_log                                               change_log[]
+  license_changes                                          license_changes[]
   manager_assignments                                      manager_assignments[]
   workshop_coursework                                      workshop_coursework[]
   workshop_notes                                           workshop_notes[]
@@ -152,6 +161,7 @@ model session_notes {
   note_id             Int               @id @default(autoincrement())
   workshop_session_id Int
   note                String
+  date_of_note        DateTime          @default(now()) @db.Timestamptz(6)
   workshop_sessions   workshop_sessions @relation(fields: [workshop_session_id], references: [workshop_session_id])
 }
 
@@ -159,6 +169,7 @@ model advisor_notes {
   note_id      Int      @id @default(autoincrement())
   advisor_id   Int
   advisor_note String
+  date_of_note DateTime @default(now()) @db.Timestamptz(6)
   advisors     advisors @relation(fields: [advisor_id], references: [advisor_id])
 }
 
@@ -202,6 +213,37 @@ model workshop_session_sets {
   session_name   String  @db.VarChar(255)
   session_order  Int
   courses        courses @relation(fields: [course_id], references: [course_id])
+}
+
+model client_notes {
+  note_id      Int      @id @default(autoincrement())
+  client_id    Int
+  note         String
+  date_of_note DateTime @default(now()) @db.Timestamptz(6)
+  clients      clients  @relation(fields: [client_id], references: [client_id])
+}
+
+model license_changes {
+  license_change_id Int        @id @default(autoincrement())
+  license_id        Int
+  amount_change     Int
+  workshop_id       Int?
+  manager_id        Int
+  date_of_change    DateTime   @default(now()) @db.Timestamptz(6)
+  change_note       String
+  licenses          licenses   @relation(fields: [license_id], references: [license_id])
+  managers          managers   @relation(fields: [manager_id], references: [manager_id])
+  workshops         workshops? @relation(fields: [workshop_id], references: [workshop_id])
+}
+
+model licenses {
+  license_id       Int               @id @default(autoincrement())
+  course_id        Int
+  client_id        Int
+  remaining_amount Int
+  clients          clients           @relation(fields: [client_id], references: [client_id])
+  courses          courses           @relation(fields: [course_id], references: [course_id])
+  license_changes  license_changes[]
 }
 
 enum session_status_enum {
