@@ -109,12 +109,22 @@ VALUES (1, 1, 'Orientation', 1),
     --
     (16, 4, 'Master Class In-Person: Day 1', 1),
     (17, 4, 'Master Class In-Person: Day 2', 2);
-INSERT INTO clients (client_id, client_name, business_unit)
-VALUES (1, 'Acme_Corp', 'Chemical Engineering'),
-    (2, 'Acme_Corp', 'Software Integration'),
-    (3, 'ABC Company', NULL),
-    (4, 'Financial Services', 'Accounting'),
-    (5, 'Financial Services', 'Investments');
+INSERT INTO clients (client_id, client_name, business_unit, active)
+VALUES (1, 'Acme_Corp', 'Chemical Engineering', TRUE),
+    (2, 'Acme_Corp', 'Software Integration', TRUE),
+    (3, 'ABC Company', NULL, TRUE),
+    (4, 'Financial Services', 'Accounting', TRUE),
+    (5, 'Financial Services', 'Investments', TRUE),
+    (6, 'Med Clinique', NULL, FALSE);
+INSERT INTO client_notes (client_id, note)
+VALUES (
+        1,
+        '70% of 2021 licenses should be used before October 2021'
+    ),
+    (
+        6,
+        'program on hiatus as client undergoes acquisition by BioTech Inc.'
+    );
 INSERT INTO advisors (advisor_id, email, first_name, last_name)
 VALUES (1, 'john.doe@email.com', 'John', 'Doe'),
     (2, 'henri@email.net', 'Henri', 'Bonaparte'),
@@ -1014,3 +1024,105 @@ VALUES (1, 1, 1, TRUE),
     (6, 2, 4, TRUE),
     (7, 2, 5, TRUE),
     (8, 1, 5, TRUE);
+INSERT INTO licenses (client_id, course_id, remaining_amount)
+VALUES (1, 1, 193),
+    (1, 3, 35),
+    (2, 1, 46),
+    (3, 1, 78),
+    (4, 1, 63),
+    (4, 3, 20),
+    (5, 2, 75),
+    (5, 3, 15),
+    (5, 4, 18),
+    (6, 1, 0);
+INSERT INTO license_changes (
+        amount_change,
+        change_note,
+        license_id,
+        manager_id,
+        workshop_id
+    )
+VALUES (
+        220,
+        'added to program',
+        1,
+        1,
+        NULL
+    ),
+    (
+        -23,
+        'Completed workshop: Workshop-ID 1',
+        1,
+        1,
+        1
+    ),
+    (
+        35,
+        'added to program',
+        2,
+        1,
+        NULL
+    ),
+    (
+        46,
+        'added to program',
+        3,
+        1,
+        NULL
+    ),
+    (
+        78,
+        'added to program',
+        4,
+        1,
+        NULL
+    ),
+    (
+        63,
+        'added to program',
+        5,
+        1,
+        NULL
+    ),
+    (
+        20,
+        'added to program',
+        6,
+        1,
+        NULL
+    ),
+    (
+        75,
+        'added to program',
+        7,
+        1,
+        NULL
+    ),
+    (
+        15,
+        'added to program',
+        8,
+        1,
+        NULL
+    ),
+    (
+        18,
+        'added to program',
+        9,
+        1,
+        NULL
+    ),
+    (
+        100,
+        'added to program',
+        10,
+        1,
+        NULL
+    ),
+    (
+        -100,
+        'removed from program',
+        10,
+        1,
+        NULL
+    );
