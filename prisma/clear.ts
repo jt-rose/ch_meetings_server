@@ -1,6 +1,11 @@
 import { prisma } from '../src/prisma'
+import { resetAutoInc } from './resetAutoInc'
 
 export async function clear() {
+  // remove licenses
+  await prisma.license_changes.deleteMany()
+  await prisma.licenses.deleteMany()
+
   // remove managers and related data
   await prisma.manager_clients.deleteMany()
   await prisma.manager_assignments.deleteMany()
@@ -27,7 +32,11 @@ export async function clear() {
   await prisma.courses_and_coursework.deleteMany()
   await prisma.coursework.deleteMany()
   await prisma.courses.deleteMany()
+  await prisma.client_notes.deleteMany()
   await prisma.clients.deleteMany()
+
+  // reset auto-increment for testing
+  await resetAutoInc()
 
   // disconnect prisma
   await prisma.$disconnect()
