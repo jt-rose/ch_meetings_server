@@ -92,4 +92,30 @@ export class ClientResolver {
     // safe to delete if client present but without workshops
     return ctx.prisma.clients.delete({ where: { client_id } })
   }
+  @Mutation(() => Client)
+  async changeClientActiveStatus(
+    @Ctx() ctx: Context,
+    @Arg('client_id', () => Int) client_id: number,
+    @Arg('active') active: boolean
+  ) {
+    if (!active) {
+      const clientWorkshops = await ctx.prisma.workshops.findMany({
+        where: { client_id },
+        include: { workshop_sessions: true },
+      })
+      const hasActiveWorkshops = clientWorkshops
+        .flatMap((x) => x.workshop_sessions)
+        .some((session) => session.session_status !== 'COMPLETED')
+      if (hasActiveWorkshops) {
+        throw Error(
+          'Client cannot be deactivated as they have upcoming workshops scheduled'
+        )
+      }
+    }
+
+    return ctx.prisma.clients.update({
+      where: { client_id },
+      data: { active },
+    })
+  }
 }

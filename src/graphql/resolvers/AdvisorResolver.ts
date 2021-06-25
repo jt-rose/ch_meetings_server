@@ -204,4 +204,31 @@ export class AdvisorResolver {
     ])
     return transaction[4]
   }
+
+  @Mutation(() => Advisor)
+  async changeAdvisorActiveStatus(
+    @Ctx() ctx: Context,
+    @Arg('advisor_id', () => Int) advisor_id: number,
+    @Arg('active') active: boolean
+  ) {
+    if (!active) {
+      const advisorWorkshops = await ctx.prisma.workshops.findMany({
+        where: { assigned_advisor_id: advisor_id },
+        include: { workshop_sessions: true },
+      })
+      const hasActiveWorkshops = advisorWorkshops
+        .flatMap((x) => x.workshop_sessions)
+        .some((session) => session.session_status !== 'COMPLETED')
+      if (hasActiveWorkshops) {
+        throw Error(
+          'Advisor cannote be deactivated as they have upcoming workshops scheduled'
+        )
+      }
+    }
+
+    return ctx.prisma.advisors.update({
+      where: { advisor_id },
+      data: { active },
+    })
+  }
 }

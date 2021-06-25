@@ -4,6 +4,7 @@
 # -----------------------------------------------
 
 type Advisor {
+  active: Boolean!
   advisor_id: Int!
   advisor_notes: [AdvisorNote!]!
   email: String!
@@ -24,6 +25,7 @@ type AdvisorLanguage {
 type AdvisorNote {
   advisor_id: Int!
   advisor_note: String!
+  date_of_note: DateTime!
   note_id: Int!
 }
 
@@ -40,10 +42,28 @@ type AdvisorUnavailableDay {
   unavailable_id: Int!
 }
 
+type ChangeLog {
+  log_date: DateTime!
+  log_id: Int!
+  note: String!
+  workshop_id: Int!
+}
+
 type Client {
+  active: Boolean!
   business_unit: String
   client_id: Int!
   client_name: String!
+  client_notes: [ClientNote!]!
+  licenses: [License!]!
+  workshops: [Workshop!]!
+}
+
+type ClientNote {
+  client_id: Int!
+  date_of_note: DateTime!
+  note: String!
+  note_id: Int!
 }
 
 type Course {
@@ -90,6 +110,38 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+type License {
+  client: Client!
+  client_id: Int!
+  course: Course!
+  course_id: Int!
+  license_changes: [LicenseChange!]!
+  license_id: Int!
+  remaining_amount: Int!
+}
+
+type LicenseChange {
+  amount_change: Int!
+  change_note: String!
+  date_of_change: DateTime!
+  license_change_id: Int!
+  license_id: Int!
+  manager_id: Int!
+  updated_amount: Int!
+  workshop_id: Int
+}
+
+type Manager {
+  active: Boolean!
+  active_clients: [Client!]!
+  active_workshops: [Workshop!]!
+  email: String!
+  first_name: String!
+  last_name: String!
+  manager_id: Int!
+  user_type: USER_TYPE!
+}
+
 type ManagerAssignment {
   active: Boolean!
   assignment_id: Int!
@@ -107,6 +159,8 @@ type Mutation {
   addCourse(courseData: CourseInput!): Course!
   addCoursework(description: String, name: String!): Coursework!
   addManagerToWorkshop(manager_id: Int!, workshop_id: Int!): ManagerAssignment!
+  changeAdvisorActiveStatus(active: Boolean!, advisor_id: Int!): Advisor!
+  changeClientActiveStatus(active: Boolean!, client_id: Int!): Client!
   changeManagerAssignmentStatus(active: Boolean!, assignment_id: Int!): ManagerAssignment!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
@@ -165,9 +219,16 @@ enum SESSION_STATUS {
 }
 
 type SessionNote {
+  date_of_note: DateTime!
   note: String!
   note_id: Int!
   workshop_session_id: Int!
+}
+
+"""distinguish between ordinary users and those with admin access"""
+enum USER_TYPE {
+  ADMIN
+  USER
 }
 
 input UnavailableDayInfo {
@@ -181,6 +242,41 @@ input UnavailableDayInfoWithID {
   day_unavailable: DateTime!
   note: String
   unavailable_id: Int!
+}
+
+type Workshop {
+  assigned_advisor: Advisor
+  assigned_advisor_id: Int!
+  backup_requested_advisor: Advisor
+  backup_requested_advisor_id: Int!
+  change_log: [ChangeLog!]!
+  class_size: Int
+  client: Client!
+  client_id: Int!
+  cohort_name: String!
+  course: Course!
+  course_id: Int!
+  coursework: [Coursework!]!
+  deleted: Boolean!
+  managers: [Manager!]!
+  open_air_id: String!
+  record_attendance: Boolean!
+  requested_advisor: Advisor!
+  requested_advisor_id: Int!
+  sessions: [WorkshopSession!]!
+  time_zone: String!
+  workshop_id: Int!
+  workshop_language: String!
+  workshop_location: String!
+  workshop_notes: [WorkshopNote!]!
+  workshop_region: REGION!
+}
+
+type WorkshopNote {
+  date_of_note: DateTime!
+  note: String!
+  note_id: Int!
+  workshop_id: Int!
 }
 
 type WorkshopSession {

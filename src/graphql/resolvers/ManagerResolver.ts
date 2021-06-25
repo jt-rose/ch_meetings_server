@@ -186,6 +186,41 @@ export class ManagerResolver {
     return ctx.prisma.managers.delete({ where: { manager_id } })
   }
 
+  @Mutation(() => Client)
+  async changeManagerActiveStatus(
+    @Ctx() ctx: Context,
+    @Arg('manager_id', () => Int) manager_id: number,
+    @Arg('active') active: boolean
+  ) {
+    // set up update function
+    const changeManagerStatus = ctx.prisma.managers.update({
+      where: { manager_id },
+      data: { active },
+    })
+
+    // if manager will switch to inactive
+    // deactivate assignments and client relationships first
+    if (!active) {
+      const removeAssignments = ctx.prisma.manager_assignments.updateMany({
+        where: { manager_id },
+        data: { active: false },
+      })
+      const removeClients = ctx.prisma.manager_clients.updateMany({
+        where: { manager_id },
+        data: { active: false },
+      })
+      const update = await ctx.prisma.$transaction([
+        removeAssignments,
+        removeClients,
+        changeManagerStatus,
+      ])
+      return update[2]
+    }
+
+    // if client will switch to active, simply run the update
+    return changeManagerStatus
+  }
+
   // addProfilePic ?
 
   /* ----------------------------- authentication ----------------------------- */
