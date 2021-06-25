@@ -226,6 +226,7 @@ model client_notes {
 model license_changes {
   license_change_id Int        @id @default(autoincrement())
   license_id        Int
+  updated_amount    Int
   amount_change     Int
   workshop_id       Int?
   manager_id        Int
