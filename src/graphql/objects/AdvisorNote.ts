@@ -10,4 +10,7 @@ export class AdvisorNote {
 
   @Field(() => String)
   advisor_note: string
+
+  @Field(() => Date)
+  date_of_note: Date
 }

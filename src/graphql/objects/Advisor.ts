@@ -18,6 +18,11 @@ export class Advisor {
   @Field()
   last_name: string
 
+  @Field()
+  active: boolean
+
+  /* ----------------------------- field resolvers ---------------------------- */
+
   @Field(() => [AdvisorRegion])
   regions: AdvisorRegion[]
 

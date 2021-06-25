@@ -22,6 +22,9 @@ export class Manager {
   @Field(() => USER_TYPE)
   user_type: USER_TYPE
 
+  @Field()
+  active: boolean
+
   // field resolvers
   @Field(() => [Client])
   active_clients: Client[]
