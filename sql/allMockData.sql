@@ -1036,13 +1036,14 @@ VALUES (1, 1, 193),
     (5, 4, 18),
     (6, 1, 0);
 INSERT INTO license_changes (
-        amount_change,
+        updated_amount amount_change,
         change_note,
         license_id,
         manager_id,
         workshop_id
     )
 VALUES (
+        220,
         220,
         'added to program',
         1,
@@ -1051,12 +1052,14 @@ VALUES (
     ),
     (
         -23,
+        197,
         'Completed workshop: Workshop-ID 1',
         1,
         1,
         1
     ),
     (
+        35,
         35,
         'added to program',
         2,
@@ -1065,12 +1068,14 @@ VALUES (
     ),
     (
         46,
+        46,
         'added to program',
         3,
         1,
         NULL
     ),
     (
+        78,
         78,
         'added to program',
         4,
@@ -1079,12 +1084,14 @@ VALUES (
     ),
     (
         63,
+        63,
         'added to program',
         5,
         1,
         NULL
     ),
     (
+        20,
         20,
         'added to program',
         6,
@@ -1093,12 +1100,14 @@ VALUES (
     ),
     (
         75,
+        75,
         'added to program',
         7,
         1,
         NULL
     ),
     (
+        15,
         15,
         'added to program',
         8,
@@ -1107,12 +1116,14 @@ VALUES (
     ),
     (
         18,
+        18,
         'added to program',
         9,
         1,
         NULL
     ),
     (
+        100,
         100,
         'added to program',
         10,
@@ -1121,6 +1132,7 @@ VALUES (
     ),
     (
         -100,
+        0,
         'removed from program',
         10,
         1,
