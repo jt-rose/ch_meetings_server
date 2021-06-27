@@ -67,7 +67,7 @@ export class ClientResolver {
     return ctx.prisma.clients.create({ data: { client_name, business_unit } })
   }
 
-  //addClient
+  // removing client should only be done when no work has been completed
   @Mutation(() => Client)
   async removeClient(
     @Arg('client_id', () => Int) client_id: number,
@@ -76,7 +76,7 @@ export class ClientResolver {
     // search for client and related workshops
     const clientAndWorkshops = await ctx.prisma.clients.findFirst({
       where: { client_id },
-      include: { workshops: true },
+      include: { workshops: true, licenses: true },
     })
 
     // reject if no client found
@@ -89,8 +89,39 @@ export class ClientResolver {
         'Cannot remove client with past or present workshops assigned'
       )
     }
-    // safe to delete if client present but without workshops
-    return ctx.prisma.clients.delete({ where: { client_id } })
+
+    // reject if outstanding licenses
+    if (clientAndWorkshops.licenses.find((x) => x.remaining_amount !== 0)) {
+      throw Error('Cannot remove client with outstanding licenses')
+    }
+
+    // safe to delete if client present but without workshops/ licenses
+    // transaction used to remove all related fields together
+    const licenseIDs = clientAndWorkshops.licenses.map((x) => x.license_id)
+
+    const removeLicenseChanges = ctx.prisma.license_changes.deleteMany({
+      where: { license_id: { in: licenseIDs } },
+    })
+    const removeLicenses = ctx.prisma.licenses.deleteMany({
+      where: { client_id },
+    })
+    const removeClientNotes = ctx.prisma.client_notes.deleteMany({
+      where: { client_id },
+    })
+    const removeClientAssignments = ctx.prisma.manager_clients.deleteMany({
+      where: { client_id },
+    })
+    const removeClient = ctx.prisma.clients.delete({ where: { client_id } })
+
+    const removeClientAndRelations = await ctx.prisma.$transaction([
+      removeLicenseChanges,
+      removeLicenses,
+      removeClientNotes,
+      removeClientAssignments,
+      removeClient,
+    ])
+
+    return removeClientAndRelations[4]
   }
   @Mutation(() => Client)
   async changeClientActiveStatus(
