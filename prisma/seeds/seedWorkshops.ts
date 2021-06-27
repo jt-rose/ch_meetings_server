@@ -7,13 +7,19 @@ import { PrismaClient } from '@prisma/client'
 export const seedWorkshops = async (prisma: PrismaClient) => {
   const workshop1 = await prisma.workshops.create({
     data: {
-      workshop_id: 1,
+      //workshop_id: 1,
       course_id: 1,
       cohort_name: 'NAM Cohort 1',
       workshop_coursework: {
         create: [
-          { workshop_coursework_id: 1, coursework_id: 1 },
-          { workshop_coursework_id: 2, coursework_id: 2 },
+          {
+            //workshop_coursework_id: 1,
+            coursework_id: 1,
+          },
+          {
+            //workshop_coursework_id: 2,
+            coursework_id: 2,
+          },
         ],
       },
       requested_advisor_id: 1,
@@ -29,7 +35,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_sessions: {
         create: [
           {
-            workshop_session_id: 1,
+            //workshop_session_id: 1,
             session_name: 'Orientation',
             date_and_time: new Date('July 21 2021 11:00:00 GMT'),
             duration_in_hours: 0.5,
@@ -38,7 +44,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 1,
+                  //request_id: 1,
                   earliest_start_time: new Date('July 21 2021 11:00:00 GMT'),
                   latest_start_time: new Date('July 21 2021 11:00:00 GMT'),
                 },
@@ -46,7 +52,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 2,
+            //workshop_session_id: 2,
             session_name: 'Managers Meeting',
             date_and_time: new Date('July 21 2021 12:00:00 GMT'),
             duration_in_hours: 1,
@@ -55,7 +61,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 2,
+                  //request_id: 2,
                   earliest_start_time: new Date('July 21 2021 12:00:00 GMT'),
                   latest_start_time: new Date('July 21 2021 12:00:00 GMT'),
                 },
@@ -63,7 +69,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 3,
+            //workshop_session_id: 3,
             session_name: 'Session 1',
             date_and_time: new Date('July 22 2021 12:00:00 GMT'),
             duration_in_hours: 2,
@@ -72,7 +78,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 3,
+                  //request_id: 3,
                   earliest_start_time: new Date('July 22 2021 12:00:00 GMT'),
                   latest_start_time: new Date('July 22 2021 12:00:00 GMT'),
                 },
@@ -80,7 +86,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 4,
+            //workshop_session_id: 4,
             session_name: 'Session 2',
             date_and_time: new Date('July 23 2021 12:00:00 GMT'),
             duration_in_hours: 2,
@@ -89,7 +95,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 4,
+                  //request_id: 4,
                   earliest_start_time: new Date('July 23 2021 12:00:00 GMT'),
                   latest_start_time: new Date('July 23 2021 12:00:00 GMT'),
                 },
@@ -97,7 +103,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 5,
+            //workshop_session_id: 5,
             session_name: 'Session 3',
             date_and_time: new Date('July 24 2021 12:00:00 GMT'),
             duration_in_hours: 2,
@@ -106,7 +112,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 5,
+                  //request_id: 5,
                   earliest_start_time: new Date('July 24 2021 12:00:00 GMT'),
                   latest_start_time: new Date('July 24 2021 12:00:00 GMT'),
                 },
@@ -114,7 +120,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 6,
+            //workshop_session_id: 6,
             session_name: 'Session 4',
             date_and_time: new Date('July 25 2021 12:00:00 GMT'),
             duration_in_hours: 2,
@@ -123,7 +129,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 6,
+                  //request_id: 6,
                   earliest_start_time: new Date('July 25 2021 12:00:00 GMT'),
                   latest_start_time: new Date('July 25 2021 12:00:00 GMT'),
                 },
@@ -131,7 +137,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 7,
+            //workshop_session_id: 7,
             session_name: 'Managers Meeting',
             date_and_time: new Date('July 28 2021 11:00:00 GMT'),
             duration_in_hours: 1,
@@ -140,7 +146,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 7,
+                  //request_id: 7,
                   earliest_start_time: new Date('July 28 2021 11:00:00 GMT'),
                   latest_start_time: new Date('July 28 2021 11:00:00 GMT'),
                 },
@@ -152,7 +158,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_notes: {
         create: [
           {
-            note_id: 1,
+            //note_id: 1,
             note: 'Client has requested translation of XYZ materials',
           },
         ],
@@ -160,12 +166,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       change_log: {
         create: [
           {
-            log_id: 1,
+            //log_id: 1,
             note: 'workshop request created',
             log_date: new Date('Nov 15 2020 15:23:00 GMT'),
           },
           {
-            log_id: 2,
+            //log_id: 2,
             note: 'workshop assigned',
             log_date: new Date('Nov 17 2020 17:44:00 GMT'),
           },
@@ -176,13 +182,19 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
 
   const workshop2 = await prisma.workshops.create({
     data: {
-      workshop_id: 2,
+      //workshop_id: 2,
       course_id: 1,
       cohort_name: 'EMEA Cohort 1',
       workshop_coursework: {
         create: [
-          { workshop_coursework_id: 3, coursework_id: 1 },
-          { workshop_coursework_id: 4, coursework_id: 2 },
+          {
+            //workshop_coursework_id: 3,
+            coursework_id: 1,
+          },
+          {
+            //workshop_coursework_id: 4,
+            coursework_id: 2,
+          },
         ],
       },
       requested_advisor_id: 2,
@@ -197,7 +209,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_sessions: {
         create: [
           {
-            workshop_session_id: 8,
+            //workshop_session_id: 8,
             session_name: 'Orientation',
             date_and_time: new Date('July 18 2021 6:00:00 GMT'),
             duration_in_hours: 0.5,
@@ -206,7 +218,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 8,
+                  //request_id: 8,
                   earliest_start_time: new Date('July 18 2021 6:00:00 GMT'),
                   latest_start_time: new Date('July 18 2021 6:00:00 GMT'),
                 },
@@ -214,7 +226,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 9,
+            //workshop_session_id: 9,
             session_name: 'Session 1',
             date_and_time: new Date('July 22 2021 06:00:00 GMT'),
             duration_in_hours: 2,
@@ -223,7 +235,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 9,
+                  //request_id: 9,
                   earliest_start_time: new Date('July 22 2021 06:00:00 GMT'),
                   latest_start_time: new Date('July 22 2021 09:00:00 GMT'),
                 },
@@ -231,7 +243,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 10,
+            //workshop_session_id: 10,
             session_name: 'Session 2',
             date_and_time: new Date('July 23 2021 06:00:00 GMT'),
             duration_in_hours: 2,
@@ -240,7 +252,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 10,
+                  //request_id: 10,
                   earliest_start_time: new Date('July 23 2021 06:00:00 GMT'),
                   latest_start_time: new Date('July 23 2021 09:00:00 GMT'),
                 },
@@ -249,14 +261,14 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             session_notes: {
               create: [
                 {
-                  note_id: 1,
+                  //note_id: 1,
                   note: 'Managers John Doe and Jane Doe will be joining as observers',
                 },
               ],
             },
           },
           {
-            workshop_session_id: 11,
+            //workshop_session_id: 11,
             session_name: 'Session 3',
             date_and_time: new Date('July 24 2021 06:00:00 GMT'),
             duration_in_hours: 2,
@@ -265,7 +277,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 11,
+                  //request_id: 11,
                   earliest_start_time: new Date('July 24 2021 06:00:00 GMT'),
                   latest_start_time: new Date('July 24 2021 09:00:00 GMT'),
                 },
@@ -274,14 +286,14 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             session_notes: {
               create: [
                 {
-                  note_id: 2,
+                  //note_id: 2,
                   note: 'Participants Phil Lowe and Stacy Adams will be unavailable and joining workshop 3/ session 3 to make up for it',
                 },
               ],
             },
           },
           {
-            workshop_session_id: 12,
+            //workshop_session_id: 12,
             session_name: 'Session 4',
             date_and_time: new Date('July 25 2021 06:00:00 GMT'),
             duration_in_hours: 2,
@@ -290,7 +302,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 12,
+                  //request_id: 12,
                   earliest_start_time: new Date('July 25 2021 06:00:00 GMT'),
                   latest_start_time: new Date('July 25 2021 09:00:00 GMT'),
                 },
@@ -302,12 +314,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       change_log: {
         create: [
           {
-            log_id: 3,
+            //log_id: 3,
             note: 'workshop request created',
             log_date: new Date('Jan 12 2021 15:23:00 GMT'),
           },
           {
-            log_id: 4,
+            //log_id: 4,
             note: 'workshop assigned',
             log_date: new Date('Jan 29 2021 15:23:00 GMT'),
           },
@@ -318,11 +330,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
 
   const workshop3 = await prisma.workshops.create({
     data: {
-      workshop_id: 3,
+      //workshop_id: 3,
       course_id: 1,
       cohort_name: 'APAC Cohort 6',
       workshop_coursework: {
-        create: [{ workshop_coursework_id: 5, coursework_id: 3 }],
+        create: [
+          {
+            //workshop_coursework_id: 5,
+            coursework_id: 3,
+          },
+        ],
       },
       requested_advisor_id: 3,
       assigned_advisor_id: 3,
@@ -336,7 +353,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_sessions: {
         create: [
           {
-            workshop_session_id: 13,
+            //workshop_session_id: 13,
             session_name: 'Foundational Concepts: Intro',
             date_and_time: null,
             duration_in_hours: 2,
@@ -345,7 +362,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 13,
+                  //request_id: 13,
                   earliest_start_time: new Date('Aug 01 2021 07:00:00 GMT'),
                   latest_start_time: new Date('Aug 02 2021 6:59:59 GMT'),
                 },
@@ -353,7 +370,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 14,
+            //workshop_session_id: 14,
             session_name: 'Foundational Concepts: Explore Further',
             date_and_time: null,
             duration_in_hours: 2,
@@ -362,7 +379,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 14,
+                  //request_id: 14,
                   earliest_start_time: new Date('Aug 08 2021 07:00:00 GMT'),
                   latest_start_time: new Date('Aug 09 2021 6:59:59 GMT'),
                 },
@@ -370,7 +387,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 15,
+            //workshop_session_id: 15,
             session_name: 'Foundational Concepts: Real-World Applications',
             date_and_time: null,
             duration_in_hours: 2,
@@ -379,7 +396,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 15,
+                  //request_id: 15,
                   earliest_start_time: new Date('Aug 15 2021 07:00:00 GMT'),
                   latest_start_time: new Date('Aug 16 2021 6:59:59 GMT'),
                 },
@@ -388,14 +405,14 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             session_notes: {
               create: [
                 {
-                  note_id: 3,
+                  //note_id: 3,
                   note: 'Phil Lowe and Stacy Adams will be joining from workshop 2, session 3',
                 },
               ],
             },
           },
           {
-            workshop_session_id: 16,
+            //workshop_session_id: 16,
             session_name: 'Foundational Concepts: Summary & Recap',
             date_and_time: null,
             duration_in_hours: 2,
@@ -404,7 +421,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 16,
+                  //request_id: 16,
                   earliest_start_time: new Date('Aug 22 2021 07:00:00 GMT'),
                   latest_start_time: new Date('Aug 23 2021 6:59:59 GMT'),
                 },
@@ -416,12 +433,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       change_log: {
         create: [
           {
-            log_id: 5,
+            //log_id: 5,
             note: 'workshop request created',
             log_date: new Date('Feb 03 2021 13:01:00 GMT'),
           },
           {
-            log_id: 6,
+            //log_id: 6,
             note: 'workshop assigned',
             log_date: new Date('Feb 10 2021 16:56:00 GMT'),
           },
@@ -432,11 +449,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
 
   const workshop4 = await prisma.workshops.create({
     data: {
-      workshop_id: 4,
+      //workshop_id: 4,
       course_id: 1,
       cohort_name: 'NAM 2021 Training',
       workshop_coursework: {
-        create: [{ workshop_coursework_id: 6, coursework_id: 4 }],
+        create: [
+          {
+            //workshop_coursework_id: 6,
+            coursework_id: 4,
+          },
+        ],
       },
       requested_advisor_id: 2,
       backup_requested_advisor_id: 1,
@@ -451,7 +473,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_sessions: {
         create: [
           {
-            workshop_session_id: 17,
+            //workshop_session_id: 17,
             session_name: 'Orientation',
             date_and_time: new Date('Oct 19 2021 14:00:00 GMT'),
             duration_in_hours: 0.5,
@@ -460,7 +482,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 17,
+                  //request_id: 17,
                   earliest_start_time: new Date('Oct 19 2021 14:00:00 GMT'),
                   latest_start_time: new Date('Oct 19 2021 14:00:00 GMT'),
                 },
@@ -468,7 +490,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 18,
+            //workshop_session_id: 18,
             session_name: 'Session 1',
             date_and_time: new Date('Oct 20 2021 14:00:00 GMT'),
             duration_in_hours: 1.5,
@@ -477,7 +499,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 18,
+                  //request_id: 18,
                   earliest_start_time: new Date('Oct 20 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Oct 20 2021 12:00:00 GMT'),
                 },
@@ -485,7 +507,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 19,
+            //workshop_session_id: 19,
             session_name: 'Session 2',
             date_and_time: new Date('Oct 22 2021 14:00:00 GMT'),
             duration_in_hours: 1.5,
@@ -494,7 +516,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 19,
+                  //request_id: 19,
                   earliest_start_time: new Date('Oct 22 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Oct 22 2021 12:00:00 GMT'),
                 },
@@ -502,7 +524,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 20,
+            //workshop_session_id: 20,
             session_name: 'Session 3',
             date_and_time: new Date('Oct 24 2021 14:00:00 GMT'),
             duration_in_hours: 1.5,
@@ -511,17 +533,17 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 20,
+                  //request_id: 20,
                   earliest_start_time: new Date('Oct 24 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Oct 24 2021 12:00:00 GMT'),
                 },
                 {
-                  request_id: 21,
+                  //request_id: 21,
                   earliest_start_time: new Date('Oct 25 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Oct 25 2021 12:00:00 GMT'),
                 },
                 {
-                  request_id: 22,
+                  //request_id: 22,
                   earliest_start_time: new Date('Oct 25 2021 16:00:00 GMT'),
                   latest_start_time: new Date('Oct 25 2021 16:00:00 GMT'),
                 },
@@ -529,7 +551,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 21,
+            //workshop_session_id: 21,
             session_name: 'Session 4',
             date_and_time: new Date('Oct 26 2021 14:00:00 GMT'),
             duration_in_hours: 1.5,
@@ -538,7 +560,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 23,
+                  //request_id: 23,
                   earliest_start_time: new Date('Oct 26 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Oct 26 2021 12:00:00 GMT'),
                 },
@@ -546,7 +568,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 22,
+            //workshop_session_id: 22,
             session_name: 'Managers Meeting',
             date_and_time: new Date('Oct 30 2021 14:00:00 GMT'),
             duration_in_hours: 1,
@@ -555,7 +577,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 24,
+                  //request_id: 24,
                   earliest_start_time: new Date('Oct 30 2021 14:00:00 GMT'),
                   latest_start_time: new Date('Oct 30 2021 14:00:00 GMT'),
                 },
@@ -567,17 +589,17 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       change_log: {
         create: [
           {
-            log_id: 7,
+            //log_id: 7,
             note: 'workshop request created',
             log_date: new Date('Nov 01 2020 14:03:00 GMT'),
           },
           {
-            log_id: 8,
+            //log_id: 8,
             note: 'workshop assigned',
             log_date: new Date('Nov 17 2020 16:16:00 GMT'),
           },
           {
-            log_id: 9,
+            //log_id: 9,
             note: 'session 3 timing conflict for client. Placed in Hold while gathering new dates',
             log_date: new Date('Nov 18 2020 11:34:00 GMT'),
           },
@@ -588,11 +610,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
 
   const workshop5 = await prisma.workshops.create({
     data: {
-      workshop_id: 5,
+      //workshop_id: 5,
       course_id: 4,
       cohort_name: 'LATAM Follow-up Cohort 8SE',
       workshop_coursework: {
-        create: [{ workshop_coursework_id: 7, coursework_id: 5 }],
+        create: [
+          {
+            //workshop_coursework_id: 7,
+            coursework_id: 5,
+          },
+        ],
       },
       requested_advisor_id: 4,
       assigned_advisor_id: null,
@@ -606,7 +633,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_sessions: {
         create: [
           {
-            workshop_session_id: 23,
+            //workshop_session_id: 23,
             session_name: 'Session 1',
             date_and_time: new Date('Dec 03 2021 13:00:00 GMT'),
             duration_in_hours: 2,
@@ -615,7 +642,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 25,
+                  //request_id: 25,
                   earliest_start_time: new Date('Dec 03 2021 10:00:00 GMT'),
                   latest_start_time: new Date('Dec 03 2021 15:00:00 GMT'),
                 },
@@ -623,7 +650,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 24,
+            //workshop_session_id: 24,
             session_name: 'Session 2',
             date_and_time: new Date('Dec 10 2021 13:00:00 GMT'),
             duration_in_hours: 2,
@@ -632,7 +659,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 26,
+                  //request_id: 26,
                   earliest_start_time: new Date('Dec 10 2021 10:00:00 GMT'),
                   latest_start_time: new Date('Dec 10 2021 15:00:00 GMT'),
                 },
@@ -640,7 +667,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 25,
+            //workshop_session_id: 25,
             session_name: 'Session 3',
             date_and_time: new Date('Dec 17 2021 13:00:00 GMT'),
             duration_in_hours: 2,
@@ -649,7 +676,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 27,
+                  //request_id: 27,
                   earliest_start_time: new Date('Dec 17 2021 10:00:00 GMT'),
                   latest_start_time: new Date('Dec 17 2021 15:00:00 GMT'),
                 },
@@ -657,7 +684,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 26,
+            //workshop_session_id: 26,
             session_name: 'Session 4',
             date_and_time: new Date('Dec 24 2021 11:00:00 GMT'),
             duration_in_hours: 2,
@@ -666,7 +693,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 28,
+                  //request_id: 28,
                   earliest_start_time: new Date('Dec 24 2021 10:00:00 GMT'),
                   latest_start_time: new Date('Dec 24 2021 15:00:00 GMT'),
                 },
@@ -678,12 +705,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       change_log: {
         create: [
           {
-            log_id: 10,
+            //log_id: 10,
             note: 'workshop request created',
             log_date: new Date('Dec 20 2020 12:24:00 GMT'),
           },
           {
-            log_id: 11,
+            //log_id: 11,
             note: 'workshop location changed',
             log_date: new Date('Dec 22 2020 18:24:00 GMT'),
           },
@@ -694,11 +721,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
 
   const workshop6 = await prisma.workshops.create({
     data: {
-      workshop_id: 6,
+      //workshop_id: 6,
       course_id: 3,
       cohort_name: 'EMEA Crossover Group B',
       workshop_coursework: {
-        create: [{ workshop_coursework_id: 8, coursework_id: 4 }],
+        create: [
+          {
+            //workshop_coursework_id: 8,
+            coursework_id: 4,
+          },
+        ],
       },
       requested_advisor_id: 2,
       backup_requested_advisor_id: 1,
@@ -713,7 +745,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_sessions: {
         create: [
           {
-            workshop_session_id: 27,
+            //workshop_session_id: 27,
             session_name: 'Orientation',
             date_and_time: new Date('Nov 01 2021 12:00:00 GMT'),
             duration_in_hours: 0.5,
@@ -722,7 +754,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 29,
+                  //request_id: 29,
                   earliest_start_time: new Date('Nov 01 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Nov 01 2021 12:00:00 GMT'),
                 },
@@ -730,7 +762,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 28,
+            //workshop_session_id: 28,
             session_name: 'Managers Meeting',
             date_and_time: new Date('Nov 02 2021 12:00:00 GMT'),
             duration_in_hours: 1,
@@ -739,7 +771,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 30,
+                  //request_id: 30,
                   earliest_start_time: new Date('Nov 02 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Nov 02 2021 12:00:00 GMT'),
                 },
@@ -747,7 +779,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 29,
+            //workshop_session_id: 29,
             session_name: 'Part 1: Teach',
             date_and_time: new Date('Nov 03 2021 12:00:00 GMT'),
             duration_in_hours: 2,
@@ -756,7 +788,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 31,
+                  //request_id: 31,
                   earliest_start_time: new Date('Nov 03 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Nov 03 2021 12:00:00 GMT'),
                 },
@@ -765,14 +797,14 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             session_notes: {
               create: [
                 {
-                  note_id: 4,
+                  //note_id: 4,
                   note: 'Head of Sales Andrea Slonik will be joining to observe process',
                 },
               ],
             },
           },
           {
-            workshop_session_id: 30,
+            //workshop_session_id: 30,
             session_name: 'Part 2: Tailor',
             date_and_time: null,
             duration_in_hours: 2,
@@ -781,12 +813,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 32,
+                  //request_id: 32,
                   earliest_start_time: new Date('Nov 10 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Nov 10 2021 12:00:00 GMT'),
                 },
                 {
-                  request_id: 33,
+                  //request_id: 33,
                   earliest_start_time: new Date('Nov 10 2021 14:00:00 GMT'),
                   latest_start_time: new Date('Nov 10 2021 14:00:00 GMT'),
                 },
@@ -794,7 +826,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 31,
+            //workshop_session_id: 31,
             session_name: 'Part 3: Take Control',
             date_and_time: null,
             duration_in_hours: 2,
@@ -803,12 +835,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 34,
+                  //request_id: 34,
                   earliest_start_time: new Date('Nov 17 2021 12:30:00 GMT'),
                   latest_start_time: new Date('Nov 17 2021 12:30:00 GMT'),
                 },
                 {
-                  request_id: 35,
+                  //request_id: 35,
                   earliest_start_time: new Date('Nov 17 2021 14:30:00 GMT'),
                   latest_start_time: new Date('Nov 17 2021 14:30:00 GMT'),
                 },
@@ -816,7 +848,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 32,
+            //workshop_session_id: 32,
             session_name: 'Part 4: Constructive Tension',
             date_and_time: new Date('Nov 24 2021 12:00:00 GMT'),
             duration_in_hours: 2,
@@ -825,7 +857,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 36,
+                  //request_id: 36,
                   earliest_start_time: new Date('Nov 24 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Nov 24 2021 12:00:00 GMT'),
                 },
@@ -833,7 +865,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             },
           },
           {
-            workshop_session_id: 33,
+            //workshop_session_id: 33,
             session_name: 'Managers Meeting 2',
             date_and_time: new Date('Nov 26 2021 12:00:00 GMT'),
             duration_in_hours: 1,
@@ -842,7 +874,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             requested_start_times: {
               create: [
                 {
-                  request_id: 37,
+                  //request_id: 37,
                   earliest_start_time: new Date('Nov 26 2021 12:00:00 GMT'),
                   latest_start_time: new Date('Nov 26 2021 12:00:00 GMT'),
                 },
@@ -854,7 +886,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_notes: {
         create: [
           {
-            note_id: 2,
+            //note_id: 2,
             note: 'Client has requested previous template of training materials ABC be used',
           },
         ],
@@ -862,12 +894,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       change_log: {
         create: [
           {
-            log_id: 12,
+            //log_id: 12,
             note: 'workshop request created',
             log_date: new Date('Mar 03 2021 13:39:00 GMT'),
           },
           {
-            log_id: 13,
+            //log_id: 13,
             note: 'session 1 and 4 confirmed, waiting for confirmation on 2 and 3',
             log_date: new Date('Mar 28 2021 20:47:00 GMT'),
           },
@@ -878,11 +910,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
 
   const deletedWorkshop = await prisma.workshops.create({
     data: {
-      workshop_id: 7,
+      //workshop_id: 7,
       course_id: 1,
       cohort_name: 'Canada Advance Team 2020-2021',
       workshop_coursework: {
-        create: [{ workshop_coursework_id: 9, coursework_id: 3 }],
+        create: [
+          {
+            //workshop_coursework_id: 9,
+            coursework_id: 3,
+          },
+        ],
       },
       requested_advisor_id: 1,
       backup_requested_advisor_id: null,
@@ -898,12 +935,12 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       change_log: {
         create: [
           {
-            log_id: 14,
+            //log_id: 14,
             note: 'workshop request created',
             log_date: new Date('Mar 03 2021 13:39:00 GMT'),
           },
           {
-            log_id: 15,
+            //log_id: 15,
             note: 'workshop deleted',
             log_date: new Date('Mar 28 2021 20:47:00 GMT'),
           },
