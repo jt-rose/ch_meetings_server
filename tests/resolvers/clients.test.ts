@@ -129,6 +129,11 @@ describe('Client Resolvers', async function () {
             client_name: 'Financial Services',
             business_unit: 'Investments',
           },
+          {
+            client_id: 6,
+            client_name: 'Med Clinique',
+            business_unit: null,
+          },
         ],
       },
     }
@@ -190,11 +195,11 @@ describe('Client Resolvers', async function () {
     expect(result.data.data).to.be.null
     expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
   })
-  it('delete client without workshops', async function () {
+  it('delete client without workshops or licenses', async function () {
     const result = await testQuery(`#graphql
       mutation {
   removeClient(
-    client_id: 2
+    client_id: 6
   ) {
     client_id
     client_name
@@ -206,9 +211,9 @@ describe('Client Resolvers', async function () {
     const expectedResult = {
       data: {
         removeClient: {
-          client_id: 2,
-          client_name: 'Acme Corp',
-          business_unit: 'Software Integration',
+          client_id: 6,
+          client_name: 'Med Clinique',
+          business_unit: null,
         },
       },
     }
@@ -216,10 +221,11 @@ describe('Client Resolvers', async function () {
 
     // confirm database updated as expected
     const checkDB = await prisma.clients.count({
-      where: { client_id: 2 },
+      where: { client_id: 6 },
     })
     expect(checkDB).to.eql(0)
   })
+
   it('reject deleting client when client not found', async function () {
     const result = await testQuery(`#graphql
     mutation {
@@ -254,4 +260,24 @@ describe('Client Resolvers', async function () {
       'Cannot remove client with past or present workshops assigned'
     )
   })
+  it('reject deleting client with outstanding licenses', async function () {
+    const result = await testQuery(`#graphql
+      mutation {
+  removeClient(
+    client_id: 2
+  ) {
+    client_id
+    client_name
+    business_unit
+  }
+}
+      `)
+
+    expect(result.data.data).to.be.null
+    expect(result.data.errors[0].message).to.eql(
+      `Cannot remove client with outstanding licenses`
+    )
+  })
+  it('deactivate client')
+  it('add licenses + license change')
 })
