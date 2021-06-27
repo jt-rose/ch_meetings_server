@@ -10,4 +10,7 @@ export class WorkshopNote {
 
   @Field()
   note: string
+
+  @Field(() => Date)
+  date_of_note: Date
 }
