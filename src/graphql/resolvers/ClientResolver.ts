@@ -1,18 +1,44 @@
 import {
   Resolver,
-  /*FieldResolver,*/ Query,
+  FieldResolver,
+  Query,
   Mutation,
   Ctx,
   Arg,
-  /*Root,*/ Int,
+  Root,
+  Int,
 } from 'type-graphql'
 import { Context } from '../../utils/context'
 import { Client } from '../objects/Client'
+import { ClientNote } from '../objects/ClientNote'
+import { License } from '../objects/License'
+import { Workshop } from '../objects/Workshop'
 
 @Resolver(Client)
 export class ClientResolver {
-  //@FieldResolver() workshops
+  /* ----------------------------- field resolvers ---------------------------- */
+  @FieldResolver(() => [ClientNote])
+  client_notes(@Ctx() ctx: Context, @Root() root: Client) {
+    return ctx.prisma.clients
+      .findUnique({ where: { client_id: root.client_id } })
+      .client_notes()
+  }
 
+  @FieldResolver(() => [License])
+  licenses(@Ctx() ctx: Context, @Root() root: Client) {
+    return ctx.prisma.clients
+      .findUnique({ where: { client_id: root.client_id } })
+      .licenses()
+  }
+
+  @FieldResolver(() => [Workshop])
+  workshops(@Ctx() ctx: Context, @Root() root: Client) {
+    return ctx.prisma.clients
+      .findUnique({ where: { client_id: root.client_id } })
+      .workshops()
+  }
+
+  /* ----------------------------- CRUD Operations ---------------------------- */
   @Query(() => Client, { nullable: true })
   async getClient(
     @Arg('client_id', () => Int) client_id: number,

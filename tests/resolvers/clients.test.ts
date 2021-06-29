@@ -139,6 +139,82 @@ describe('Client Resolvers', async function () {
     }
     expect(result.data).to.eql(expectedResult)
   })
+  it('retrieve field resolvers for client_notes, licenses, and workshops', async function () {
+    const result = await testQuery(`#graphql
+    query {
+  getClient(client_id: 1) {
+    client_id
+    client_name
+    client_notes {
+      note
+    }
+    licenses {
+      course_id
+      remaining_amount
+      license_changes {
+        change_note
+      }
+    }
+    workshops {
+      workshop_id
+    }
+  }
+}
+    `)
+
+    const expectedResult = {
+      data: {
+        getClient: {
+          client_id: 1,
+          client_name: 'Acme Corp',
+          client_notes: [
+            {
+              note: '70% of 2021 licenses should be used before October 2021',
+            },
+          ],
+          licenses: [
+            {
+              course_id: 1,
+              remaining_amount: 193,
+              license_changes: [
+                {
+                  change_note: 'added to program',
+                },
+                {
+                  change_note: 'Completed workshop: Workshop-ID 1',
+                },
+              ],
+            },
+            {
+              course_id: 3,
+              remaining_amount: 35,
+              license_changes: [
+                {
+                  change_note: 'added to program',
+                },
+              ],
+            },
+          ],
+          workshops: [
+            {
+              workshop_id: 1,
+            },
+            {
+              workshop_id: 2,
+            },
+            {
+              workshop_id: 3,
+            },
+            {
+              workshop_id: 7,
+            },
+          ],
+        },
+      },
+    }
+
+    expect(result.data).to.eql(expectedResult)
+  })
   it('update client', async function () {
     const result = await testQuery(`#graphql
       mutation {
