@@ -131,6 +131,15 @@ type LicenseChange {
   workshop_id: Int
 }
 
+input LicenseInput {
+  change_note: String!
+  client_id: Int!
+  course_id: Int!
+  license_id: Int
+  remaining_amount: Int!
+  workshop_id: Int
+}
+
 type Manager {
   active: Boolean!
   active_clients: [Client!]!
@@ -168,6 +177,7 @@ type Mutation {
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
   editCoursework(courseworkInput: CourseworkInput!): Coursework!
+  editLicenseAmount(licenseInput: LicenseInput!): License!
   registerAsCourseMaterial(course_id: Int!, coursework_id: Int!): CoursesToCoursework!
   removeAdvisor(advisor_id: Int!): Advisor!
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!

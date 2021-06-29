@@ -1,9 +1,9 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
+//import { expect } from 'chai'
+//import { testQuery } from '../queryTester'
 import { seed } from '../../prisma/seed'
 import { clear } from '../../prisma/clear'
-import { prisma } from '../../src/prisma'
+//import { prisma } from '../../src/prisma'
 
 describe('License Resolvers', async function () {
   /* ------------------- seed and clear DB before each test ------------------- */
