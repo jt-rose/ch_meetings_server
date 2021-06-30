@@ -7,11 +7,13 @@ type Advisor {
   active: Boolean!
   advisor_id: Int!
   advisor_notes: [AdvisorNote!]!
+  assigned_workshops: [Workshop!]!
   email: String!
   first_name: String!
   languages: [AdvisorLanguage!]!
   last_name: String!
   regions: [AdvisorRegion!]!
+  requested_workshops: [Workshop!]!
   unavailable_days: [AdvisorUnavailableDay!]!
 }
 
@@ -192,7 +194,7 @@ type Mutation {
 }
 
 type Query {
-  getAdvisor(advisor_id: Int!): Advisor!
+  getAdvisor(advisor_id: Int!): Advisor
   getAllAdvisorLanguages(language: String): [AdvisorLanguage!]!
   getAllAdvisors: [Advisor!]!
   getAllClients: [Client!]

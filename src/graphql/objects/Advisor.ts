@@ -3,6 +3,7 @@ import { AdvisorLanguage } from './AdvisorLanguage'
 import { AdvisorRegion } from './AdvisorRegion'
 import { AdvisorUnavailableDay } from './AdvisorUnavailableDay'
 import { AdvisorNote } from './AdvisorNote'
+import { Workshop } from './Workshop'
 
 @ObjectType()
 export class Advisor {
@@ -35,6 +36,9 @@ export class Advisor {
   @Field(() => [AdvisorNote])
   advisor_notes: AdvisorNote[]
 
-  // assigned_workshops field resolver
-  // requested_for_pending_workshops field resolver
+  @Field(() => [Workshop])
+  assigned_workshops: Workshop[]
+
+  @Field(() => [Workshop])
+  requested_workshops: Workshop[]
 }

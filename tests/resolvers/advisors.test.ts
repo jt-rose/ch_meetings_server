@@ -127,6 +127,46 @@ describe('Advisor Resolvers', async function () {
 
     expect(result.data).to.eql(expectedResult)
   })
+  it('retrieve advisor workshops via field resolver', async function () {
+    const result = await testQuery(`#graphql
+    query {
+  getAdvisor(advisor_id: 1) {
+    advisor_id
+    email
+    assigned_workshops {
+      workshop_id
+    }
+    requested_workshops {
+      workshop_id
+    }
+  }
+}
+    `)
+
+    const expectedResult = {
+      data: {
+        getAdvisor: {
+          advisor_id: 1,
+          email: 'john.doe@email.com',
+          assigned_workshops: [
+            {
+              workshop_id: 1,
+            },
+            {
+              workshop_id: 4,
+            },
+          ],
+          requested_workshops: [
+            {
+              workshop_id: 6,
+            },
+          ],
+        },
+      },
+    }
+
+    expect(result.data).to.eql(expectedResult)
+  })
 
   it('retrieve all advisors', async function () {
     const result = await testQuery(`#graphql
@@ -298,4 +338,5 @@ describe('Advisor Resolvers', async function () {
     expect(result.data.data).to.eql(null)
     expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
   })
+  it('deactivate advisor')
 })

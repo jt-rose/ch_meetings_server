@@ -21,7 +21,7 @@ export class AdvisorResolver {
 
   // workshops - field resolver
   @FieldResolver(() => [AdvisorLanguage])
-  async languages(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+  languages(@Ctx() ctx: Context, @Root() advisor: Advisor) {
     return ctx.prisma.advisors
       .findUnique({
         where: { advisor_id: advisor.advisor_id },
@@ -30,7 +30,7 @@ export class AdvisorResolver {
   }
 
   @FieldResolver(() => [AdvisorRegion])
-  async regions(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+  regions(@Ctx() ctx: Context, @Root() advisor: Advisor) {
     return ctx.prisma.advisors
       .findUnique({
         where: { advisor_id: advisor.advisor_id },
@@ -39,7 +39,7 @@ export class AdvisorResolver {
   }
 
   @FieldResolver(() => [AdvisorUnavailableDay])
-  async unavailable_days(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+  unavailable_days(@Ctx() ctx: Context, @Root() advisor: Advisor) {
     return ctx.prisma.advisors
       .findUnique({
         where: { advisor_id: advisor.advisor_id },
@@ -48,26 +48,53 @@ export class AdvisorResolver {
   }
 
   @FieldResolver(() => [AdvisorNote])
-  async advisor_notes(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+  advisor_notes(@Ctx() ctx: Context, @Root() advisor: Advisor) {
     return ctx.prisma.advisors
       .findUnique({
         where: { advisor_id: advisor.advisor_id },
       })
       .advisor_notes()
   }
-  /*
+
   @FieldResolver()
-  async assigned_workshops(@Ctx() ctx: Context, @Root() advisor: Advisor) {
-    return ctx.prisma.workshops.findMany({
-      where: { assigned_advisor: advisor.advisor_id },
-    })
+  assigned_workshops(@Ctx() ctx: Context, @Root() root: Advisor) {
+    return ctx.prisma.advisors
+      .findUnique({ where: { advisor_id: root.advisor_id } })
+      .workshops_advisorsToworkshops_assigned_advisor_id()
   }
-  */
+
+  @FieldResolver()
+  async requested_workshops(@Ctx() ctx: Context, @Root() root: Advisor) {
+    // get workshops where advisor is the first requested advisor
+    const firstRequest = await ctx.prisma.advisors
+      .findUnique({ where: { advisor_id: root.advisor_id } })
+      .workshops_advisorsToworkshops_requested_advisor_id({
+        include: { workshop_sessions: true },
+      })
+
+    // get workshops where advisor is requested as a backup
+    const backupRequest = await ctx.prisma.advisors
+      .findUnique({ where: { advisor_id: root.advisor_id } })
+      .workshops_advisorsToworkshops_backup_requested_advisor_id({
+        include: { workshop_sessions: true },
+      })
+
+    // combine both lists and remove workshops that are already complete
+    const upcomingRequestedWorkshops = [
+      ...firstRequest,
+      ...backupRequest,
+    ].filter((workshop) =>
+      workshop.workshop_sessions.some(
+        (session) => session.session_status === 'REQUESTED'
+      )
+    )
+    return upcomingRequestedWorkshops
+  }
 
   /* ----------------------------- CRUD operations ---------------------------- */
   // getAdvisor
   // refactor later with dataloader
-  @Query(() => Advisor)
+  @Query(() => Advisor, { nullable: true })
   async getAdvisor(
     @Ctx() ctx: Context,
     @Arg('advisor_id', () => Int) advisor_id: number
