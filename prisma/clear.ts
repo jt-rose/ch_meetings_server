@@ -1,7 +1,11 @@
 import { prisma } from '../src/prisma'
 import { resetAutoInc } from './resetAutoInc'
+import { logout } from './manageLogins'
 
 export async function clear() {
+  // log out user
+  await logout()
+
   // remove licenses
   await prisma.license_changes.deleteMany()
   await prisma.licenses.deleteMany()
