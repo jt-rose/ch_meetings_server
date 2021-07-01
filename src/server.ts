@@ -26,6 +26,7 @@ import { RegionResolver } from './graphql/resolvers/AdvisorRegionResolver'
 import { AdvisorNoteResolver } from './graphql/resolvers/AdvisorNoteResolver'
 import { UnavailableDayResolver } from './graphql/resolvers/AdvisorUnavailableDayResolver'
 import { CourseworkResolver } from './graphql/resolvers/CourseworkResolver'
+import { ManagerResolver } from './graphql/resolvers/ManagerResolver'
 import { ManagerAssignmentsResolver } from './graphql/resolvers/ManagerAssignmentResolver'
 import { LicenseResolver } from './graphql/resolvers/LicenseResolver'
 
@@ -81,6 +82,7 @@ const main = async () => {
       AdvisorNoteResolver,
       UnavailableDayResolver,
       CourseworkResolver,
+      ManagerResolver,
       ManagerAssignmentsResolver,
       LicenseResolver,
     ],
