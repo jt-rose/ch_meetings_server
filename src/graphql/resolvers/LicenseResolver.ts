@@ -82,12 +82,7 @@ export class LicenseResolver {
       workshop_id,
     } = licenseInput
     const manager_id = ctx.req.session.manager_id!
-    const currentLicense = await ctx.prisma.licenses.findFirst({
-      where: { license_id },
-      include: { license_changes: true },
-    })
-
-    if (!currentLicense) {
+    if (!license_id) {
       return ctx.prisma.licenses.create({
         data: {
           client_id,
@@ -104,6 +99,14 @@ export class LicenseResolver {
           },
         },
       })
+    }
+    const currentLicense = await ctx.prisma.licenses.findFirst({
+      where: { license_id },
+      include: { license_changes: true },
+    })
+
+    if (!currentLicense) {
+      throw Error('no such license found!')
     }
 
     const amount_change = remaining_amount - currentLicense.remaining_amount
