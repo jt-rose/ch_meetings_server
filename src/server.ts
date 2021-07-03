@@ -3,8 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
-//import path from 'path'
-import { buildSchema } from 'type-graphql'
+import { createSchema } from './createSchema'
 import { ApolloServer } from 'apollo-server-express'
 import { redis } from './utils/redis'
 import { Context } from './utils/context'
@@ -15,20 +14,6 @@ import {
 } from 'graphql-query-complexity'
 
 import { prisma } from './prisma'
-
-/* ---------------------------- import resolvers ---------------------------- */
-import { WorkshopSessionResolver } from './graphql/resolvers/SessionResolver'
-import { ClientResolver } from './graphql/resolvers/ClientResolver'
-import { CourseResolver } from './graphql/resolvers/CourseResolver'
-import { AdvisorResolver } from './graphql/resolvers/AdvisorResolver'
-import { LanguageResolver } from './graphql/resolvers/LanguageResolver'
-import { RegionResolver } from './graphql/resolvers/AdvisorRegionResolver'
-import { AdvisorNoteResolver } from './graphql/resolvers/AdvisorNoteResolver'
-import { UnavailableDayResolver } from './graphql/resolvers/AdvisorUnavailableDayResolver'
-import { CourseworkResolver } from './graphql/resolvers/CourseworkResolver'
-import { ManagerResolver } from './graphql/resolvers/ManagerResolver'
-import { ManagerAssignmentsResolver } from './graphql/resolvers/ManagerAssignmentResolver'
-import { LicenseResolver } from './graphql/resolvers/LicenseResolver'
 
 /* --------------------------- init main function --------------------------- */
 
@@ -44,7 +29,7 @@ const main = async () => {
   //app.set('trust proxy', 1) // for use in prod with nginx
   app.use(
     cors({
-      origin: process.env.CORS_ORIGIN,
+      origin: [process.env.CORS_ORIGIN as string],
       credentials: true,
     })
   )
@@ -71,25 +56,7 @@ const main = async () => {
 
   /* ------------------------------ build schema ------------------------------ */
 
-  const schema = await buildSchema({
-    resolvers: [
-      WorkshopSessionResolver,
-      ClientResolver,
-      CourseResolver,
-      AdvisorResolver,
-      LanguageResolver,
-      RegionResolver,
-      AdvisorNoteResolver,
-      UnavailableDayResolver,
-      CourseworkResolver,
-      ManagerResolver,
-      ManagerAssignmentsResolver,
-      LicenseResolver,
-    ],
-    validate: false,
-    // automatically create `schema.gql` file with schema definition in project's working directory
-    emitSchemaFile: true,
-  })
+  const schema = await createSchema()
 
   /* ---------------------------- initialize apollo --------------------------- */
 
