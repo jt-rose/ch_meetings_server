@@ -7,7 +7,6 @@ import {
   Ctx,
   Root,
   InputType,
-  UseMiddleware,
   Field,
 } from 'type-graphql'
 import { License } from '../objects/License'
@@ -15,7 +14,7 @@ import { LicenseChange } from '../objects/LicenseChange'
 import { Course } from './../objects/Course'
 import { Context } from './../../utils/context'
 import { Client } from '../objects/Client'
-import { isAuth } from '../../middleware/isAuth'
+import { Authenticated } from '../../middleware/authChecker'
 
 @InputType()
 class LicenseInput {
@@ -67,8 +66,8 @@ export class LicenseResolver {
 
   // read function will be managed via field resolver on clients
 
+  @Authenticated()
   @Mutation(() => License)
-  @UseMiddleware(isAuth)
   async editLicenseAmount(
     @Ctx() ctx: Context,
     @Arg('licenseInput') licenseInput: LicenseInput
@@ -81,7 +80,7 @@ export class LicenseResolver {
       change_note,
       workshop_id,
     } = licenseInput
-    const manager_id = ctx.req.session.manager_id!
+    const manager_id = ctx.session.manager_id!
     if (!license_id) {
       return ctx.prisma.licenses.create({
         data: {
