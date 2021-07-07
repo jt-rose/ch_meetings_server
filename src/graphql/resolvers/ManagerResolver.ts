@@ -9,7 +9,6 @@ import {
   Mutation,
   InputType,
   Field,
-  UseMiddleware,
 } from 'type-graphql'
 import { Context } from '../../utils/context'
 import { Manager } from '../objects/Manager'
@@ -18,11 +17,10 @@ import { ManagerAssignment } from '../objects/ManagerAssignment'
 import { Workshop } from '../objects/Workshop'
 import { validateEmail, validatePassword } from '../../utils/validateUser'
 import { USER_TYPE } from '../enums/USER_TYPE'
-import { isAdmin } from '../../middleware/isAdmin'
-import { isAuth } from '../../middleware/isAuth'
 import argon2 from 'argon2'
 import { sendEmail } from '../../utils/sendEmail'
 import { v4 } from 'uuid'
+import { Authenticated, AdminOnly } from '../../middleware/authChecker'
 
 const FORGOT_PASSWORD_PREFIX = 'forgot-password:'
 
@@ -44,7 +42,7 @@ class ManagerInput {
   user_type: USER_TYPE
 }
 
-@Resolver()
+@Resolver(Manager)
 export class ManagerResolver {
   /* ----------------------------- field resolvers ---------------------------- */
   @FieldResolver(() => [Client])
@@ -73,8 +71,8 @@ export class ManagerResolver {
 
   // add new manager as normal user or admin
   // only accessible by admins
+  @AdminOnly()
   @Mutation(() => Manager)
-  @UseMiddleware(isAdmin)
   async addManager(
     @Ctx() ctx: Context,
     @Arg('managerInput', () => ManagerInput) managerInput: ManagerInput
@@ -124,8 +122,8 @@ export class ManagerResolver {
     return ctx.prisma.managers.findMany()
   }
 
+  @AdminOnly()
   @Mutation(() => Manager)
-  @UseMiddleware(isAdmin)
   async editManager(
     @Ctx() ctx: Context,
     @Arg('manager_id') manager_id: number,
@@ -169,8 +167,8 @@ export class ManagerResolver {
     })
   }
 
+  @AdminOnly()
   @Mutation(() => Manager)
-  @UseMiddleware(isAdmin)
   async removeManager(
     @Ctx() ctx: Context,
     @Arg('manager_id') manager_id: number
@@ -225,7 +223,11 @@ export class ManagerResolver {
 
   /* ----------------------------- authentication ----------------------------- */
   @Mutation(() => Manager)
-  async login(@Ctx() ctx: Context, email: string, password: string) {
+  async login(
+    @Ctx() ctx: Context,
+    @Arg('email') email: string,
+    @Arg('password') password: string
+  ) {
     try {
       const manager = await ctx.prisma.managers.findFirst({ where: { email } })
       if (!manager) {
@@ -239,9 +241,9 @@ export class ManagerResolver {
       if (!validPassword) {
         throw Error('incorrect username/password')
       }
-      ctx.req.session.manager_id = manager.manager_id
+      ctx.session.manager_id = manager.manager_id
       if (manager.user_type === 'ADMIN') {
-        ctx.req.session.admin = manager.manager_id
+        ctx.session.admin = manager.manager_id
       }
       return manager
     } catch (err) {
@@ -252,8 +254,8 @@ export class ManagerResolver {
   @Mutation(() => Boolean)
   logout(@Ctx() ctx: Context) {
     return new Promise((resolve) =>
-      ctx.req.session.destroy((err) => {
-        ctx.res.clearCookie(process.env.COOKIE_SECRET as string)
+      ctx.session.destroy((err: any) => {
+        ctx.session.clearCookie(process.env.COOKIE_SECRET as string)
         if (err) {
           console.log(err)
           resolve(false)
@@ -267,7 +269,7 @@ export class ManagerResolver {
 
   @Query(() => Manager, { nullable: true })
   fetchManager(@Ctx() ctx: Context) {
-    const { manager_id } = ctx.req.session
+    const { manager_id } = ctx.session
     // if not logged in
     if (!manager_id) return null
 
@@ -275,8 +277,8 @@ export class ManagerResolver {
   }
 
   // change own password when logged in
+  @Authenticated()
   @Mutation(() => Manager)
-  @UseMiddleware(isAuth)
   async changeMyPassword(
     @Ctx() ctx: Context,
     @Arg('newPassword') newPassword: string
@@ -288,14 +290,14 @@ export class ManagerResolver {
     }
     const newPasswordHash = await argon2.hash(newPassword)
     return ctx.prisma.managers.update({
-      where: { manager_id: ctx.req.session.manager_id },
+      where: { manager_id: ctx.session.manager_id },
       data: { email_password: newPasswordHash },
     })
   }
 
   // admin - change password of any user or admin
+  @AdminOnly()
   @Mutation(() => Manager)
-  @UseMiddleware(isAdmin)
   async changePasswordAdminAccess(
     @Ctx() ctx: Context,
     @Arg('manager_id', () => Int) manager_id: number,
@@ -379,7 +381,7 @@ export class ManagerResolver {
     await ctx.redis.del(key)
 
     // login after changing password
-    ctx.req.session.manager_id = manager_id
+    ctx.session.manager_id = manager_id
 
     return updatedManager
   }
