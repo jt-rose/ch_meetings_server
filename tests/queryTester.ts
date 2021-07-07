@@ -3,6 +3,8 @@ import { expect } from 'chai'
 import { PrismaPromise } from '@prisma/client'
 import { ApolloServer } from 'apollo-server-express'
 
+/* ------------------------ test against live server ------------------------ */
+
 const API_URL = `http://localhost:5000/graphql`
 
 // run a graphql query against the testing environment
@@ -18,7 +20,13 @@ export const testQuery = async (graphqlRequest: string, variables?: any) =>
     }
   )
 
-// run a graphql query against apollo, confirming valid response
+/* ---------------- test valid query against apollo instance ---------------- */
+
+export type ConfirmResponse = (config: {
+  gqlScript: string
+  expectedResult: any
+}) => Promise<void>
+
 export const confirmResponse =
   (apollo: ApolloServer) =>
   async (config: { gqlScript: string; expectedResult: any }) => {
@@ -27,7 +35,13 @@ export const confirmResponse =
     expect(response.data).to.eql(config.expectedResult)
   }
 
-// run a graphql query against apollo, confirming expected error
+/* --------------- test error response against apollo instance -------------- */
+
+export type ConfirmError = (config: {
+  gqlScript: string
+  expectedErrorMessage: string
+}) => Promise<void>
+
 export const confirmError =
   (apollo: ApolloServer) =>
   async (config: { gqlScript: string; expectedErrorMessage: string }) => {
@@ -37,7 +51,8 @@ export const confirmError =
     expect(response.errors[0]?.message).to.eql(config.expectedErrorMessage)
   }
 
-// check database to confirm update succeeded
+/* ------------------- check database for expected update ------------------- */
+
 export const confirmDBUpdate = async (config: {
   databaseQuery: PrismaPromise<number>
   expectedCount: number
