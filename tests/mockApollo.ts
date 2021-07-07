@@ -5,12 +5,19 @@ import {
   createMockAdminContext,
   CreateContext,
 } from '../src/utils/context'
+import { confirmResponse, confirmError, confirmDBUpdate } from './queryTester'
 
 // reduce some boilerplate when generating mock versions of apollo
 const createMockApollo = (createContext: CreateContext) => async () => {
   const schema = await createSchema()
   const apolloMockUser = await createServer(schema, createContext)
-  return apolloMockUser.apolloServer
+  const apollo = apolloMockUser.apolloServer
+  return {
+    apollo,
+    confirmResponse: confirmResponse(apollo),
+    confirmError: confirmError(apollo),
+    confirmDBUpdate,
+  }
 }
 
 export const createMockApolloUser = createMockApollo(createMockUserContext)
