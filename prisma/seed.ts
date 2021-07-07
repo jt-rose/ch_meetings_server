@@ -5,22 +5,17 @@ import { seedAdvisors } from './seeds/seedAdvisors'
 import { seedWorkshops } from './seeds/seedWorkshops'
 import { seedManagers } from './seeds/seedManagers'
 import { seedLicenses } from './seeds/seedLicenses'
-import { loginAsManager } from './manageLogins'
 
 // run all prisma seeding
 // some tables are set up with PK / FK constraints
 // so the order here matters
 export async function seed() {
-  // seed database
   await seedCourses(prisma)
   await seedClients(prisma)
   await seedAdvisors(prisma)
   await seedWorkshops(prisma)
   await seedManagers(prisma)
   await seedLicenses(prisma)
-
-  // log in user
-  await loginAsManager()
 }
 
 /*
