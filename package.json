@@ -1,12 +1,12 @@
 {
   "name": "ch_meetings_server",
   "version": "1.0.0",
-  "main": "server.ts",
+  "main": "app.ts",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
-    "dev": "nodemon dist/server.js",
+    "start": "node dist/app.js",
+    "dev": "nodemon dist/app.js",
     "watch": "tsc -w",
     "docker:build": "docker-compose -f docker-compose.yml build --no-cache",
     "docker:up": "docker-compose up -d",
@@ -46,6 +46,7 @@
     "apollo-server-express": "^2.24.0",
     "argon2": "^0.27.2",
     "connect-redis": "^5.2.0",
+    "cors": "^2.8.5",
     "cros": "^1.0.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
