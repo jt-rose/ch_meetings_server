@@ -1,31 +1,11 @@
 import { describe } from 'mocha'
 import { expect } from 'chai'
 import { testQuery } from '../queryTester'
-import { seed } from '../../prisma/seed'
-import { clear } from '../../prisma/clear'
 import { prisma } from '../../src/prisma'
 
+/* ------------------------- test advisor resolvers ------------------------- */
+
 describe('Advisor Resolvers', async function () {
-  /* ------------------- seed and clear DB before each test ------------------- */
-
-  before('clear any data at the start', async function () {
-    await clear()
-  })
-
-  beforeEach('seed database', async function () {
-    await seed()
-  })
-
-  afterEach('clear database', async function () {
-    await clear()
-  })
-
-  after('restore database for local testing', async function () {
-    await seed()
-  })
-
-  /* ------------------------- test CRUD functionality ------------------------ */
-
   it('create advisor', async function () {
     const result = await testQuery(`#graphql
     mutation {
@@ -213,7 +193,7 @@ describe('Advisor Resolvers', async function () {
 
     expect(result.data).to.eql(expectedResult)
   })
-  /* ------------------------ test updating an advisor ------------------------ */
+
   it('update advisor', async function () {
     const result = await testQuery(`#graphql
     mutation {

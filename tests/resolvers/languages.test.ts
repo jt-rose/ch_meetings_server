@@ -1,36 +1,17 @@
 import { describe } from 'mocha'
 import { expect } from 'chai'
 import { testQuery } from '../queryTester'
-import { seed } from '../../prisma/seed'
-import { clear } from '../../prisma/clear'
 import { prisma } from '../../src/prisma'
 
+/* -------------------- test adjusting advisor languages -------------------- */
+
+// languages for an individual advisor will be retrieved
+// through a relational query on the getAdvisor resolver
+
+// the following language queries are for mutations and
+// gathering data on all languages available
+
 describe('Language Resolvers', async function () {
-  /* ------------------- seed and clear DB before each test ------------------- */
-
-  before('clear any data at the start', async function () {
-    await clear()
-  })
-
-  beforeEach('seed database', async function () {
-    await seed()
-  })
-
-  afterEach('clear database', async function () {
-    await clear()
-  })
-
-  after('restore database for local testing', async function () {
-    await seed()
-  })
-
-  /* -------------------- test adjusting advisor languages -------------------- */
-
-  // languages for an individual advisor will be retrieved
-  // through a relational query on the getAdvisor resolver
-
-  // the following language queries are for mutations and
-  // gathering data on all languages available
   it('retrieve advisor through field resolver', async function () {
     const result = await testQuery(`#graphql
       mutation {

@@ -1,29 +1,9 @@
 import { describe } from 'mocha'
 import { expect } from 'chai'
 import { testQuery } from '../queryTester'
-import { seed } from '../../prisma/seed'
-import { clear } from '../../prisma/clear'
 import { prisma } from '../../src/prisma'
 
 describe('Manager Resolvers', async function () {
-  /* ------------------- seed and clear DB before each test ------------------- */
-
-  before('clear any data at the start', async function () {
-    await clear()
-  })
-
-  beforeEach('seed database', async function () {
-    await seed()
-  })
-
-  afterEach('clear database', async function () {
-    await clear()
-  })
-
-  after('restore database for local testing', async function () {
-    await seed()
-  })
-
   /* --------------------------- create new manager --------------------------- */
 
   it('add new manager') // with default password
@@ -35,6 +15,7 @@ describe('Manager Resolvers', async function () {
   it('retrieve manager')
   it('retrieve all managers')
   it('retrieve all managers based on workshop_id filter')
+  it('retrieve workshops via manager field resolver')
 
   /* ------------------------------ edit managers ----------------------------- */
   it('edit manager details')
@@ -44,11 +25,58 @@ describe('Manager Resolvers', async function () {
 
   /* --------------------------------- sign in -------------------------------- */
 
-  it('sign in with email and password')
-  it('reject sign in when wrong email + password provided')
+  it('sign in with email and password', async function () {
+    const result = await testQuery(`#graphql
+    mutation {
+  login(email: "amy.firenzi@company.net", password: "Password123!") {
+    manager_id
+  }
+}
+    `)
+
+    const expectedResult = {
+      data: {
+        login: {
+          manager_id: 1,
+        },
+      },
+    }
+    const cookie = result.headers['set-cookie'][0]
+    console.log(cookie)
+
+    expect(result.data).to.eql(expectedResult)
+  })
+  it('reject sign in when wrong email provided', async function () {
+    const result = await testQuery(`#graphql
+    mutation {
+  login(email: "john.doe@email.com", password: "Password123!") {
+    manager_id
+  }
+}
+    `)
+
+    const expectedErrorMessage = 'incorrect username/password'
+
+    expect(result.data.data).to.be.null
+    expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
+  })
+  it('reject sign in when wrong password provided', async function () {
+    const result = await testQuery(`#graphql
+    mutation {
+  login(email: "amy.firenzi@company.net", password: "wrongpassword") {
+    manager_id
+  }
+}
+    `)
+
+    const expectedErrorMessage = 'incorrect username/password'
+
+    expect(result.data.data).to.be.null
+    expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
+  })
   it('sign in with cookies')
   it('reject sign in when cookies not valid')
-  it('reject sign in whenc cookies expired')
+  it('reject sign in when cookies expired')
 
   /* ----------------------------- reset password ----------------------------- */
   it('reset password')
@@ -60,6 +88,7 @@ describe('Manager Resolvers', async function () {
   it('remove manager')
   it('reject removing manager when workshops are scheduled to them')
   it('reject removing manager when role not "admin"')
+  it('deactivate manager')
 
   /* ----------------------- manage client relationships ---------------------- */
   it('assign client to manager')

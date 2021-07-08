@@ -1,28 +1,9 @@
 import { describe } from 'mocha'
 import { expect } from 'chai'
 import { testQuery } from '../queryTester'
-import { seed } from '../../prisma/seed'
-import { clear } from '../../prisma/clear'
 import { prisma } from '../../src/prisma'
 
 describe('Coursework Resolvers', function () {
-  /* --------------------- seed and clear DB for each test -------------------- */
-
-  before('clear any data at the start', async function () {
-    await clear()
-  })
-
-  beforeEach('seed database', async function () {
-    await seed()
-  })
-
-  afterEach('clear database', async function () {
-    await clear()
-  })
-
-  after('restore database for local testing', async function () {
-    await seed()
-  })
   /* ----------------------- test coursework field resolver ---------------------- */
   it('access related courses through courses field resolver', async function () {
     const result = await testQuery(`#graphql

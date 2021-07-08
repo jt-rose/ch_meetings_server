@@ -1,61 +1,73 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
-import { seed } from '../../prisma/seed'
-import { clear } from '../../prisma/clear'
 import { prisma } from '../../src/prisma'
+import { createMockApolloUser } from '../mockApollo'
 
 describe('Advisor Notes Resolvers', async function () {
   /* ------------------- seed and clear DB before each test ------------------- */
 
   before('clear any data at the start', async function () {
-    await clear()
-  })
+    // instantiate mock apollo testing queries
+    const { confirmResponse, confirmDBUpdate, confirmDBRemoval } =
+      await createMockApolloUser()
 
-  beforeEach('seed database', async function () {
-    await seed()
-  })
-
-  afterEach('clear database', async function () {
-    await clear()
-  })
-
-  after('restore database for local testing', async function () {
-    await seed()
+    // attach to mocha 'this' context
+    this.confirmResponse = confirmResponse
+    this.confirmDBUpdate = confirmDBUpdate
+    this.confirmDBRemoval = confirmDBRemoval
   })
 
   /* ---------------------- test adjusting advisor notes ---------------------- */
 
   it('add new advisor note', async function () {
-    const result = await testQuery(`#graphql
+    await this.confirmResponse({
+      gqlScript: `
     mutation {
   addAdvisorNote(advisor_id: 1, advisor_note: "This is a new note") {
     advisor_id
     advisor_note
   }
 }
-    `)
-
-    // confirm response object as expected
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addAdvisorNote: {
           advisor_id: 1,
           advisor_note: 'This is a new note',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.advisor_notes.count({
+    await this.confirmDBUpdate({
+      databaseQuery: prisma.advisor_notes.count({
+        where: { advisor_id: 1, advisor_note: 'This is a new note' },
+      }),
+    })
+    /*const checkDB = await prisma.advisor_notes.count({
       where: { advisor_id: 1, advisor_note: 'This is a new note' },
     })
-    expect(checkDB).to.eql(1)
+    expect(checkDB).to.eql(1)*/
   })
   // advisor notes will be retrieved via the Advisor field resolver
   it('edit advisor note', async function () {
+    await this.confirmResponse({
+      gqlScript: `
+    mutation {
+  editAdvisorNote(note_id: 1, advisor_note: "This is an edited note") {
+    advisor_id
+    note_id
+    advisor_note
+  }
+}
+    `,
+      expectedResult: {
+        editAdvisorNote: {
+          advisor_id: 1,
+          note_id: 1,
+          advisor_note: 'This is an edited note',
+        },
+      },
+    })
+    /*
     const result = await testQuery(`#graphql
     mutation {
   editAdvisorNote(note_id: 1, advisor_note: "This is an edited note") {
@@ -78,7 +90,17 @@ describe('Advisor Notes Resolvers', async function () {
     }
 
     expect(result.data).to.eql(expectedResult)
-
+*/
+    await this.confirmDBUpdate({
+      databaseQuery: prisma.advisor_notes.count({
+        where: {
+          advisor_id: 1,
+          note_id: 1,
+          advisor_note: 'This is an edited note',
+        },
+      }),
+    })
+    /*
     // confirm database updated as expected
     const checkDB = await prisma.advisor_notes.count({
       where: {
@@ -87,10 +109,11 @@ describe('Advisor Notes Resolvers', async function () {
         advisor_note: 'This is an edited note',
       },
     })
-    expect(checkDB).to.eql(1)
+    expect(checkDB).to.eql(1)*/
   })
   it('remove advisor note', async function () {
-    const result = await testQuery(`#graphql
+    await this.confirmResponse({
+      gqlScript: `
     mutation {
   removeAdvisorNote(note_id: 1) {
     advisor_id
@@ -98,23 +121,19 @@ describe('Advisor Notes Resolvers', async function () {
     advisor_note
   }
 }
-    `)
-
-    // confirm response object as expected
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         removeAdvisorNote: {
           advisor_id: 1,
           note_id: 1,
           advisor_note: 'Can travel to EMEA occasionally with 3+ months notice',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.advisor_notes.count({ where: { note_id: 1 } })
-    expect(checkDB).to.eql(0)
+    await this.confirmDBRemoval({
+      databaseQuery: prisma.advisor_notes.count({ where: { note_id: 1 } }),
+    })
   })
 })
