@@ -48,16 +48,18 @@ export const confirmError =
     const response = await apollo.executeOperation({ query: config.gqlScript })
     // confirm valid gql response
     expect(response.data).to.eql(null)
-    expect(response.errors[0]?.message).to.eql(config.expectedErrorMessage)
+    expect(response.errors?.[0].message).to.eql(config.expectedErrorMessage)
   }
 
 /* ------------------- check database for expected update ------------------- */
 
-export const confirmDBUpdate = async (config: {
-  databaseQuery: PrismaPromise<number>
-  expectedCount: number
-}) => {
-  // confirm database updated as expected
-  const checkDB = await config.databaseQuery // ex: prisma.advisor_notes.count({ where: { note_id: 1 } })
-  expect(checkDB).to.eql(config.expectedCount)
-}
+const confirmDBChange =
+  (expectedDBCount: 1 | 0) =>
+  async (config: { databaseQuery: PrismaPromise<number> }) => {
+    // confirm database updated as expected
+    const checkDB = await config.databaseQuery // ex: prisma.advisor_notes.count({ where: { note_id: 1 } })
+    expect(checkDB).to.eql(expectedDBCount)
+  }
+
+export const confirmDBUpdate = confirmDBChange(1)
+export const confirmDBRemoval = confirmDBChange(0)
