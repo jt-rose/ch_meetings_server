@@ -5,7 +5,12 @@ import {
   createMockAdminContext,
   CreateContext,
 } from '../src/utils/context'
-import { confirmResponse, confirmError, confirmDBUpdate } from './queryTester'
+import {
+  confirmResponse,
+  confirmError,
+  confirmDBUpdate,
+  confirmDBRemoval,
+} from './queryTester'
 
 // reduce some boilerplate when generating mock versions of apollo
 const createMockApollo = (createContext: CreateContext) => async () => {
@@ -17,6 +22,7 @@ const createMockApollo = (createContext: CreateContext) => async () => {
     confirmResponse: confirmResponse(apollo),
     confirmError: confirmError(apollo),
     confirmDBUpdate,
+    confirmDBRemoval,
   }
 }
 
