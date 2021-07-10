@@ -48,7 +48,8 @@ export const confirmError =
     const response = await apollo.executeOperation({ query: config.gqlScript })
     // confirm valid gql response
     expect(response.data).to.eql(null)
-    expect(response.errors?.[0].message).to.eql(config.expectedErrorMessage)
+    expect(response.errors?.[0].message.includes(config.expectedErrorMessage))
+      .to.be.true
   }
 
 /* ------------------- check database for expected update ------------------- */
