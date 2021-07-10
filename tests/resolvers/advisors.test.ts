@@ -311,21 +311,60 @@ describe('Advisor Resolvers', function () {
       expectedErrorMessage:
         'Advisor #1 cannot be deleted because this advisor currently has past or present workshops assigned',
     })
-
-    it('reject deleting advisor when they have been requested for workshops', async function () {
-      await mockAdmin.confirmError({
-        gqlScript: `
+  })
+  it('reject deleting advisor when they have been requested for workshops', async function () {
+    await mockAdmin.confirmError({
+      gqlScript: `
     mutation {
   removeAdvisor(advisor_id: 4) {
     email
   }
 }
     `,
-        expectedErrorMessage:
-          'Advisor #4 has been requested for workshops. Please clear this request before removing the advisor.',
-      })
+      expectedErrorMessage:
+        'Advisor #4 has been requested for workshops. Please clear this request before removing the advisor.',
     })
-    it('deactivate advisor')
   })
-  it('reject changing advisor if not admin')
+  it('deactivate advisor')
+  it('reject deactivating advisor if current or future workshops scheduled')
+  it('reject changing advisor if not admin', async function () {
+    await mockUser.confirmError({
+      gqlScript: `
+    mutation {
+      addAdvisor(first_name: "only", last_name: "admin", email: "allowed@allowed.com") {
+        advisor_id
+        email
+      }
+    }
+    `,
+      expectedErrorMessage:
+        "Access denied! You don't have permission for this action!",
+    })
+
+    await mockUser.confirmError({
+      gqlScript: `
+  mutation {
+    editAdvisor(advisor_id: 1, email: "please@dontwork.com", first_name: "no", last_name: "access") {
+      advisor_id
+      email
+    }
+  }
+    `,
+      expectedErrorMessage:
+        "Access denied! You don't have permission for this action!",
+    })
+
+    await mockUser.confirmError({
+      gqlScript: `
+    mutation {
+      removeAdvisor(advisor_id: 1) {
+        advisor_id
+        email
+      }
+    }
+    `,
+      expectedErrorMessage:
+        "Access denied! You don't have permission for this action!",
+    })
+  })
 })
