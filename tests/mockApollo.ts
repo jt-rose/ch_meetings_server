@@ -1,3 +1,5 @@
+import { ApolloServer } from 'apollo-server-express'
+import { PrismaPromise } from '@prisma/client'
 import { createSchema } from '../src/createSchema'
 import { createServer } from '../src/apollo'
 import {
@@ -24,6 +26,28 @@ const createMockApollo = (createContext: CreateContext) => async () => {
     confirmDBUpdate,
     confirmDBRemoval,
   }
+}
+
+export interface MockApolloTestRunners {
+  apollo: ApolloServer
+
+  confirmResponse: (config: {
+    gqlScript: string
+    expectedResult: any
+  }) => Promise<void>
+
+  confirmError: (config: {
+    gqlScript: string
+    expectedErrorMessage: string
+  }) => Promise<void>
+
+  confirmDBUpdate: (config: {
+    databaseQuery: PrismaPromise<number>
+  }) => Promise<void>
+
+  confirmDBRemoval: (config: {
+    databaseQuery: PrismaPromise<number>
+  }) => Promise<void>
 }
 
 export const createMockApolloUser = createMockApollo(createMockUserContext)
