@@ -1,12 +1,21 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
 import { prisma } from '../../src/prisma'
+import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 
 describe('Coursework Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  let mockUser: MockApolloTestRunners
+
+  before(async function () {
+    mockUser = await createMockApolloUser()
+  })
+
+  /* -------------------------------- run tests ------------------------------- */
+
   /* ----------------------- test coursework field resolver ---------------------- */
   it('access related courses through courses field resolver', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     query {
   getAllCoursework {
     coursework_name
@@ -15,10 +24,8 @@ describe('Coursework Resolvers', function () {
     }
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         getAllCoursework: [
           {
             coursework_name: 'Intro Prework',
@@ -75,40 +82,38 @@ describe('Coursework Resolvers', function () {
           },
         ],
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
 
   /* -------------------------- test coursework CRUD -------------------------- */
   it('create courswork', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   addCoursework(name: "test-123", description: "test adding coursework") {
     coursework_name
     coursework_description
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addCoursework: {
           coursework_name: 'test-123',
           coursework_description: 'test adding coursework',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.coursework.count({
-      where: { coursework_name: 'test-123' },
     })
-    expect(checkDB).to.eql(1)
+
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.coursework.count({
+        where: { coursework_name: 'test-123' },
+      }),
+    })
   })
+
   it('retrieve all coursework', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     query {
   getAllCourses {
     course_name
@@ -117,10 +122,8 @@ describe('Coursework Resolvers', function () {
     virtual_course
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         getAllCourses: [
           {
             course_name: 'Course 101',
@@ -154,12 +157,12 @@ describe('Coursework Resolvers', function () {
           },
         ],
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
+
   it('edit coursework', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   editCoursework(courseworkInput: {coursework_id: 1, coursework_name: "new coursework name", coursework_description: "edit my coursework please", active: false }) {
     coursework_name
@@ -167,32 +170,30 @@ describe('Coursework Resolvers', function () {
     active
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         editCoursework: {
           coursework_name: 'new coursework name',
           coursework_description: 'edit my coursework please',
           active: false,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.coursework.count({
-      where: {
-        coursework_name: 'new coursework name',
-        coursework_description: 'edit my coursework please',
-        active: false,
-      },
     })
 
-    expect(checkDB).to.eql(1)
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.coursework.count({
+        where: {
+          coursework_name: 'new coursework name',
+          coursework_description: 'edit my coursework please',
+          active: false,
+        },
+      }),
+    })
   })
+
   it('remove coursework', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   removeCoursework(coursework_id: 6) {
     coursework_name
@@ -200,10 +201,8 @@ describe('Coursework Resolvers', function () {
     active
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         removeCoursework: {
           coursework_name: '301 prework',
           coursework_description:
@@ -211,20 +210,20 @@ describe('Coursework Resolvers', function () {
           active: true,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.coursework.count({
-      where: {
-        coursework_name: '301 prework',
-      },
     })
 
-    expect(checkDB).to.eql(0)
+    await mockUser.confirmDBRemoval({
+      databaseQuery: prisma.coursework.count({
+        where: {
+          coursework_name: '301 prework',
+        },
+      }),
+    })
   })
+
   it('reject removing coursework when assigned to workshop', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
     mutation {
   removeCoursework(coursework_id: 1) {
     coursework_name
@@ -232,73 +231,65 @@ describe('Coursework Resolvers', function () {
     active
   }
 }
-    `)
-
-    const expectedErrorMessage =
-      "The change you are trying to make would violate the required relation 'courses_and_courseworkTocoursework' between the `courses_and_coursework` and `coursework` models."
-
-    expect(result.data.data).to.be.null
-    expect(result.data.errors[0].message.includes(expectedErrorMessage)).to.be
-      .true
+    `,
+      expectedErrorMessage:
+        "The change you are trying to make would violate the required relation 'courses_and_courseworkTocoursework' between the `courses_and_coursework` and `coursework` models.",
+    })
   })
 
   /* -------------- manage many-to-many relationship with courses ------------- */
   it('register coursework as material for course', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   registerAsCourseMaterial(coursework_id: 5, course_id: 1) {
     course_id
     coursework_id
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         registerAsCourseMaterial: {
           course_id: 1,
           coursework_id: 5,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.courses_and_coursework.count({
-      where: {
-        course_id: 1,
-        coursework_id: 5,
-      },
     })
-    expect(checkDB).to.eql(1)
+
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.courses_and_coursework.count({
+        where: {
+          course_id: 1,
+          coursework_id: 5,
+        },
+      }),
+    })
   })
   it('remove coursework from course materials', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   removeFromCourseMaterial(course_and_coursework_id: 1) {
     course_id
     coursework_id
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         removeFromCourseMaterial: {
           course_id: 1,
           coursework_id: 1,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.courses_and_coursework.count({
-      where: {
-        course_id: 1,
-        coursework_id: 1,
-      },
     })
-    expect(checkDB).to.eql(0)
+
+    await mockUser.confirmDBRemoval({
+      databaseQuery: prisma.courses_and_coursework.count({
+        where: {
+          course_id: 1,
+          coursework_id: 1,
+        },
+      }),
+    })
   })
 })

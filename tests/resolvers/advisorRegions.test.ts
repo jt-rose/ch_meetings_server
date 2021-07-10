@@ -1,42 +1,49 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
 import { prisma } from '../../src/prisma'
+import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 
 /* --------------------- test adjusting advisor regions --------------------- */
 
-describe('Region Resolvers', async function () {
+describe('Region Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  let mockUser: MockApolloTestRunners
+
+  before(async function () {
+    mockUser = await createMockApolloUser()
+  })
+
+  /* -------------------------------- run tests ------------------------------- */
+
   // no need to retrieve regions directly, as these will be retrieved via
   // a field resolver on the Advisor object
   it('add region to advisor', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   addAdvisorRegion(advisor_id: 1, advisor_region: APAC) {
     advisor_id
     advisor_region
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addAdvisorRegion: {
           advisor_id: 1,
           advisor_region: 'APAC',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.regions.count({
-      where: { advisor_id: 1, advisor_region: 'APAC' },
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.regions.count({
+        where: { advisor_id: 1, advisor_region: 'APAC' },
+      }),
     })
-    expect(checkDB).to.eql(1)
   })
   it('return current listing if advisor / region combination already registered', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   addAdvisorRegion(advisor_id: 1, advisor_region: NAM) {
     advisor_id
@@ -44,29 +51,27 @@ describe('Region Resolvers', async function () {
     advisor_region
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addAdvisorRegion: {
           advisor_id: 1,
           region_id: 1,
           advisor_region: 'NAM',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.regions.count({
-      where: { advisor_id: 1, region_id: 1, advisor_region: 'NAM' },
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.regions.count({
+        where: { advisor_id: 1, region_id: 1, advisor_region: 'NAM' },
+      }),
     })
-    expect(checkDB).to.eql(1)
   })
 
   it('remove region from advisor', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   removeAdvisorRegion(region_id: 1) {
     advisor_id
@@ -74,24 +79,21 @@ describe('Region Resolvers', async function () {
     advisor_region
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         removeAdvisorRegion: {
           advisor_id: 1,
           region_id: 1,
           advisor_region: 'NAM',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    // confirm database updated as expected
-    const checkDB = await prisma.regions.count({
-      where: { region_id: 1 },
     })
-    expect(checkDB).to.eql(0)
+
+    // confirm database enry deleted as expected
+    await mockUser.confirmDBRemoval({
+      databaseQuery: prisma.regions.count({
+        where: { region_id: 1 },
+      }),
+    })
   })
 })

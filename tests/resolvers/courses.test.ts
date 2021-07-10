@@ -1,12 +1,21 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
 import { prisma } from '../../src/prisma'
+import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 
 describe('Course Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  let mockUser: MockApolloTestRunners
+
+  before(async function () {
+    mockUser = await createMockApolloUser()
+  })
+
+  /* -------------------------------- run tests ------------------------------- */
+
   /* --------------------- test coursework field resolver --------------------- */
   it('access related coursework through field resolver', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     query {
   getCourse(course_id: 1) {
     course_name
@@ -15,10 +24,8 @@ describe('Course Resolvers', function () {
     }
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         getCourse: {
           course_name: 'Course 101',
           coursework: [
@@ -34,15 +41,14 @@ describe('Course Resolvers', function () {
           ],
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
 
   /* ------------------------------ create course ----------------------------- */
 
   it('create course', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
          mutation {
             addCourse(courseData: { course_name: "test_course", course_description: "course_description", active: true, virtual_course: true}) {
               course_name
@@ -51,10 +57,8 @@ describe('Course Resolvers', function () {
               virtual_course
             }
           }
-      `)
-
-    const expectedResult = {
-      data: {
+      `,
+      expectedResult: {
         addCourse: {
           course_name: 'test_course',
           course_description: 'course_description',
@@ -62,23 +66,24 @@ describe('Course Resolvers', function () {
           virtual_course: true,
         },
       },
-    }
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.courses.count({
-      where: {
-        course_name: 'test_course',
-        course_description: 'course_description',
-        active: true,
-        virtual_course: true,
-      },
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.courses.count({
+        where: {
+          course_name: 'test_course',
+          course_description: 'course_description',
+          active: true,
+          virtual_course: true,
+        },
+      }),
     })
-    expect(checkDB).to.eql(1)
   })
   /* ---------------- reject creating course -> already exisits --------------- */
   it('reject creating course when course name already exists', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
         mutation {
   addCourse(courseData: { course_name: "Course 301", course_description: "course_description", active: true, virtual_course: true}) {
     course_name
@@ -87,17 +92,14 @@ describe('Course Resolvers', function () {
     virtual_course
   }
 }
-        `)
-
-    expect(
-      result.data.errors[0].message.includes(
-        'Error: Course name "Course 301" is already in use'
-      )
-    ).to.be.true
+        `,
+      expectedErrorMessage: 'Error: Course name "Course 301" is already in use',
+    })
   })
 
   it('retrieve course', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
         query {
   getCourse(course_id: 4) {
     course_name
@@ -106,10 +108,8 @@ describe('Course Resolvers', function () {
     virtual_course
   }
 }
-        `)
-
-    const expectedResult = {
-      data: {
+        `,
+      expectedResult: {
         getCourse: {
           course_name: 'Course 301',
           course_description: 'the advanced level - only in person',
@@ -117,13 +117,12 @@ describe('Course Resolvers', function () {
           virtual_course: false,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
   /* -------------------------- retrieve all courses -------------------------- */
   it('retrieve all courses', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
         query {
   getAllCourses {
     course_name
@@ -132,9 +131,8 @@ describe('Course Resolvers', function () {
     virtual_course
   }
 }
-        `)
-    const expectedResult = {
-      data: {
+        `,
+      expectedResult: {
         getAllCourses: [
           {
             course_name: 'Course 101',
@@ -168,89 +166,81 @@ describe('Course Resolvers', function () {
           },
         ],
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
   /* ------------------------------- edit course ------------------------------ */
   it('edit course and related workshops', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
 mutation {
   editCourse(course_id: 1, courseData: { course_name: "Course 901", course_description: "test", active: true, virtual_course: true}) {
     course_name
   }
   }
-`)
-
-    const expectedResult = {
-      data: {
+`,
+      expectedResult: {
         editCourse: {
           course_name: 'Course 901',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.courses.count({
-      where: { course_name: 'Course 901' },
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.courses.count({
+        where: { course_name: 'Course 901' },
+      }),
     })
-    expect(checkDB).to.eql(1)
   })
   /* -------------- reject update to course -> name already used -------------- */
   it('reject updating course to a name already registered', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
     mutation {
   editCourse(course_id: 5, courseData: { course_name: "Course 101", course_description: "test", active: true, virtual_course: true}) {
     course_name
   }
   }
-    `)
-
-    expect(
-      result.data.errors[0].message.includes(
-        'Error: Course name "Course 101" is already in use'
-      )
-    ).to.be.true
+    `,
+      expectedErrorMessage: 'Error: Course name "Course 101" is already in use',
+    })
   })
   /* ------------------------------ delete course ----------------------------- */
   it('delete course', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
           mutation {
             removeCourse(course_id: 5) {
               course_name
             }
           }
-      `)
-
-    const expectedResult = {
-      data: {
+      `,
+      expectedResult: {
         removeCourse: {
           course_name: 'Course 999',
         },
       },
-    }
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.courses.count({
-      where: { course_id: 5 },
+    await mockUser.confirmDBRemoval({
+      databaseQuery: prisma.courses.count({
+        where: { course_id: 5 },
+      }),
     })
-    expect(checkDB).to.eql(0)
   })
   /* ---------- reject deleting course -> workshops already assigned ---------- */
   it('reject deleting course when workshops already assigned to it', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
           mutation {
             removeCourse(course_id: 1) {
               course_name
             }
           }
-      `)
-
-    expect(result.data.errors[0].message).to.eql(
-      'Cannot delete course with past or present workshops assigned'
-    )
+      `,
+      expectedErrorMessage:
+        'Cannot delete course with past or present workshops assigned',
+    })
   })
 })

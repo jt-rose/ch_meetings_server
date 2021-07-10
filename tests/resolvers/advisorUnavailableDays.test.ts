@@ -1,13 +1,22 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
 import { prisma } from '../../src/prisma'
+import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 
 /* ----------------- test adjusting advisor unavailable days ---------------- */
 
-describe('Unavailable Days Resolvers', async function () {
+describe('Unavailable Days Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  let mockUser: MockApolloTestRunners
+
+  before(async function () {
+    mockUser = await createMockApolloUser()
+  })
+
+  /* -------------------------------- run tests ------------------------------- */
+
   it('add unavailable day', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   addAdvisorUnavailableDay( unavailable_day_info: {
     advisor_id: 1,
@@ -19,32 +28,30 @@ describe('Unavailable Days Resolvers', async function () {
     note
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addAdvisorUnavailableDay: {
           advisor_id: 1,
           day_unavailable: '2017-12-25T00:00:00.000Z',
           note: 'testing 123',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.unavailable_days.count({
-      where: {
-        advisor_id: 1,
-        day_unavailable: '2017-12-25T00:00:00.000Z',
-        note: 'testing 123',
-      },
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.unavailable_days.count({
+        where: {
+          advisor_id: 1,
+          day_unavailable: '2017-12-25T00:00:00.000Z',
+          note: 'testing 123',
+        },
+      }),
     })
-    expect(checkDB).to.eql(1)
   })
   it('reject adding if unavailable day conflicts with currently scheduled workshop sessions', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
       mutation {
   addAdvisorUnavailableDay( unavailable_day_info: {
     advisor_id: 1,
@@ -57,15 +64,14 @@ describe('Unavailable Days Resolvers', async function () {
     note
   }
 }
-      `)
-
-    const expectedErrorMessage =
-      'This advisor is currently scheduled for a workshop session on this date'
-    expect(result.data.data).to.eql(null)
-    expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
+      `,
+      expectedErrorMessage:
+        'This advisor is currently scheduled for a workshop session on this date',
+    })
   })
   it('edit unavailable day', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   editAdvisorUnavailableDay( unavailable_day_info: {
     unavailable_id: 1,
@@ -79,10 +85,8 @@ describe('Unavailable Days Resolvers', async function () {
     note
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         editAdvisorUnavailableDay: {
           unavailable_id: 1,
           advisor_id: 1,
@@ -90,23 +94,23 @@ describe('Unavailable Days Resolvers', async function () {
           note: 'edit 123',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.unavailable_days.count({
-      where: {
-        unavailable_id: 1,
-        advisor_id: 1,
-        day_unavailable: '2017-12-25T00:00:00.000Z',
-        note: 'edit 123',
-      },
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.unavailable_days.count({
+        where: {
+          unavailable_id: 1,
+          advisor_id: 1,
+          day_unavailable: '2017-12-25T00:00:00.000Z',
+          note: 'edit 123',
+        },
+      }),
     })
-    expect(checkDB).to.eql(1)
   })
   it('reject editing if unavailable day conflicts with currently scheduled workshop sessions', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
       mutation {
   editAdvisorUnavailableDay( unavailable_day_info: {
     unavailable_id: 1
@@ -120,15 +124,14 @@ describe('Unavailable Days Resolvers', async function () {
     note
   }
 }
-      `)
-
-    const expectedErrorMessage =
-      'This advisor is currently scheduled for a workshop session on this date'
-    expect(result.data.data).to.eql(null)
-    expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
+      `,
+      expectedErrorMessage:
+        'This advisor is currently scheduled for a workshop session on this date',
+    })
   })
   it('remove unavailable day', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   removeAdvisorUnavailableDay(unavailable_id: 1) {
     unavailable_id
@@ -136,24 +139,21 @@ describe('Unavailable Days Resolvers', async function () {
     day_unavailable
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         removeAdvisorUnavailableDay: {
           unavailable_id: 1,
           advisor_id: 1,
           day_unavailable: '2021-10-22T00:00:00.000Z',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
 
     // confirm database updated as expected
-    const checkDB = await prisma.unavailable_days.count({
-      where: { unavailable_id: 1 },
+    await mockUser.confirmDBRemoval({
+      databaseQuery: prisma.unavailable_days.count({
+        where: { unavailable_id: 1 },
+      }),
     })
-    expect(checkDB).to.eql(0)
   })
 })

@@ -1,13 +1,22 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
+import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 //import { prisma } from '../../src/prisma'
 
 /* -------------------- test adjusting client licenses -------------------- */
 
-describe('License Resolvers', async function () {
+describe('License Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  let mockUser: MockApolloTestRunners
+
+  before(async function () {
+    mockUser = await createMockApolloUser()
+  })
+
+  /* -------------------------------- run tests ------------------------------- */
+
   it('add licenses to client', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   editLicenseAmount(licenseInput: {client_id: 1, course_id: 1, remaining_amount: 200, change_note: "test adding new license", workshop_id: 1}) {
     license_id
@@ -18,10 +27,8 @@ describe('License Resolvers', async function () {
     }
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         editLicenseAmount: {
           license_id: 11,
           client_id: 1,
@@ -33,12 +40,12 @@ describe('License Resolvers', async function () {
           ],
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
+
   it('update licenses for client', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   editLicenseAmount(licenseInput: {license_id: 1, client_id: 1, course_id: 1, remaining_amount: 200, change_note: "test updating license", workshop_id: 1}) {
     license_id
@@ -49,10 +56,8 @@ describe('License Resolvers', async function () {
     }
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         editLicenseAmount: {
           license_id: 1,
           client_id: 1,
@@ -65,17 +70,17 @@ describe('License Resolvers', async function () {
               change_note: 'Completed workshop: Workshop-ID 1',
             },
             {
-              change_note: 'test adding new license',
+              change_note: 'test updating license',
             },
           ],
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
+
   it('reject editing license when license not found', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
     mutation {
   editLicenseAmount(licenseInput: {license_id: 100, client_id: 1, course_id: 1, remaining_amount: 200, change_note: "test adding new license", workshop_id: 1}) {
     license_id
@@ -86,15 +91,14 @@ describe('License Resolvers', async function () {
     }
   }
 }
-    `)
-
-    const expectedErrorMessage = 'no such license found!'
-
-    expect(result.data).to.be.null
-    expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
+    `,
+      expectedErrorMessage: 'no such license found!',
+    })
   })
+
   it('retrieve client license information', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     query {
   getClient( client_id: 1) {
     client_id
@@ -106,10 +110,8 @@ describe('License Resolvers', async function () {
     }
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         getClient: {
           client_id: 1,
           licenses: [
@@ -128,13 +130,12 @@ describe('License Resolvers', async function () {
           ],
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
   /* ---------------------- test license field resolvers ---------------------- */
   it('retreive field resolvers on license object', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     query {
   getClient( client_id: 1) {
     client_id
@@ -153,10 +154,8 @@ describe('License Resolvers', async function () {
     }
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         getClient: {
           client_id: 1,
           licenses: [
@@ -199,8 +198,6 @@ describe('License Resolvers', async function () {
           ],
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
 })

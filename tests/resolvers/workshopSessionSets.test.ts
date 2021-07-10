@@ -1,9 +1,17 @@
 import { describe } from 'mocha'
-//import { expect } from 'chai'
-//import { testQuery } from '../queryTester'
+//import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 //import { prisma } from '../../src/prisma'
 
 describe('Workshop Session Sets Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  //let mockUser: MockApolloTestRunners
+  /*
+  before(async function () {
+    mockUser = await createMockApolloUser()
+  })*/
+
+  /* -------------------------------- run tests ------------------------------- */
+
   it('add workshop session set')
   it('retreive workshop session set via field resolver')
   it('edit workshop session set')

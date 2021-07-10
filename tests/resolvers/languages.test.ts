@@ -1,7 +1,6 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
 import { prisma } from '../../src/prisma'
+import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 
 /* -------------------- test adjusting advisor languages -------------------- */
 
@@ -11,9 +10,19 @@ import { prisma } from '../../src/prisma'
 // the following language queries are for mutations and
 // gathering data on all languages available
 
-describe('Language Resolvers', async function () {
+describe('Language Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  let mockUser: MockApolloTestRunners
+
+  before(async function () {
+    mockUser = await createMockApolloUser()
+  })
+
+  /* -------------------------------- run tests ------------------------------- */
+
   it('retrieve advisor through field resolver', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
       mutation {
   addAdvisorLanguage(language: "German", advisor_id: 1) {
     advisor_id
@@ -23,10 +32,8 @@ describe('Language Resolvers', async function () {
     }
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addAdvisorLanguage: {
           advisor_id: 1,
           advisor_language: 'German',
@@ -35,22 +42,20 @@ describe('Language Resolvers', async function () {
           },
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
+
   it('retrieve all advisor languages', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     query {
   getAllAdvisorLanguages(language: null) {
     language_id
     advisor_language
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         getAllAdvisorLanguages: [
           {
             language_id: 1,
@@ -86,22 +91,20 @@ describe('Language Resolvers', async function () {
           },
         ],
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
+
   it('retrieve only advisors with language specified', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
       query {
   getAllAdvisorLanguages(language: "English") {
     language_id
     advisor_language
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         getAllAdvisorLanguages: [
           {
             language_id: 1,
@@ -117,53 +120,49 @@ describe('Language Resolvers', async function () {
           },
         ],
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
 
   it('add language to advisor', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   addAdvisorLanguage(advisor_id: 1, language: "Japanese") {
     advisor_id
     advisor_language
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addAdvisorLanguage: {
           advisor_id: 1,
           advisor_language: 'Japanese',
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.languages.count({
-      where: { advisor_id: 1, advisor_language: 'Japanese' },
     })
-    expect(checkDB).to.eql(1)
+
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.languages.count({
+        where: { advisor_id: 1, advisor_language: 'Japanese' },
+      }),
+    })
   })
   it('reject if invalid language entered', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
     mutation {
   addAdvisorLanguage(advisor_id: 1, language: "Klingon") {
     advisor_language
   }
 }
-    `)
-
-    expect(result.data.data).to.be.null
-    expect(result.data.errors[0].message).to.eql(
-      'Please submit a valid language'
-    )
+    `,
+      expectedErrorMessage: 'Please submit a valid language',
+    })
   })
+
   it('remove language from advisor', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   removeAdvisorLanguage(language_id: 1) {
     language_id
@@ -171,21 +170,18 @@ describe('Language Resolvers', async function () {
     advisor_language
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         removeAdvisorLanguage: {
           language_id: 1,
           advisor_id: 1,
           advisor_language: 'English',
         },
       },
-    }
+    })
 
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.languages.count({ where: { language_id: 1 } })
-    expect(checkDB).to.eql(0)
+    await mockUser.confirmDBRemoval({
+      databaseQuery: prisma.languages.count({ where: { language_id: 1 } }),
+    })
   })
 })

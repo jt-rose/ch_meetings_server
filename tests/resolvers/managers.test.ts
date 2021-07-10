@@ -1,9 +1,23 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
-import { testQuery } from '../queryTester'
 import { prisma } from '../../src/prisma'
+import {
+  createMockApolloUser,
+  //createMockApolloAdmin,
+  MockApolloTestRunners,
+} from '../mockApollo'
 
-describe('Manager Resolvers', async function () {
+describe('Manager Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  let mockUser: MockApolloTestRunners
+  //let mockAdmin: MockApolloTestRunners
+
+  before(async function () {
+    mockUser = await createMockApolloUser()
+    //mockAdmin = await createMockApolloAdmin()
+  })
+
+  /* -------------------------------- run tests ------------------------------- */
+
   /* --------------------------- create new manager --------------------------- */
 
   it('add new manager') // with default password
@@ -26,53 +40,46 @@ describe('Manager Resolvers', async function () {
   /* --------------------------------- sign in -------------------------------- */
 
   it('sign in with email and password', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   login(email: "amy.firenzi@company.net", password: "Password123!") {
     manager_id
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         login: {
           manager_id: 1,
         },
       },
-    }
-    const cookie = result.headers['set-cookie'][0]
-    console.log(cookie)
-
-    expect(result.data).to.eql(expectedResult)
+    })
   })
+
   it('reject sign in when wrong email provided', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
     mutation {
   login(email: "john.doe@email.com", password: "Password123!") {
     manager_id
   }
 }
-    `)
-
-    const expectedErrorMessage = 'incorrect username/password'
-
-    expect(result.data.data).to.be.null
-    expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
+    `,
+      expectedErrorMessage: 'incorrect username/password',
+    })
   })
+
   it('reject sign in when wrong password provided', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmError({
+      gqlScript: `
     mutation {
   login(email: "amy.firenzi@company.net", password: "wrongpassword") {
     manager_id
   }
 }
-    `)
-
-    const expectedErrorMessage = 'incorrect username/password'
-
-    expect(result.data.data).to.be.null
-    expect(result.data.errors[0].message).to.eql(expectedErrorMessage)
+    `,
+      expectedErrorMessage: 'incorrect username/password',
+    })
   })
   it('sign in with cookies')
   it('reject sign in when cookies not valid')
@@ -97,37 +104,36 @@ describe('Manager Resolvers', async function () {
 
   /* ----------------------- manage workshop assignments ---------------------- */
   it('add workshop assignment', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   addManagerToWorkshop(manager_id: 3, workshop_id: 1) {
     manager_id
     workshop_id
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addManagerToWorkshop: {
           manager_id: 3,
           workshop_id: 1,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.manager_assignments.count({
-      where: {
-        manager_id: 3,
-        workshop_id: 1,
-      },
     })
 
-    expect(checkDB).to.eql(1)
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.manager_assignments.count({
+        where: {
+          manager_id: 3,
+          workshop_id: 1,
+        },
+      }),
+    })
   })
+
   it('return current assignment instead of creating duplicate', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   addManagerToWorkshop(manager_id: 1, workshop_id: 1) {
     assignment_id
@@ -135,31 +141,29 @@ describe('Manager Resolvers', async function () {
     workshop_id
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         addManagerToWorkshop: {
           assignment_id: 1,
           manager_id: 1,
           workshop_id: 1,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.manager_assignments.count({
-      where: {
-        manager_id: 1,
-        workshop_id: 1,
-      },
     })
 
-    expect(checkDB).to.eql(1)
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.manager_assignments.count({
+        where: {
+          manager_id: 1,
+          workshop_id: 1,
+        },
+      }),
+    })
   })
+
   it('if creating duplicate of inactive assignment, switch current assignment to active', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
       mutation {
     addManagerToWorkshop(manager_id: 3, workshop_id: 6) {
       assignment_id
@@ -168,10 +172,8 @@ describe('Manager Resolvers', async function () {
       active
     }
   }
-      `)
-
-    const expectedResult = {
-      data: {
+      `,
+      expectedResult: {
         addManagerToWorkshop: {
           assignment_id: 13,
           manager_id: 3,
@@ -179,21 +181,21 @@ describe('Manager Resolvers', async function () {
           active: true,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.manager_assignments.count({
-      where: {
-        manager_id: 3,
-        workshop_id: 6,
-      },
     })
 
-    expect(checkDB).to.eql(1)
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.manager_assignments.count({
+        where: {
+          manager_id: 3,
+          workshop_id: 6,
+        },
+      }),
+    })
   })
+
   it('remove workshop assignment', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   removeManagerFromWorkshop(assignment_id: 1) {
     assignment_id
@@ -201,56 +203,49 @@ describe('Manager Resolvers', async function () {
     active
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         removeManagerFromWorkshop: {
           assignment_id: 1,
           manager_id: 1,
           active: true,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.manager_assignments.count({
-      where: {
-        assignment_id: 1,
-      },
     })
 
-    expect(checkDB).to.eql(0)
+    await mockUser.confirmDBRemoval({
+      databaseQuery: prisma.manager_assignments.count({
+        where: {
+          assignment_id: 1,
+        },
+      }),
+    })
   })
   it('change active status of manager assignment', async function () {
-    const result = await testQuery(`#graphql
+    await mockUser.confirmResponse({
+      gqlScript: `
     mutation {
   changeManagerAssignmentStatus(assignment_id: 13, active: true) {
     assignment_id
     active
   }
 }
-    `)
-
-    const expectedResult = {
-      data: {
+    `,
+      expectedResult: {
         changeManagerAssignmentStatus: {
           assignment_id: 13,
           active: true,
         },
       },
-    }
-
-    expect(result.data).to.eql(expectedResult)
-
-    const checkDB = await prisma.manager_assignments.count({
-      where: {
-        assignment_id: 13,
-        active: true,
-      },
     })
 
-    expect(checkDB).to.eql(1)
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.manager_assignments.count({
+        where: {
+          assignment_id: 13,
+          active: true,
+        },
+      }),
+    })
   })
 })

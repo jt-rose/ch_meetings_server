@@ -1,8 +1,17 @@
 import { describe } from 'mocha'
-//import { expect } from 'chai'
-//import { testQuery } from '../queryTester'
+//import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 
-describe('Session Resolvers', async function () {
+describe('Session Resolvers', function () {
+  /* ------------------- declare mockUser and initialize it ------------------- */
+  //let mockUser: MockApolloTestRunners
+
+  /*
+  before(async function () {
+    mockUser = await createMockApolloUser()
+  })*/
+
+  /* -------------------------------- run tests ------------------------------- */
+
   /* ----------------------------- add new session ---------------------------- */
   it('create new session')
   it('reject creating new session if time conflict')
