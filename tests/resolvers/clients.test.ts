@@ -334,6 +334,45 @@ describe('Client Resolvers', function () {
     })
   })
 
-  it('deactivate client')
+  it('change client active status', async function () {
+    await mockUser.confirmResponse({
+      gqlScript: `
+    mutation {
+      changeClientActiveStatus(client_id: 6, active: true) {
+        client_id
+        client_name
+        active
+      }
+    }
+    `,
+      expectedResult: {
+        changeClientActiveStatus: {
+          client_id: 6,
+          client_name: 'Med Clinique',
+          active: true,
+        },
+      },
+    })
+    await mockUser.confirmDBUpdate({
+      databaseQuery: prisma.clients.count({
+        where: { client_id: 6, active: true },
+      }),
+    })
+  })
+  it('reject deactivating client with active workshops', async function () {
+    await mockUser.confirmError({
+      gqlScript: `
+      mutation {
+        changeClientActiveStatus(client_id: 1, active: false) {
+          client_id
+          client_name
+          active
+        }
+      }
+      `,
+      expectedErrorMessage:
+        'Client cannot be deactivated as they have upcoming workshops scheduled',
+    })
+  })
   it('add licenses + license change')
 })
