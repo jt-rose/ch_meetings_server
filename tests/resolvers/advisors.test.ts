@@ -1,22 +1,27 @@
 import { describe } from 'mocha'
-import { expect } from 'chai'
 import { prisma } from '../../src/prisma'
-import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
+import {
+  createMockApolloUser,
+  createMockApolloAdmin,
+  MockApolloTestRunners,
+} from '../mockApollo'
 
 /* ------------------------- test advisor resolvers ------------------------- */
 
 describe('Advisor Resolvers', function () {
   /* ------------------- declare mockUser and initialize it ------------------- */
   let mockUser: MockApolloTestRunners
+  let mockAdmin: MockApolloTestRunners
 
   before(async function () {
     mockUser = await createMockApolloUser()
+    mockAdmin = await createMockApolloAdmin()
   })
 
   /* -------------------------------- run tests ------------------------------- */
 
   it('create advisor', async function () {
-    await mockUser.confirmResponse({
+    await mockAdmin.confirmResponse({
       gqlScript: `
     mutation {
   addAdvisor(first_name: "first", last_name: "last", email: "test@test.com") {
@@ -36,17 +41,18 @@ describe('Advisor Resolvers', function () {
     })
 
     // confirm database updated as expected
-    const checkDB = await prisma.advisors.count({
-      where: {
-        first_name: 'first',
-        last_name: 'last',
-        email: 'test@test.com',
-      },
+    await mockAdmin.confirmDBUpdate({
+      databaseQuery: prisma.advisors.count({
+        where: {
+          first_name: 'first',
+          last_name: 'last',
+          email: 'test@test.com',
+        },
+      }),
     })
-    expect(checkDB).to.eql(1)
   })
   it('reject creating advisor when email already registered', async function () {
-    await mockUser.confirmError({
+    await mockAdmin.confirmError({
       gqlScript: `
     mutation {
   addAdvisor(first_name: "John", last_name: "Doe", email: "john.doe@email.com") {
@@ -195,7 +201,7 @@ describe('Advisor Resolvers', function () {
   })
 
   it('update advisor', async function () {
-    await mockUser.confirmResponse({
+    await mockAdmin.confirmResponse({
       gqlScript: `
     mutation {
   editAdvisor(advisor_id: 1, email: "jane.doe@email.com", first_name: "Jane", last_name: "Doe") {
@@ -227,7 +233,7 @@ describe('Advisor Resolvers', function () {
     })
   })
   it('reject update when new email already registered for other user', async function () {
-    await mockUser.confirmError({
+    await mockAdmin.confirmError({
       gqlScript: `
     mutation {
   editAdvisor(advisor_id: 1, email: "henri@email.net", first_name: "John", last_name: "Doe") {
@@ -242,7 +248,7 @@ describe('Advisor Resolvers', function () {
     })
   })
   it('delete advisor and remove related languages, regions, and unavailable_days', async function () {
-    await mockUser.confirmResponse({
+    await mockAdmin.confirmResponse({
       gqlScript: `
     mutation {
   removeAdvisor(advisor_id: 5) {
@@ -259,42 +265,42 @@ describe('Advisor Resolvers', function () {
 
     // confirm database updated as expected
     // advisor removed
-    await mockUser.confirmDBRemoval({
+    await mockAdmin.confirmDBRemoval({
       databaseQuery: prisma.advisors.count({
         where: { advisor_id: 5 },
       }),
     })
 
     // advisor languages removed
-    await mockUser.confirmDBRemoval({
+    await mockAdmin.confirmDBRemoval({
       databaseQuery: prisma.languages.count({
         where: { advisor_id: 5 },
       }),
     })
 
     // advisor regions removed
-    await mockUser.confirmDBRemoval({
+    await mockAdmin.confirmDBRemoval({
       databaseQuery: prisma.regions.count({
         where: { advisor_id: 5 },
       }),
     })
 
     // advisor notes removed
-    await mockUser.confirmDBRemoval({
+    await mockAdmin.confirmDBRemoval({
       databaseQuery: prisma.advisor_notes.count({
         where: { advisor_id: 5 },
       }),
     })
 
     // unavailable days removed
-    await mockUser.confirmDBRemoval({
+    await mockAdmin.confirmDBRemoval({
       databaseQuery: prisma.unavailable_days.count({
         where: { advisor_id: 5 },
       }),
     })
   })
   it('reject deleting advisor when workshops have been scheduled to them', async function () {
-    await mockUser.confirmError({
+    await mockAdmin.confirmError({
       gqlScript: `
     mutation {
   removeAdvisor(advisor_id: 1) {
@@ -307,7 +313,7 @@ describe('Advisor Resolvers', function () {
     })
 
     it('reject deleting advisor when they have been requested for workshops', async function () {
-      await mockUser.confirmError({
+      await mockAdmin.confirmError({
         gqlScript: `
     mutation {
   removeAdvisor(advisor_id: 4) {
@@ -321,4 +327,5 @@ describe('Advisor Resolvers', function () {
     })
     it('deactivate advisor')
   })
+  it('reject changing advisor if not admin')
 })
