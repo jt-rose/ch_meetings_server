@@ -12,6 +12,7 @@ import { AdvisorLanguage } from '../objects/AdvisorLanguage'
 import { Advisor } from '../objects/Advisor'
 import { Context } from './../../utils/context'
 import { languageList } from '../../utils/languageList'
+import { Authenticated } from '../../middleware/authChecker'
 
 @Resolver(AdvisorLanguage)
 export class LanguageResolver {
@@ -27,6 +28,7 @@ export class LanguageResolver {
   /* ------------------------- Advisor_languages CRUD ------------------------- */
 
   // addAdvisorLanguage
+  @Authenticated()
   @Mutation(() => AdvisorLanguage)
   async addAdvisorLanguage(
     @Ctx() ctx: Context,
@@ -42,6 +44,7 @@ export class LanguageResolver {
   }
 
   // removeAdvisorLanguage
+  @Authenticated()
   @Mutation(() => AdvisorLanguage)
   async removeAdvisorLanguage(
     @Ctx() ctx: Context,
@@ -49,10 +52,12 @@ export class LanguageResolver {
   ) {
     return ctx.prisma.languages.delete({ where: { language_id } })
   }
+
   // no resolver endpoint is needed for reading single AdvisorLanguage objects
   // as this functionality will be handled by a field resolver
   // on the Advisor Resolver
   // getAllAdvisorLanguages - nullable where
+  @Authenticated()
   @Query(() => [AdvisorLanguage])
   async getAllAdvisorLanguages(
     @Ctx() ctx: Context,

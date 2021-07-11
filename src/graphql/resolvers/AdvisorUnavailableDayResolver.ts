@@ -10,6 +10,7 @@ import {
   Field,
 } from 'type-graphql'
 import { Context } from '../../utils/context'
+import { Authenticated } from '../../middleware/authChecker'
 
 @InputType()
 class UnavailableDayInfo {
@@ -60,6 +61,7 @@ const rejectIfAdvisorAlreadyScheduled = async (
 
 @Resolver(AdvisorUnavailableDay)
 export class UnavailableDayResolver {
+  @Authenticated()
   @Mutation(() => AdvisorUnavailableDay)
   async addAdvisorUnavailableDay(
     @Ctx() ctx: Context,
@@ -79,6 +81,7 @@ export class UnavailableDayResolver {
     })
   }
 
+  @Authenticated()
   @Mutation(() => AdvisorUnavailableDay)
   async editAdvisorUnavailableDay(
     @Ctx() ctx: Context,
@@ -100,6 +103,7 @@ export class UnavailableDayResolver {
     })
   }
 
+  @Authenticated()
   @Mutation(() => AdvisorUnavailableDay)
   async removeAdvisorUnavailableDay(
     @Ctx() ctx: Context,

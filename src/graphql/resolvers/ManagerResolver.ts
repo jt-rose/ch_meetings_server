@@ -241,9 +241,9 @@ export class ManagerResolver {
       if (!validPassword) {
         throw Error('incorrect username/password')
       }
-      ctx.session.manager_id = manager.manager_id
+      ctx.req.session.manager_id = manager.manager_id
       if (manager.user_type === 'ADMIN') {
-        ctx.session.admin = manager.manager_id
+        ctx.req.session.admin = manager.manager_id
       }
       return manager
     } catch (err) {
@@ -254,8 +254,8 @@ export class ManagerResolver {
   @Mutation(() => Boolean)
   logout(@Ctx() ctx: Context) {
     return new Promise((resolve) =>
-      ctx.session.destroy((err: any) => {
-        ctx.session.clearCookie(process.env.COOKIE_SECRET as string)
+      ctx.req.session.destroy((err: any) => {
+        ctx.res.clearCookie(process.env.COOKIE_SECRET as string)
         if (err) {
           console.log(err)
           resolve(false)
@@ -269,7 +269,7 @@ export class ManagerResolver {
 
   @Query(() => Manager, { nullable: true })
   fetchManager(@Ctx() ctx: Context) {
-    const { manager_id } = ctx.session
+    const { manager_id } = ctx.req.session
     // if not logged in
     if (!manager_id) return null
 
@@ -290,7 +290,7 @@ export class ManagerResolver {
     }
     const newPasswordHash = await argon2.hash(newPassword)
     return ctx.prisma.managers.update({
-      where: { manager_id: ctx.session.manager_id },
+      where: { manager_id: ctx.req.session.manager_id },
       data: { email_password: newPasswordHash },
     })
   }
@@ -381,7 +381,7 @@ export class ManagerResolver {
     await ctx.redis.del(key)
 
     // login after changing password
-    ctx.session.manager_id = manager_id
+    ctx.req.session.manager_id = manager_id
 
     return updatedManager
   }

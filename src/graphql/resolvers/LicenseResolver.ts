@@ -80,7 +80,7 @@ export class LicenseResolver {
       change_note,
       workshop_id,
     } = licenseInput
-    const manager_id = ctx.session.manager_id!
+    const manager_id = ctx.req.session.manager_id!
     if (!license_id) {
       return ctx.prisma.licenses.create({
         data: {

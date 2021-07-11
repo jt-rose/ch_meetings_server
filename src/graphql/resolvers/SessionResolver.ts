@@ -1,6 +1,6 @@
 import { Resolver, FieldResolver, Root, Query, Arg, Ctx } from 'type-graphql'
 import { WorkshopSession } from '../objects/Session'
-import { RequestedStartTime } from './../objects/RequestedStartTime'
+import { RequestedStartTime } from '../objects/SessionRequestedStartTime'
 import { SessionNote } from '../objects/SessionNote'
 import { Context } from '../../utils/context'
 

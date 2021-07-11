@@ -2,6 +2,7 @@ import { Resolver, Arg, Ctx, Int, Mutation } from 'type-graphql'
 import { AdvisorRegion } from '../objects/AdvisorRegion'
 import { REGION } from '../enums/REGION'
 import { Context } from '../../utils/context'
+import { Authenticated } from '../../middleware/authChecker'
 
 // Advisor regions are built around simple enums
 // and will be read as a field resolver/ join on the Advisor data
@@ -9,6 +10,7 @@ import { Context } from '../../utils/context'
 
 @Resolver(AdvisorRegion)
 export class RegionResolver {
+  @Authenticated()
   @Mutation(() => AdvisorRegion)
   async addAdvisorRegion(
     @Ctx() ctx: Context,
@@ -25,6 +27,7 @@ export class RegionResolver {
     return ctx.prisma.regions.create({ data: { advisor_id, advisor_region } })
   }
 
+  @Authenticated()
   @Mutation(() => AdvisorRegion)
   async removeAdvisorRegion(
     @Ctx() ctx: Context,

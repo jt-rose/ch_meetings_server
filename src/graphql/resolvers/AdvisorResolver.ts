@@ -14,6 +14,7 @@ import { AdvisorRegion } from '../objects/AdvisorRegion'
 import { AdvisorUnavailableDay } from '../objects/AdvisorUnavailableDay'
 import { AdvisorNote } from '../objects/AdvisorNote'
 import { Context } from '../../utils/context'
+import { Authenticated, AdminOnly } from '../../middleware/authChecker'
 
 @Resolver(Advisor)
 export class AdvisorResolver {
@@ -93,7 +94,7 @@ export class AdvisorResolver {
 
   /* ----------------------------- CRUD operations ---------------------------- */
   // getAdvisor
-  // refactor later with dataloader
+  @Authenticated()
   @Query(() => Advisor, { nullable: true })
   async getAdvisor(
     @Ctx() ctx: Context,
@@ -105,6 +106,7 @@ export class AdvisorResolver {
   }
 
   //getAllAdvisors
+  @Authenticated()
   @Query(() => [Advisor])
   async getAllAdvisors(@Ctx() ctx: Context) {
     // add pagination later
@@ -112,6 +114,7 @@ export class AdvisorResolver {
   }
 
   // addAdvisor
+  @AdminOnly()
   @Mutation(() => Advisor)
   async addAdvisor(
     @Ctx() ctx: Context,
@@ -135,6 +138,7 @@ export class AdvisorResolver {
   }
 
   //editAdvisor
+  @AdminOnly()
   @Mutation(() => Advisor)
   async editAdvisor(
     @Ctx() ctx: Context,
@@ -162,6 +166,7 @@ export class AdvisorResolver {
   }
 
   // removeAdvisor
+  @AdminOnly()
   @Mutation(() => Advisor)
   async removeAdvisor(
     @Ctx() ctx: Context,
@@ -232,6 +237,7 @@ export class AdvisorResolver {
     return transaction[4]
   }
 
+  @AdminOnly()
   @Mutation(() => Advisor)
   async changeAdvisorActiveStatus(
     @Ctx() ctx: Context,
