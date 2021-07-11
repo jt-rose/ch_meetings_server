@@ -8,12 +8,12 @@ const standardLimit = 500
 type RateLimit = (limit?: number) => MiddlewareFn<Context>
 export const rateLimit: RateLimit =
   (limit = standardLimit) =>
-  async ({ context: { session } /*, info */ }, next) => {
+  async ({ context: { req } /*, info */ }, next) => {
     // for now, a simple daily user rate limit is sufficient
     // if we need to rate limit specific queries
     // we can use the following commented out code
     //const key = `rate-limit:${info.fieldName}:${req.ip}`
-    const key = `rate-limit:${session.ip}`
+    const key = `rate-limit:${req.ip}`
 
     const current = await redis.incr(key)
     console.log(key, ' is at ', current)

@@ -1,6 +1,5 @@
 import 'reflect-metadata'
 import express from 'express'
-import cors from 'cors'
 import session from 'express-session'
 import { redis } from './utils/redis'
 import connectRedis from 'connect-redis'
@@ -22,13 +21,7 @@ export const createServer = (schema: GraphQLSchema, context: CreateContext) => {
 
   const RedisStore = connectRedis(session)
 
-  //app.set('trust proxy', 1) // for use in prod with nginx
-  app.use(
-    cors({
-      origin: [process.env.CORS_ORIGIN as string],
-      credentials: true,
-    })
-  )
+  app.set('trust proxy', 1) // for use in prod with nginx
 
   app.use(
     session({
@@ -85,7 +78,13 @@ export const createServer = (schema: GraphQLSchema, context: CreateContext) => {
     ],
   })
 
-  apolloServer.applyMiddleware({ app })
+  apolloServer.applyMiddleware({
+    app,
+    cors: {
+      origin: process.env.CORS_ORIGIN as string,
+      credentials: true,
+    },
+  })
 
   // return the app for starting the server
   // and apollo for unit testing directly against the schema
