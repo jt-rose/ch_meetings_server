@@ -2,34 +2,237 @@ import { describe } from 'mocha'
 import { prisma } from '../../src/prisma'
 import {
   createMockApolloUser,
-  //createMockApolloAdmin,
+  createMockApolloAdmin,
   MockApolloTestRunners,
 } from '../mockApollo'
 
 describe('Manager Resolvers', function () {
   /* ------------------- declare mockUser and initialize it ------------------- */
   let mockUser: MockApolloTestRunners
-  //let mockAdmin: MockApolloTestRunners
+  let mockAdmin: MockApolloTestRunners
 
   before(async function () {
     mockUser = await createMockApolloUser()
-    //mockAdmin = await createMockApolloAdmin()
+    mockAdmin = await createMockApolloAdmin()
   })
 
   /* -------------------------------- run tests ------------------------------- */
 
   /* --------------------------- create new manager --------------------------- */
 
-  it('add new manager') // with default password
-  it('reject adding new manager when email already in use')
-  it('reject adding new manager when role is not "admin"')
+  it('add new manager', async function () {
+    await mockAdmin.confirmResponse({
+      gqlScript: `
+    mutation {
+      addManager(managerInput: {first_name: "Darth", last_name: "Vader", email: "sith@company.net", user_type: ADMIN, email_password: "HateSand66!@"}) {
+        email
+      }
+    }
+    `,
+      expectedResult: {
+        addManager: {
+          email: 'sith@company.net',
+        },
+      },
+    })
+  })
+  it('reject adding new manager when email already in use', async function () {
+    await mockAdmin.confirmError({
+      gqlScript: `
+    mutation {
+      addManager(managerInput: {first_name: "Darth", last_name: "Vader", email: "amy.firenzi@company.net", user_type: ADMIN, email_password: "HateSand66!@"}) {
+        email
+      }
+    }
+    `,
+      expectedErrorMessage: `user with email "amy.firenzi@company.net" already registered in the system`,
+    })
+  })
+
+  it('reject adding new manager when role is not "admin"', async function () {
+    await mockUser.confirmError({
+      gqlScript: `
+    mutation {
+      addManager(managerInput: {first_name: "Darth", last_name: "Vader", email: "sith@company.net", user_type: ADMIN, email_password: "HateSand66!@"}) {
+        email
+      }
+    }
+    `,
+      expectedErrorMessage:
+        "Access denied! You don't have permission for this action!",
+    })
+  })
+  it('reject adding manager without valid company email', async function () {
+    await mockAdmin.confirmError({
+      gqlScript: `
+    mutation {
+      addManager(managerInput: {first_name: "Darth", last_name: "Vader", email: "sith@empire.gov", user_type: ADMIN, email_password: "HateSand66!@"}) {
+        email
+      }
+    }
+    `,
+      expectedErrorMessage:
+        'invalid email submitted - Please confirm the email signature matches the official company email',
+    })
+  })
+  it('reject adding manager with password that fails password strength criteria', async function () {
+    await mockAdmin.confirmError({
+      gqlScript: `
+    mutation {
+      addManager(managerInput: {first_name: "Darth", last_name: "Vader", email: "sith@company.net", user_type: ADMIN, email_password: "secret"}) {
+        email
+      }
+    }
+    `,
+      expectedErrorMessage:
+        'invalid password - please confirm password is at least 8 characters long, has upper and lowwercase characters, and includes a number and special character',
+    })
+  })
 
   /* ---------------------------- retrieve manager ---------------------------- */
 
-  it('retrieve manager')
-  it('retrieve all managers')
+  it('retrieve all managers', async function () {
+    await mockUser.confirmResponse({
+      gqlScript: `
+    query {
+      getAllManagers {
+        manager_id
+        active
+        email
+      }
+    }
+    `,
+      expectedResult: {
+        getAllManagers: [
+          {
+            manager_id: 1,
+            active: true,
+            email: 'amy.firenzi@company.net',
+          },
+          {
+            manager_id: 2,
+            active: true,
+            email: 'frank.low@company.net',
+          },
+          {
+            manager_id: 3,
+            active: true,
+            email: 'gina.haskell@company.net',
+          },
+        ],
+      },
+    })
+  })
   it('retrieve all managers based on workshop_id filter')
-  it('retrieve workshops via manager field resolver')
+  it('retrieve workshops and clients via manager field resolvers', async function () {
+    await mockUser.confirmResponse({
+      gqlScript: `
+    query {
+      getAllManagers {
+        manager_id
+        email
+        workshops {
+          workshop_id
+        }
+        clients {
+          client_id
+        }
+      }
+    }
+    `,
+      expectedResult: {
+        getAllManagers: [
+          {
+            manager_id: 1,
+            email: 'amy.firenzi@company.net',
+            workshops: [
+              {
+                workshop_id: 1,
+              },
+              {
+                workshop_id: 2,
+              },
+              {
+                workshop_id: 3,
+              },
+              {
+                workshop_id: 4,
+              },
+              {
+                workshop_id: 6,
+              },
+            ],
+            clients: [
+              {
+                client_id: 1,
+              },
+              {
+                client_id: 3,
+              },
+              {
+                client_id: 5,
+              },
+            ],
+          },
+          {
+            manager_id: 2,
+            email: 'frank.low@company.net',
+            workshops: [
+              {
+                workshop_id: 1,
+              },
+              {
+                workshop_id: 2,
+              },
+              {
+                workshop_id: 3,
+              },
+              {
+                workshop_id: 5,
+              },
+              {
+                workshop_id: 6,
+              },
+            ],
+            clients: [
+              {
+                client_id: 1,
+              },
+              {
+                client_id: 4,
+              },
+              {
+                client_id: 5,
+              },
+            ],
+          },
+          {
+            manager_id: 3,
+            email: 'gina.haskell@company.net',
+            workshops: [
+              {
+                workshop_id: 4,
+              },
+              {
+                workshop_id: 5,
+              },
+              {
+                workshop_id: 6,
+              },
+            ],
+            clients: [
+              {
+                client_id: 3,
+              },
+              {
+                client_id: 4,
+              },
+            ],
+          },
+        ],
+      },
+    })
+  })
 
   /* ------------------------------ edit managers ----------------------------- */
   it('edit manager details')
@@ -81,9 +284,6 @@ describe('Manager Resolvers', function () {
       expectedErrorMessage: 'incorrect username/password',
     })
   })
-  it('sign in with cookies')
-  it('reject sign in when cookies not valid')
-  it('reject sign in when cookies expired')
 
   /* ----------------------------- reset password ----------------------------- */
   it('reset password')
