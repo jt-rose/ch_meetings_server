@@ -325,8 +325,62 @@ describe('Advisor Resolvers', function () {
         'Advisor #4 has been requested for workshops. Please clear this request before removing the advisor.',
     })
   })
-  it('deactivate advisor')
-  it('reject deactivating advisor if current or future workshops scheduled')
+  it('change advisor active status', async function () {
+    await mockAdmin.confirmResponse({
+      gqlScript: `
+      mutation {
+        changeAdvisorActiveStatus(advisor_id: 5, active: false) {
+          advisor_id
+          email
+          active
+        }
+      }
+      `,
+      expectedResult: {
+        changeAdvisorActiveStatus: {
+          advisor_id: 5,
+          email: 'nathan.jameson@email.com',
+          active: false,
+        },
+      },
+    })
+
+    await mockAdmin.confirmDBUpdate({
+      databaseQuery: prisma.advisors.count({
+        where: { advisor_id: 5, active: false },
+      }),
+    })
+  })
+  it('reject changing advisor active status if not admin', async function () {
+    await mockUser.confirmError({
+      gqlScript: `
+    mutation {
+      changeAdvisorActiveStatus(advisor_id: 5, active: false) {
+        advisor_id
+        email
+        active
+      }
+    }
+    `,
+      expectedErrorMessage:
+        "Access denied! You don't have permission for this action!",
+    })
+  })
+  it('reject deactivating advisor if current or future workshops scheduled', async function () {
+    await mockAdmin.confirmError({
+      gqlScript: `
+    mutation {
+      changeAdvisorActiveStatus(advisor_id: 1, active: false) {
+        advisor_id
+        email
+        active
+      }
+    }
+    `,
+      expectedErrorMessage:
+        'Advisor cannote be deactivated as they have upcoming workshops scheduled',
+    })
+  })
   it('reject changing advisor if not admin', async function () {
     await mockUser.confirmError({
       gqlScript: `
