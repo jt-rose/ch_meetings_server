@@ -3,7 +3,10 @@ import { registerEnumType } from 'type-graphql'
 export enum SESSION_STATUS {
   REQUESTED = 'REQUESTED',
   SCHEDULED = 'SCHEDULED',
+  VETTING = 'VETTING',
+  HOLDING = 'HOLDING',
   COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
   HOLD_A = 'HOLD A',
   HOLD_B = 'HOLD B',
 }
