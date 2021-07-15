@@ -59,6 +59,7 @@ export const seedManagers = async (prisma: PrismaClient) => {
               workshop_id: 6,
               active: true,
             },
+            { workshop_id: 7, active: false },
           ],
         },
       },

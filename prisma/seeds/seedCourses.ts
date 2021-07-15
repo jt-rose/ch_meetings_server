@@ -10,6 +10,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         course_description: 'the basics',
         active: true,
         virtual_course: true,
+        created_by: 3,
       },
       {
         //course_id: 2,
@@ -17,6 +18,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         course_description: 'the basics, but in person',
         active: true,
         virtual_course: false,
+        created_by: 3,
       },
       {
         //course_id: 3,
@@ -24,6 +26,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         course_description: 'the intermediate level',
         active: true,
         virtual_course: true,
+        created_by: 3,
       },
       {
         //course_id: 4,
@@ -31,6 +34,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         course_description: 'the advanced level - only in person',
         active: true,
         virtual_course: false,
+        created_by: 3,
       },
       {
         //course_id: 5,
@@ -38,6 +42,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         course_description: 'inactive course',
         active: false,
         virtual_course: false,
+        created_by: 3,
       },
     ],
   })
@@ -55,6 +60,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         coursework_description:
           'Foundation eLearning to introduce basic concepts. Recommended 2-4 weeks, before coursework.',
         active: true,
+        created_by: 3,
       },
       {
         //coursework_id: 2,
@@ -62,6 +68,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         coursework_description:
           'Reinforement exercises to be done after completing intro course. Recommended 2-4 weeks, after coursework.',
         active: true,
+        created_by: 3,
       },
       {
         //coursework_id: 3,
@@ -69,6 +76,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         coursework_description:
           'Combined foundations introduction and reinforcement exercises. Recommended 4-8 weeks, before coursework.',
         active: true,
+        created_by: 3,
       },
       {
         //coursework_id: 4,
@@ -76,6 +84,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         coursework_description:
           'Introduction to 201 concepts and quick refresher on 101 materials. Recommended 2-4 weeks.',
         active: true,
+        created_by: 3,
       },
       {
         //coursework_id: 5,
@@ -83,6 +92,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         coursework_description:
           'RETIRED - PLEASE USE THE CURRENT "201 prework"! Original description: Introduction to 201 concepts and quick refresher on 101 materials. Recommended 2-4 weeks.',
         active: false,
+        created_by: 3,
       },
       {
         //coursework_id: 6,
@@ -90,6 +100,7 @@ export const seedCourses = async (prisma: PrismaClient) => {
         coursework_description:
           'Introduction to advanced 301 concepts, to be completed in conjunction with real-world work opportunities. Recommended 3-6 weeks.',
         active: true,
+        created_by: 3,
       },
     ],
   })

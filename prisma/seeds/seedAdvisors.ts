@@ -9,23 +9,31 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       email: 'john.doe@email.com',
       first_name: 'John',
       last_name: 'Doe',
-      languages: { create: { 
-        // language_id: 1, 
-        advisor_language: 'English' } },
-      regions: { create: { 
-        // region_id: 1, 
-        advisor_region: 'NAM' } },
+      languages: {
+        create: {
+          // language_id: 1,
+          advisor_language: 'English',
+        },
+      },
+      regions: {
+        create: {
+          // region_id: 1,
+          advisor_region: 'NAM',
+        },
+      },
       advisor_notes: {
         create: [
           {
             // note_id: 1,
             advisor_note:
               'Can travel to EMEA occasionally with 3+ months notice',
+            created_by: 3,
           },
           {
             // note_id: 2,
             advisor_note:
               'Has partnered with Henri in developing training materials for EMEA cohorts',
+            created_by: 1,
           },
         ],
       },
@@ -67,24 +75,28 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       languages: {
         createMany: {
           data: [
-            { 
-              // language_id: 2, 
-              advisor_language: 'English' },
-            { 
-              // language_id: 3, 
-              advisor_language: 'French' },
+            {
+              // language_id: 2,
+              advisor_language: 'English',
+            },
+            {
+              // language_id: 3,
+              advisor_language: 'French',
+            },
           ],
         },
       },
       regions: {
         createMany: {
           data: [
-            { 
-              // region_id: 2, 
-              advisor_region: 'EMEA' },
-            { 
-              // region_id: 3, 
-              advisor_region: 'NAM' },
+            {
+              // region_id: 2,
+              advisor_region: 'EMEA',
+            },
+            {
+              // region_id: 3,
+              advisor_region: 'NAM',
+            },
           ],
         },
       },
@@ -114,23 +126,28 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       languages: {
         createMany: {
           data: [
-            { 
-              //language_id: 4, 
-              advisor_language: 'Japanese' },
-            { 
-              //language_id: 5, 
-              advisor_language: 'Chinese' },
+            {
+              //language_id: 4,
+              advisor_language: 'Japanese',
+            },
+            {
+              //language_id: 5,
+              advisor_language: 'Chinese',
+            },
           ],
         },
       },
       regions: {
         createMany: {
           data: [
-            { 
-              //region_id: 4, 
-              advisor_region: 'APAC' },
-            { //region_id: 5, 
-              advisor_region: 'NAM' },
+            {
+              //region_id: 4,
+              advisor_region: 'APAC',
+            },
+            {
+              //region_id: 5,
+              advisor_region: 'NAM',
+            },
           ],
         },
       },
@@ -150,10 +167,18 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       email: 'jorge@advisor.net',
       first_name: 'Jorge',
       last_name: 'Esteban',
-      languages: { create: { //language_id: 6, 
-        advisor_language: 'Spanish' } },
-      regions: { create: { //region_id: 6, 
-        advisor_region: 'LATAM' } },
+      languages: {
+        create: {
+          //language_id: 6,
+          advisor_language: 'Spanish',
+        },
+      },
+      regions: {
+        create: {
+          //region_id: 6,
+          advisor_region: 'LATAM',
+        },
+      },
     },
   })
 
@@ -165,24 +190,34 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
       last_name: 'Jameson',
       languages: {
         create: [
-          { //language_id: 7, 
-            advisor_language: 'English' },
-          { //language_id: 8, 
-            advisor_language: 'Vietnamese' },
+          {
+            //language_id: 7,
+            advisor_language: 'English',
+          },
+          {
+            //language_id: 8,
+            advisor_language: 'Vietnamese',
+          },
         ],
       },
       regions: {
         create: [
-          { //region_id: 7, 
-            advisor_region: 'NAM' },
-          { //region_id: 8, 
-            advisor_region: 'APAC' },
+          {
+            //region_id: 7,
+            advisor_region: 'NAM',
+          },
+          {
+            //region_id: 8,
+            advisor_region: 'APAC',
+          },
         ],
       },
       advisor_notes: {
         create: {
           //note_id: 3,
           advisor_note: 'Regularly travels between US, Japan, and Vietnam',
+
+          created_by: 1,
         },
       },
     },
