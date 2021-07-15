@@ -17,5 +17,9 @@ export class Coursework {
 
   @Field(() => [Course])
   courses: Course[]
+
+  @Field(() => Int)
+  created_by: number
+
   // workshops field resolver
 }

@@ -13,4 +13,10 @@ export class AdvisorNote {
 
   @Field(() => Date)
   date_of_note: Date
+
+  @Field(() => Int)
+  created_by: number
+
+  @Field(() => Date)
+  created_at: Date
 }

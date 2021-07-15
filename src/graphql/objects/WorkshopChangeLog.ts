@@ -12,5 +12,5 @@ export class ChangeLog {
   note: string
 
   @Field(() => Date)
-  log_date: Date
+  created_at: Date
 }

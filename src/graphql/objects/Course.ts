@@ -17,7 +17,10 @@ export class Course {
   @Field()
   virtual_course: boolean
 
-  @Field()
+  @Field(() => Int)
+  created_by: number
+
+  @Field(() => Date)
   created_at: Date
 
   @Field()

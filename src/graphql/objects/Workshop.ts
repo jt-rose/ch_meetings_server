@@ -8,11 +8,18 @@ import { WorkshopSession } from './Session'
 import { WorkshopNote } from './WorkshopNote'
 import { Coursework } from './Coursework'
 import { REGION } from '../enums/REGION'
+import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 
 @ObjectType()
 export class Workshop {
   @Field(() => Int)
   workshop_id: number
+
+  @Field(() => Int)
+  created_by: number
+
+  @Field(() => Date)
+  created_at: Date
 
   @Field(() => Int)
   course_id: number
@@ -55,7 +62,25 @@ export class Workshop {
   record_attendance: boolean
 
   @Field()
+  in_person: boolean
+
+  @Field()
   deleted: boolean
+
+  @Field(() => Date)
+  workshop_start_date: Date
+
+  @Field(() => Date)
+  workshop_end_date: Date
+
+  @Field(() => SESSION_STATUS)
+  workshop_status: SESSION_STATUS
+
+  @Field()
+  participant_sign_up_link: string
+
+  @Field()
+  launch_participant_sign_ups: boolean
 
   /* ----------------------------- field resolvers ---------------------------- */
 

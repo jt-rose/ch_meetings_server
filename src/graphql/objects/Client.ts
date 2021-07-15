@@ -17,6 +17,12 @@ export class Client {
   @Field()
   active: boolean
 
+  @Field(() => Int)
+  created_by: number
+
+  @Field(() => Date)
+  created_at: Date
+
   /* ----------------------------- field resolvers ---------------------------- */
   @Field(() => [ClientNote])
   client_notes: ClientNote[]

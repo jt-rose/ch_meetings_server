@@ -11,6 +11,9 @@ export class WorkshopNote {
   @Field()
   note: string
 
+  @Field(() => Int)
+  created_by: number
+
   @Field(() => Date)
-  date_of_note: Date
+  created_at: Date
 }

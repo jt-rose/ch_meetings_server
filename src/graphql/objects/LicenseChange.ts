@@ -20,8 +20,11 @@ export class LicenseChange {
   @Field(() => Int)
   manager_id: number
 
+  @Field(() => Int)
+  created_by: number
+
   @Field(() => Date)
-  date_of_change: Date
+  created_at: Date
 
   @Field()
   change_note: string
