@@ -1,9 +1,12 @@
 CREATE TYPE SESSION_STATUS_ENUM AS ENUM (
     'REQUESTED',
+    'VETTING',
+    'HOLDING',
     'SCHEDULED',
     'COMPLETED',
+    'CANCELLED',
     'HOLD A',
-    'HOLD B' -- possible extras: PAID, REJECTED, REQUEST_NEW_DATES, REQUEST_INFO, etc.
+    'HOLD B'
 );
 CREATE TYPE REGION_ENUM AS ENUM (
     'NAM',
@@ -16,18 +19,6 @@ CREATE TYPE USER_TYPE_ENUM AS ENUM (
     'USER',
     'ADMIN' -- 'CLIENT', if needed
 );
-CREATE TABLE clients (
-    client_id SERIAL PRIMARY KEY,
-    client_name VARCHAR(255) NOT NULL,
-    business_unit VARCHAR(255),
-    active BOOLEAN NOT NULL DEFAULT TRUE
-);
-CREATE TABLE client_notes (
-    note_id SERIAL PRIMARY KEY,
-    client_id INT REFERENCES clients(client_id) NOT NULL,
-    note TEXT NOT NULL,
-    date_of_note TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
 CREATE TABLE managers (
     manager_id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -36,6 +27,21 @@ CREATE TABLE managers (
     email_password VARCHAR(255) NOT NULL,
     user_type USER_TYPE_ENUM NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE -- may add regions for managers later if needed
+);
+CREATE TABLE clients (
+    client_id SERIAL PRIMARY KEY,
+    client_name VARCHAR(255) NOT NULL,
+    business_unit VARCHAR(255),
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE TABLE client_notes (
+    note_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    client_id INT REFERENCES clients(client_id) NOT NULL,
+    note TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE TABLE advisors (
     advisor_id SERIAL PRIMARY KEY,
@@ -62,12 +68,14 @@ CREATE TABLE regions (
 );
 CREATE TABLE advisor_notes (
     note_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
     advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
     advisor_note TEXT NOT NULL,
-    date_of_note TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE TABLE courses (
     course_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
     course_name VARCHAR(255) UNIQUE NOT NULL,
     course_description TEXT NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
@@ -78,6 +86,7 @@ CREATE TABLE courses (
 );
 CREATE TABLE coursework (
     coursework_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
     coursework_name VARCHAR(255) UNIQUE NOT NULL,
     coursework_description TEXT,
     -- will leave nullable for now
@@ -96,6 +105,14 @@ CREATE TABLE courses_and_coursework (
 -- the scheduling status of the work shop (see note below)
 CREATE TABLE workshops (
     workshop_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    -- start and end dates will be manually updated
+    -- as workshop sessions are added, updated, deleted
+    -- this will allow for much simpler sorting by date
+    workshop_start_date TIMESTAMPTZ,
+    workshop_end_date TIMESTAMPTZ,
+    workshop_status SESSION_STATUS_ENUM NOT NULL,
     course_id INT REFERENCES courses (course_id) NOT NULL,
     cohort_name VARCHAR(255) NOT NULL,
     requested_advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
@@ -111,7 +128,10 @@ CREATE TABLE workshops (
     time_zone VARCHAR(10) NOT NULL,
     workshop_language VARCHAR(255) NOT NULL,
     record_attendance BOOLEAN NOT NULL,
-    deleted BOOLEAN NOT NULL DEFAULT FALSE
+    in_person BOOLEAN NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    participant_sign_up_link VARCHAR(255) NOT NULL,
+    launch_participant_sign_ups BOOLEAN NOT NULL DEFAULT FALSE
 );
 -- different versions of coursework are available for each course
 -- this table will track which one has been chosen for each workshop
@@ -133,9 +153,11 @@ CREATE TABLE workshop_session_sets (
 -- for example, if just one session needs to be rescheduled
 CREATE TABLE workshop_sessions (
     workshop_session_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
     session_name VARCHAR(255) NOT NULL,
-    date_and_time TIMESTAMPTZ,
+    date_and_time TIMESTAMPTZ NOT NULL,
     -- date and time are set to nullable
     -- to accomodate requests where the date is not set yet
     -- server or DB validation will be used
@@ -150,17 +172,17 @@ CREATE TABLE workshop_sessions (
 -- of each selected date if not specified by user
 -- multiple time ranges per session can be requested
 -- in case there are gaps that won't work
-CREATE TABLE requested_start_times (
-    request_id SERIAL PRIMARY KEY,
-    workshop_session_id INT REFERENCES workshop_sessions (workshop_session_id) NOT NULL,
-    earliest_start_time TIMESTAMPTZ NOT NULL,
-    latest_start_time TIMESTAMPTZ NOT NULL
-);
+--CREATE TABLE requested_start_times (
+--    request_id SERIAL PRIMARY KEY,
+--    workshop_session_id INT REFERENCES workshop_sessions (workshop_session_id) NOT NULL,
+--    earliest_start_time TIMESTAMPTZ NOT NULL,
+--    latest_start_time TIMESTAMPTZ NOT NULL
+--);
 CREATE TABLE change_log (
     log_id SERIAL PRIMARY KEY,
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
     note TEXT NOT NULL,
-    log_date TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE TABLE manager_assignments (
     assignment_id SERIAL PRIMARY KEY,
@@ -176,16 +198,17 @@ CREATE TABLE manager_clients (
 );
 CREATE TABLE workshop_notes (
     note_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
     note TEXT NOT NULL,
-    date_of_note TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-CREATE TABLE session_notes (
-    note_id SERIAL PRIMARY KEY,
-    workshop_session_id INT REFERENCES workshop_sessions (workshop_session_id) NOT NULL,
-    note TEXT NOT NULL,
-    date_of_note TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+--CREATE TABLE session_notes (
+--    note_id SERIAL PRIMARY KEY,
+--    workshop_session_id INT REFERENCES workshop_sessions (workshop_session_id) NOT NULL,
+--    note TEXT NOT NULL,
+--    date_of_note TIMESTAMPTZ NOT NULL DEFAULT NOW()
+--);
 CREATE TABLE licenses (
     license_id SERIAL PRIMARY KEY,
     course_id INT REFERENCES courses(course_id) NOT NULL,
@@ -199,8 +222,36 @@ CREATE TABLE license_changes (
     amount_change INT NOT NULL,
     workshop_id INT REFERENCES workshops(workshop_id),
     -- nullable, for when changes are not related to workshops
-    manager_id INT REFERENCES managers(manager_id) NOT NULL,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
     -- references who made the change
-    date_of_change TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     change_note TEXT NOT NULL -- will be autogenerated for workshops
+);
+CREATE TABLE workshop_groups (
+    group_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    workshop_id INT REFERENCES workshops(workshop_id) NOT NULL
+);
+CREATE TABLE workshop_group_notes (
+    note_id SERIAL PRIMARY KEY,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    group_id INT REFERENCES workshop_groups(group_id) NOT NULL,
+    note TEXT NOT NULL
+);
+-- we could break this into two tables
+-- one for participants and one for participant sign ups (for signing up for multiple workshops)
+-- however, as we are keeping the signup process simple and avoiding a login
+-- using a url/signup/:uuid instead (with @email validation)
+-- we can settle for a small degree of duplicate info
+-- we can also use cookies to autopopulate workshop sign up fields
+CREATE TABLE workshop_participants (
+    participant_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    --participant_role ENUM
+    -- signed_up DATE
+    workshop_id INT REFERENCES workshops(workshop_id) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
