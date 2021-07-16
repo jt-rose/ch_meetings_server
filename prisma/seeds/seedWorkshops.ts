@@ -117,26 +117,17 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //log_id: 1,
             note: 'workshop request created',
-            log_date: new Date('Nov 15 2020 15:23:00 GMT'),
+            created_at: new Date('Nov 15 2020 15:23:00 GMT'),
           },
           {
             //log_id: 2,
             note: 'workshop assigned',
-            log_date: new Date('Nov 17 2020 17:44:00 GMT'),
+            created_at: new Date('Nov 17 2020 17:44:00 GMT'),
           },
         ],
       },
       in_person: false,
-      participant_sign_up_link: `lM3U7oKg6R-VivCULBHi3
-      xa_WOcacAydjIJ2e7FSF5
-      pl_eDbFcX35vGT-VEu35f
-      FI8CjTZo3itZFfOUlV-BY
-      Vq8Cr1XxAd_bYhox4gQEk
-      eCb_S7MKzsOM3iMURdrYE
-      PN1z8r40lGdWgYrLuQK1X
-      3CSh5Zkf5cY8f4NU7qg0y
-      5Z3h5vlUaPuBAomSt-W9t
-      l34QK9VLWbKfrwxWKIJhs`,
+      participant_sign_up_link: 'lM3U7oKg6R-VivCULBHi3xa_WOcac',
     },
   })
 
@@ -239,26 +230,17 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //log_id: 3,
             note: 'workshop request created',
-            log_date: new Date('Jan 12 2021 15:23:00 GMT'),
+            created_at: new Date('Jan 12 2021 15:23:00 GMT'),
           },
           {
             //log_id: 4,
             note: 'workshop assigned',
-            log_date: new Date('Jan 29 2021 15:23:00 GMT'),
+            created_at: new Date('Jan 29 2021 15:23:00 GMT'),
           },
         ],
       },
       in_person: false,
-      participant_sign_up_link: `vMHR27InW5ajXhfL8LKs4
-      J7JwHDqvDOV-CcBynrUTT
-      XxxZkyrZ3JxvFC1D6Ja2K
-      K5xtJYJQtSgHUu5jYD5OT
-      erzEo55JU2ke6AgWWfzr_
-      O6ljbwJ2aoVfqYGqyj1iY
-      oQW14sb74-snXrTXsF-6n
-      0YNGtu12M9yZDKgGKNTiQ
-      3UbyhPjiGJfz_qssqHnYk
-      _McnBYm0qzxev7MmFx6mu`,
+      participant_sign_up_link: 'vMHR27InW5ajXhfL8LKs4',
     },
   })
 
@@ -334,25 +316,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //log_id: 5,
             note: 'workshop request created',
-            log_date: new Date('Feb 03 2021 13:01:00 GMT'),
+            created_at: new Date('Feb 03 2021 13:01:00 GMT'),
           },
           {
             //log_id: 6,
             note: 'workshop assigned',
-            log_date: new Date('Feb 10 2021 16:56:00 GMT'),
+            created_at: new Date('Feb 10 2021 16:56:00 GMT'),
           },
         ],
       },
-      participant_sign_up_link: `61V6omeJzpKZarKyMiS5B
-      qGHFLzk8B4GLHWQS3A2zu
-      d_7dj6nweiXQT9vJ2swmq
-      ur4krNylBV75SDrxeL22p
-      nQjCW6Q3oC1ZvG2uY8lTE
-      mlkRxB_o-E0BIoO6Ffc70
-      cI1CcWrB-j7YqLXmZdi2U
-      9kqYg_CkctCOMmT36Hv9m
-      io6wIRsRhvjRPO0gvTve6
-      8emBSGGweqognGZ2s0iLL`,
+      participant_sign_up_link: '61V6omeJzpKZarKyMiS5B',
     },
   })
 
@@ -447,30 +420,21 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //log_id: 7,
             note: 'workshop request created',
-            log_date: new Date('Nov 01 2020 14:03:00 GMT'),
+            created_at: new Date('Nov 01 2020 14:03:00 GMT'),
           },
           {
             //log_id: 8,
             note: 'workshop assigned',
-            log_date: new Date('Nov 17 2020 16:16:00 GMT'),
+            created_at: new Date('Nov 17 2020 16:16:00 GMT'),
           },
           {
             //log_id: 9,
             note: 'session 3 timing conflict for client. Placed in Hold while gathering new dates',
-            log_date: new Date('Nov 18 2020 11:34:00 GMT'),
+            created_at: new Date('Nov 18 2020 11:34:00 GMT'),
           },
         ],
       },
-      participant_sign_up_link: `U_AzcEO3rsqk8FKpxPgmV
-      IiE06SXzwvwxWENIZvcdW
-      _owgBOJ_DfnUF5K6O01rB
-      0I0bgp0P14pZLsRz6TUrT
-      apUy5ukDt6swY0ttthTFa
-      FYxQCHLKLh-WJgRaDfY7Z
-      9ALSeW8K1m6obbDGxJ4oS
-      drIKjOBVBSispntfqIVA5
-      zZe-GGYz7DF37LQpJ4Lj7
-      W7SlWLuaB7ZbEhvFaf2fx`,
+      participant_sign_up_link: 'U_AzcEO3rsqk8FKpxPgmV',
     },
   })
 
@@ -546,25 +510,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //log_id: 10,
             note: 'workshop request created',
-            log_date: new Date('Dec 20 2020 12:24:00 GMT'),
+            created_at: new Date('Dec 20 2020 12:24:00 GMT'),
           },
           {
             //log_id: 11,
             note: 'workshop location changed',
-            log_date: new Date('Dec 22 2020 18:24:00 GMT'),
+            created_at: new Date('Dec 22 2020 18:24:00 GMT'),
           },
         ],
       },
-      participant_sign_up_link: `B9DXtbEoul5GFwibcADWy
-      wM_Ef8S4UPt58xRkFsYEN
-      ApuGlt6CwaV6HDsB9OrW6
-      hhcpe1DaYugLDw_LA4yCL
-      ivz0CcO-Xc6o6bNB6wrN_
-      2BakRz8fhmtTtG8bduwUD
-      UnKCtM6FOJ1kZOcEdIWYz
-      X8ejyD4ALbEnu3CsvlSUs
-      xCyEBNHQme6HA7Hip4L3P
-      NIki1NrhD-6Qpd3Cjq2ki`,
+      participant_sign_up_link: 'B9DXtbEoul5GFwibcADWy',
     },
   })
 
@@ -628,7 +583,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //workshop_session_id: 30,
             session_name: 'Part 2: Tailor',
-            date_and_time: null,
+            date_and_time: new Date('Nov 17 2021 12:00:00 GMT'),
             duration_in_hours: 2,
             zoom_link: 'www.zoom.com/user/abcdef1234',
             session_status: 'REQUESTED',
@@ -637,7 +592,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //workshop_session_id: 31,
             session_name: 'Part 3: Take Control',
-            date_and_time: null,
+            date_and_time: new Date('Nov 20 2021 12:00:00 GMT'),
             duration_in_hours: 2,
             zoom_link: 'www.zoom.com/user/abcdef1234',
             session_status: 'REQUESTED',
@@ -682,25 +637,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //log_id: 12,
             note: 'workshop request created',
-            log_date: new Date('Mar 03 2021 13:39:00 GMT'),
+            created_at: new Date('Mar 03 2021 13:39:00 GMT'),
           },
           {
             //log_id: 13,
             note: 'session 1 and 4 confirmed, waiting for confirmation on 2 and 3',
-            log_date: new Date('Mar 28 2021 20:47:00 GMT'),
+            created_at: new Date('Mar 28 2021 20:47:00 GMT'),
           },
         ],
       },
-      participant_sign_up_link: `2qHk6rV91iKvX2fCE3l7y
-      DgMATBkRBEOPwB8ZKCs-d
-      jYfDq72HEdfXCDnQJgqrG
-      GnPIUHjSNPF16_aHeEG-s
-      ssh15JeX0JQcjWIlO_53o
-      c2wcF7Jivv8BEfV_aO1nY
-      6uZkkzG-gpt00RsqmFEp3
-      1b7O0HSmxvp02OS2WMdgv
-      P9vsD6vjYOxTvQXufnmuZ
-      8A_P-wkcZ3weSehMUwtqJ`,
+      participant_sign_up_link: '2qHk6rV91iKvX2fCE3l',
     },
   })
 
@@ -739,25 +685,16 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           {
             //log_id: 14,
             note: 'workshop request created',
-            log_date: new Date('Mar 03 2021 13:39:00 GMT'),
+            created_at: new Date('Mar 03 2021 13:39:00 GMT'),
           },
           {
             //log_id: 15,
             note: 'workshop deleted',
-            log_date: new Date('Mar 28 2021 20:47:00 GMT'),
+            created_at: new Date('Mar 28 2021 20:47:00 GMT'),
           },
         ],
       },
-      participant_sign_up_link: `6r8ev80i3ruPolZEBQUq8
-      -p_N8Pz3yXsZZ8w_2dXLD
-      2vTOYnEg8ItRye_xkpOv0
-      es-6LCr1buAvvgEoj6lMX
-      WUsqW7_u-IPmtbOedGZUH
-      03GkQmnkPI66W45jTYbr0
-      eoSPn2rjS9Bhh8oH_VPa4
-      mO12Cje7X5ybev6_ptkZe
-      2Jx2SJuLRszWeuW6kMVRX
-      5iEEkueqk0avhj_TURCOA`,
+      participant_sign_up_link: '6r8ev80i3ruPolZEBQUq8',
     },
   })
 

@@ -27,6 +27,8 @@ type AdvisorLanguage {
 type AdvisorNote {
   advisor_id: Int!
   advisor_note: String!
+  created_at: DateTime!
+  created_by: Int!
   date_of_note: DateTime!
   note_id: Int!
 }
@@ -45,7 +47,7 @@ type AdvisorUnavailableDay {
 }
 
 type ChangeLog {
-  log_date: DateTime!
+  created_at: DateTime!
   log_id: Int!
   note: String!
   workshop_id: Int!
@@ -57,13 +59,16 @@ type Client {
   client_id: Int!
   client_name: String!
   client_notes: [ClientNote!]!
+  created_at: DateTime!
+  created_by: Int!
   licenses: [License!]!
   workshops: [Workshop!]!
 }
 
 type ClientNote {
   client_id: Int!
-  date_of_note: DateTime!
+  created_at: DateTime!
+  created_by: Int!
   note: String!
   note_id: Int!
 }
@@ -75,6 +80,7 @@ type Course {
   course_name: String!
   coursework: [Coursework!]!
   created_at: DateTime!
+  created_by: Int!
   updated_at: DateTime!
   virtual_course: Boolean!
 }
@@ -98,6 +104,7 @@ type Coursework {
   coursework_description: String
   coursework_id: Int!
   coursework_name: String!
+  created_by: Int!
 }
 
 input CourseworkInput {
@@ -125,7 +132,8 @@ type License {
 type LicenseChange {
   amount_change: Int!
   change_note: String!
-  date_of_change: DateTime!
+  created_at: DateTime!
+  created_by: Int!
   license_change_id: Int!
   license_id: Int!
   manager_id: Int!
@@ -223,9 +231,11 @@ type Query {
   getAllCourses: [Course!]!
   getAllCoursework: [Coursework!]!
   getAllManagers: [Manager!]!
+  getAllWorkshopa: [Workshop!]!
   getClient(client_id: Int!): Client
   getCourse(course_id: Int!): Course
   getSession(sessionID: Float!): [WorkshopSession!]!
+  getWorkshop(workshop_id: Int!): Workshop!
 }
 
 """international business regions"""
@@ -237,27 +247,16 @@ enum REGION {
   NAM
 }
 
-type RequestedStartTime {
-  earliest_start_time: DateTime!
-  latest_start_time: DateTime!
-  request_id: Int!
-  workshop_session_id: Int!
-}
-
 """status of workshops and individual session requests"""
 enum SESSION_STATUS {
+  CANCELLED
   COMPLETED
+  HOLDING
   HOLD_A
   HOLD_B
   REQUESTED
   SCHEDULED
-}
-
-type SessionNote {
-  date_of_note: DateTime!
-  note: String!
-  note_id: Int!
-  workshop_session_id: Int!
+  VETTING
 }
 
 """distinguish between ordinary users and those with admin access"""
@@ -280,10 +279,13 @@ input UnavailableDayInfoWithID {
 }
 
 type Workshop {
+  assignedAdvisor: [Advisor!]!
   assigned_advisor: Advisor
   assigned_advisor_id: Int!
+  backupRequestedAdvisor: [Advisor!]!
   backup_requested_advisor: Advisor
   backup_requested_advisor_id: Int!
+  changeLog: [ChangeLog!]!
   change_log: [ChangeLog!]!
   class_size: Int
   client: Client!
@@ -292,34 +294,45 @@ type Workshop {
   course: Course!
   course_id: Int!
   coursework: [Coursework!]!
+  created_at: DateTime!
+  created_by: Int!
   deleted: Boolean!
+  in_person: Boolean!
+  launch_participant_sign_ups: Boolean!
   managers: [Manager!]!
+  notes: [WorkshopNote!]!
   open_air_id: String!
+  participant_sign_up_link: String!
   record_attendance: Boolean!
+  requestedAdvisor: [Advisor!]!
   requested_advisor: Advisor!
   requested_advisor_id: Int!
   sessions: [WorkshopSession!]!
   time_zone: String!
+  workshop_end_date: DateTime!
   workshop_id: Int!
   workshop_language: String!
   workshop_location: String!
   workshop_notes: [WorkshopNote!]!
   workshop_region: REGION!
+  workshop_start_date: DateTime!
+  workshop_status: SESSION_STATUS!
 }
 
 type WorkshopNote {
-  date_of_note: DateTime!
+  created_at: DateTime!
+  created_by: Int!
   note: String!
   note_id: Int!
   workshop_id: Int!
 }
 
 type WorkshopSession {
-  date_and_time: DateTime
+  created_at: DateTime!
+  created_by: Int!
+  date_and_time: DateTime!
   duration_in_hours: Float!
-  requested_start_times: [RequestedStartTime!]!
   session_name: String!
-  session_notes: [SessionNote!]!
   session_status: SESSION_STATUS!
   workshop_id: Float!
   workshop_session_id: Int!

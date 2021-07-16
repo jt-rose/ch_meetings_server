@@ -6,15 +6,12 @@ export async function clear() {
   await prisma.license_changes.deleteMany()
   await prisma.licenses.deleteMany()
 
-  // remove managers and related data
+  // remove managers related data
   await prisma.manager_clients.deleteMany()
   await prisma.manager_assignments.deleteMany()
-  await prisma.managers.deleteMany()
 
   //remove workshops and related data
   await prisma.change_log.deleteMany()
-  await prisma.session_notes.deleteMany()
-  await prisma.requested_start_times.deleteMany()
   await prisma.workshop_sessions.deleteMany()
   await prisma.workshop_notes.deleteMany()
   await prisma.workshop_coursework.deleteMany()
@@ -34,6 +31,9 @@ export async function clear() {
   await prisma.courses.deleteMany()
   await prisma.client_notes.deleteMany()
   await prisma.clients.deleteMany()
+
+  // remove managers
+  await prisma.managers.deleteMany()
 
   // reset auto-increment for testing
   await resetAutoInc()
