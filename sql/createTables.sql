@@ -105,13 +105,13 @@ CREATE TABLE courses_and_coursework (
 -- the scheduling status of the work shop (see note below)
 CREATE TABLE workshops (
     workshop_id SERIAL PRIMARY KEY,
-    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    created_by INT REFERENCES managers (manager_id) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     -- start and end dates will be manually updated
     -- as workshop sessions are added, updated, deleted
     -- this will allow for much simpler sorting by date
-    workshop_start_date TIMESTAMPTZ,
-    workshop_end_date TIMESTAMPTZ,
+    workshop_start_date TIMESTAMPTZ NOT NULL,
+    workshop_end_date TIMESTAMPTZ NOT NULL,
     workshop_status SESSION_STATUS_ENUM NOT NULL,
     course_id INT REFERENCES courses (course_id) NOT NULL,
     cohort_name VARCHAR(255) NOT NULL,
