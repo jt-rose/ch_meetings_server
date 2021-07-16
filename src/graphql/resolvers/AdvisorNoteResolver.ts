@@ -16,7 +16,11 @@ export class AdvisorNoteResolver {
     @Arg('advisor_note') advisor_note: string
   ) {
     return ctx.prisma.advisor_notes.create({
-      data: { advisor_id, advisor_note },
+      data: {
+        advisor_id,
+        advisor_note,
+        created_by: ctx.req.session.manager_id!,
+      },
     })
   }
 

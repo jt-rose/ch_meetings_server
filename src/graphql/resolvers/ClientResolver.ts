@@ -90,7 +90,13 @@ export class ClientResolver {
     if (alreadyRegistered) {
       throw Error('This client has already been registered in the system')
     }
-    return ctx.prisma.clients.create({ data: { client_name, business_unit } })
+    return ctx.prisma.clients.create({
+      data: {
+        client_name,
+        business_unit,
+        created_by: ctx.req.session.manager_id!,
+      },
+    })
   }
 
   // removing client should only be done when no work has been completed

@@ -55,7 +55,9 @@ export class CourseResolver {
         `Error: Course name "${courseData.course_name}" is already in use`
       )
     }
-    return ctx.prisma.courses.create({ data: courseData })
+    return ctx.prisma.courses.create({
+      data: { ...courseData, created_by: ctx.req.session.manager_id! },
+    })
   }
 
   // editCourse

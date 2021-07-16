@@ -63,6 +63,7 @@ export class CourseworkResolver {
         coursework_name: name,
         coursework_description: description,
         active: true,
+        created_by: ctx.req.session.manager_id!,
       },
     })
   }
