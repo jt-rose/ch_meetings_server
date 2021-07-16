@@ -13,6 +13,9 @@ describe('Workshop Session Sets Resolvers', function () {
   /* -------------------------------- run tests ------------------------------- */
 
   it('add workshop session set')
+  it(
+    'update start and end date on workshop when adding, updating or deleting session'
+  )
   it('retreive workshop session set via field resolver')
   it('edit workshop session set')
   it('remove workshop session set')

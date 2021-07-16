@@ -161,6 +161,9 @@ describe('Manager Resolvers', function () {
               {
                 workshop_id: 6,
               },
+              {
+                workshop_id: 7,
+              },
             ],
             clients: [
               {
@@ -375,7 +378,7 @@ describe('Manager Resolvers', function () {
       `,
       expectedResult: {
         addManagerToWorkshop: {
-          assignment_id: 13,
+          assignment_id: 14,
           manager_id: 3,
           workshop_id: 6,
           active: true,

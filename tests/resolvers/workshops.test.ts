@@ -18,3 +18,4 @@
 // retrieve workshop notes via field resolver
 // edit workshop note
 // remove workshop note
+// test status update tied to session update
