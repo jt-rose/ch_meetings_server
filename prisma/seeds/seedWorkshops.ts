@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-
 // prisma seeding for workshops
 // with relational fields for workshop_sessions,
 // workshop_notes, and change_logs
@@ -354,7 +353,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_language: 'English',
       record_attendance: false,
       in_person: false,
-      workshop_status: 'HOLD_A',
+      workshop_status: 'VETTING',
       workshop_start_date: new Date('Oct 19 2021 14:00:00 GMT'),
       workshop_end_date: new Date('Oct 30 2021 14:00:00 GMT'),
       workshop_sessions: {
@@ -392,7 +391,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
             date_and_time: new Date('Oct 24 2021 14:00:00 GMT'),
             duration_in_hours: 1.5,
             zoom_link: 'www.zoom.com/user/abcdef1234',
-            session_status: 'HOLD_A',
+            session_status: 'VETTING',
             created_by: 1,
           },
           {
@@ -429,7 +428,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
           {
             //log_id: 9,
-            note: 'session 3 timing conflict for client. Placed in Hold while gathering new dates',
+            note: 'session 3 timing conflict for client. Reset to vetting while gathering new dates',
             created_at: new Date('Nov 18 2020 11:34:00 GMT'),
           },
         ],

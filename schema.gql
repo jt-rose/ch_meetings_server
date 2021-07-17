@@ -231,7 +231,7 @@ type Query {
   getAllCourses: [Course!]!
   getAllCoursework: [Coursework!]!
   getAllManagers: [Manager!]!
-  getAllWorkshopa: [Workshop!]!
+  getAllWorkshops(orderBy: [WorkshopsOrderBy!]!, skip: Float, take: Float): [Workshop!]!
   getClient(client_id: Int!): Client
   getCourse(course_id: Int!): Course
   getSession(sessionID: Float!): [WorkshopSession!]!
@@ -252,8 +252,6 @@ enum SESSION_STATUS {
   CANCELLED
   COMPLETED
   HOLDING
-  HOLD_A
-  HOLD_B
   REQUESTED
   SCHEDULED
   VETTING
@@ -337,4 +335,9 @@ type WorkshopSession {
   workshop_id: Float!
   workshop_session_id: Int!
   zoom_link: String
+}
+
+input WorkshopsOrderBy {
+  column: String!
+  direction: String!
 }

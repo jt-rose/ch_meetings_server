@@ -7,8 +7,6 @@ export enum SESSION_STATUS {
   HOLDING = 'HOLDING',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
-  HOLD_A = 'HOLD A',
-  HOLD_B = 'HOLD B',
 }
 
 registerEnumType(SESSION_STATUS, {
