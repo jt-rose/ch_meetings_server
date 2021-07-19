@@ -227,8 +227,13 @@ CREATE TABLE license_changes (
 );
 CREATE TABLE workshop_groups (
     group_id SERIAL PRIMARY KEY,
-    created_by INT REFERENCES managers(manager_id) NOT NULL,
-    workshop_id INT REFERENCES workshops(workshop_id) NOT NULL
+    group_name VARCHAR(255) NOT NULL,
+    created_by INT REFERENCES managers(manager_id) NOT NULL
+);
+CREATE TABLE workshops_to_workshop_groups (
+    group_member_id SERIAL PRIMARY KEY,
+    group_id INT REFERENCES workshop_groups (group_id) NOT NULL,
+    workshop_id INT REFERENCES workshops (workshop_id) NOT NULL
 );
 CREATE TABLE workshop_group_notes (
     note_id SERIAL PRIMARY KEY,

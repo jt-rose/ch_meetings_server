@@ -139,43 +139,43 @@ model workshop_sessions {
 }
 
 model workshops {
-  workshop_id                                              Int                     @id @default(autoincrement())
+  workshop_id                                              Int                            @id @default(autoincrement())
   created_by                                               Int
-  created_at                                               DateTime                @default(now()) @db.Timestamptz(6)
-  workshop_start_date                                      DateTime                @db.Timestamptz(6)
-  workshop_end_date                                        DateTime                @db.Timestamptz(6)
+  created_at                                               DateTime                       @default(now()) @db.Timestamptz(6)
+  workshop_start_date                                      DateTime                       @db.Timestamptz(6)
+  workshop_end_date                                        DateTime                       @db.Timestamptz(6)
   workshop_status                                          session_status_enum
   course_id                                                Int
-  cohort_name                                              String                  @db.VarChar(255)
+  cohort_name                                              String                         @db.VarChar(255)
   requested_advisor_id                                     Int
   backup_requested_advisor_id                              Int?
   assigned_advisor_id                                      Int?
-  workshop_location                                        String                  @db.VarChar(255)
+  workshop_location                                        String                         @db.VarChar(255)
   workshop_region                                          region_enum
   class_size                                               Int?
   client_id                                                Int
-  open_air_id                                              String                  @db.VarChar(255)
-  time_zone                                                String                  @db.VarChar(10)
-  workshop_language                                        String                  @db.VarChar(255)
+  open_air_id                                              String                         @db.VarChar(255)
+  time_zone                                                String                         @db.VarChar(10)
+  workshop_language                                        String                         @db.VarChar(255)
   record_attendance                                        Boolean
   in_person                                                Boolean
-  deleted                                                  Boolean                 @default(false)
-  participant_sign_up_link                                 String                  @db.VarChar(255)
-  launch_participant_sign_ups                              Boolean                 @default(false)
-  advisors_advisorsToworkshops_assigned_advisor_id         advisors?               @relation("advisorsToworkshops_assigned_advisor_id", fields: [assigned_advisor_id], references: [advisor_id])
-  advisors_advisorsToworkshops_backup_requested_advisor_id advisors?               @relation("advisorsToworkshops_backup_requested_advisor_id", fields: [backup_requested_advisor_id], references: [advisor_id])
-  clients                                                  clients                 @relation(fields: [client_id], references: [client_id])
-  courses                                                  courses                 @relation(fields: [course_id], references: [course_id])
-  managers                                                 managers                @relation(fields: [created_by], references: [manager_id])
-  advisors_advisorsToworkshops_requested_advisor_id        advisors                @relation("advisorsToworkshops_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
+  deleted                                                  Boolean                        @default(false)
+  participant_sign_up_link                                 String                         @db.VarChar(255)
+  launch_participant_sign_ups                              Boolean                        @default(false)
+  advisors_advisorsToworkshops_assigned_advisor_id         advisors?                      @relation("advisorsToworkshops_assigned_advisor_id", fields: [assigned_advisor_id], references: [advisor_id])
+  advisors_advisorsToworkshops_backup_requested_advisor_id advisors?                      @relation("advisorsToworkshops_backup_requested_advisor_id", fields: [backup_requested_advisor_id], references: [advisor_id])
+  clients                                                  clients                        @relation(fields: [client_id], references: [client_id])
+  courses                                                  courses                        @relation(fields: [course_id], references: [course_id])
+  managers                                                 managers                       @relation(fields: [created_by], references: [manager_id])
+  advisors_advisorsToworkshops_requested_advisor_id        advisors                       @relation("advisorsToworkshops_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
   change_log                                               change_log[]
   license_changes                                          license_changes[]
   manager_assignments                                      manager_assignments[]
   workshop_coursework                                      workshop_coursework[]
-  workshop_groups                                          workshop_groups[]
   workshop_notes                                           workshop_notes[]
   workshop_participants                                    workshop_participants[]
   workshop_sessions                                        workshop_sessions[]
+  workshops_to_workshop_groups                             workshops_to_workshop_groups[]
 }
 
 model advisor_notes {
@@ -277,12 +277,12 @@ model workshop_group_notes {
 }
 
 model workshop_groups {
-  group_id             Int                    @id @default(autoincrement())
-  created_by           Int
-  workshop_id          Int
-  managers             managers               @relation(fields: [created_by], references: [manager_id])
-  workshops            workshops              @relation(fields: [workshop_id], references: [workshop_id])
-  workshop_group_notes workshop_group_notes[]
+  group_id                     Int                            @id @default(autoincrement())
+  group_name                   String                         @db.VarChar(255)
+  created_by                   Int
+  managers                     managers                       @relation(fields: [created_by], references: [manager_id])
+  workshop_group_notes         workshop_group_notes[]
+  workshops_to_workshop_groups workshops_to_workshop_groups[]
 }
 
 model workshop_participants {
@@ -295,6 +295,14 @@ model workshop_participants {
   workshops      workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
 
+model workshops_to_workshop_groups {
+  group_member_id Int             @id @default(autoincrement())
+  group_id        Int
+  workshop_id     Int
+  workshop_groups workshop_groups @relation(fields: [group_id], references: [group_id])
+  workshops       workshops       @relation(fields: [workshop_id], references: [workshop_id])
+}
+
 enum session_status_enum {
   REQUESTED
   VETTING
@@ -302,8 +310,6 @@ enum session_status_enum {
   SCHEDULED
   COMPLETED
   CANCELLED
-  HOLD_A @map("HOLD A")
-  HOLD_B @map("HOLD B")
 }
 
 enum region_enum {
