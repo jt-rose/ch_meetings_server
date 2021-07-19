@@ -7,6 +7,7 @@ import { seedManagers } from './seeds/seedManagers'
 import { seedManagerAssignments } from './seeds/seedManagerAssignments'
 import { seedManagerClients } from './seeds/seedManagerClients'
 import { seedLicenses } from './seeds/seedLicenses'
+import { seedWorkshopGroups } from './seeds/seedWorkshopGroups'
 
 // run all prisma seeding
 // some tables are set up with PK / FK constraints
@@ -17,6 +18,7 @@ export async function seed() {
   await seedClients(prisma)
   await seedManagerClients(prisma)
   await seedAdvisors(prisma)
+  await seedWorkshopGroups(prisma)
   await seedWorkshops(prisma)
   await seedManagerAssignments(prisma)
   await seedLicenses(prisma)
