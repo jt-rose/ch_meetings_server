@@ -4,9 +4,24 @@ import { PrismaClient } from '@prisma/client'
 // workshop_notes, and change_logs
 
 export const seedWorkshops = async (prisma: PrismaClient) => {
+  await prisma.workshop_groups.create({
+    data: {
+      created_by: 2,
+
+      group_name: 'Acme Cohorts 2020-2021',
+      workshop_group_notes: {
+        create: {
+          created_by: 2,
+          note: 'Group of Cohorts using V2 training materials',
+        },
+      },
+    },
+  })
+
   const workshop1 = await prisma.workshops.create({
     data: {
       //workshop_id: 1,
+      group_id: 1,
       course_id: 1,
       created_by: 1,
       cohort_name: 'NAM Cohort 1',
@@ -22,7 +37,6 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      workshops_to_workshop_groups: { create: { group_id: 1 } },
       requested_advisor_id: 1,
       backup_requested_advisor_id: 2,
       assigned_advisor_id: 1,
@@ -134,6 +148,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
   const workshop2 = await prisma.workshops.create({
     data: {
       //workshop_id: 2,
+      group_id: 1,
       course_id: 1,
       created_by: 1,
       cohort_name: 'EMEA Cohort 1',
@@ -149,7 +164,6 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      workshops_to_workshop_groups: { create: { group_id: 1 } },
       requested_advisor_id: 2,
       assigned_advisor_id: 2,
       workshop_location: 'Zoom',
@@ -248,6 +262,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
   const workshop3 = await prisma.workshops.create({
     data: {
       //workshop_id: 3,
+      group_id: 1,
       course_id: 1,
       created_by: 1,
       cohort_name: 'APAC Cohort 6',
@@ -259,7 +274,6 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      workshops_to_workshop_groups: { create: { group_id: 1 } },
       requested_advisor_id: 3,
       assigned_advisor_id: 3,
       workshop_location: 'Teams',

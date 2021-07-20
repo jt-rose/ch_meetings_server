@@ -16,6 +16,9 @@ export class Workshop {
   workshop_id: number
 
   @Field(() => Int)
+  group_id: number
+
+  @Field(() => Int)
   created_by: number
 
   @Field(() => Date)
