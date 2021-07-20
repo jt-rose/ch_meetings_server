@@ -231,7 +231,7 @@ type Query {
   getAllCourses: [Course!]!
   getAllCoursework: [Coursework!]!
   getAllManagers: [Manager!]!
-  getAllWorkshops(orderBy: [WorkshopsOrderBy!]!, skip: Float, take: Float): [Workshop!]!
+  getAllWorkshops(filters: WorkshopFilterOptions, orderBy: [WorkshopsOrderBy!], skip: Float, take: Float): [Workshop!]!
   getClient(client_id: Int!): Client
   getCourse(course_id: Int!): Course
   getSession(sessionID: Float!): [WorkshopSession!]!
@@ -295,6 +295,7 @@ type Workshop {
   created_at: DateTime!
   created_by: Int!
   deleted: Boolean!
+  group_id: Int!
   in_person: Boolean!
   launch_participant_sign_ups: Boolean!
   managers: [Manager!]!
@@ -315,6 +316,21 @@ type Workshop {
   workshop_region: REGION!
   workshop_start_date: DateTime!
   workshop_status: SESSION_STATUS!
+}
+
+input WorkshopFilterOptions {
+  assigned_advisor_id: Float
+  client_id: Float
+  cohort_name: String
+  deleted: Boolean
+  group_id: Float
+  in_person: Boolean
+  open_air_id: String
+  workshop_end_date: DateTime
+  workshop_groups: Float
+  workshop_id: Float
+  workshop_start_date: DateTime
+  workshop_status: [SESSION_STATUS!]
 }
 
 type WorkshopNote {

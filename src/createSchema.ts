@@ -15,8 +15,9 @@ import { CourseworkResolver } from './graphql/resolvers/CourseworkResolver'
 import { ManagerResolver } from './graphql/resolvers/ManagerResolver'
 import { ManagerAssignmentsResolver } from './graphql/resolvers/ManagerAssignmentResolver'
 import { LicenseResolver } from './graphql/resolvers/LicenseResolver'
+import { WorkshopResolver } from './graphql/resolvers/WorkshopResolver'
 
-// generates the graphQL schema
+/* ---------------------- generates the graphQL schema ---------------------- */
 // authChecker is applied as an arg, allowing for DI if needed
 // if a mock schema is set up, make sure to set 'emitSDL' to false
 // to avoid overwriting the real schema SDL
@@ -24,6 +25,7 @@ const generateSchemaType =
   (customAuthChecker: typeof authChecker, emitSDL: boolean) => () =>
     buildSchema({
       resolvers: [
+        WorkshopResolver,
         WorkshopSessionResolver,
         ClientResolver,
         CourseResolver,
