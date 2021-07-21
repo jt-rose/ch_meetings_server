@@ -9,9 +9,6 @@ export class CreateWorkshopInput {
   @Field(() => Int, { nullable: true })
   group_id?: number
 
-  //created_by
-  //created_at
-
   @Field()
   course_id: number
 

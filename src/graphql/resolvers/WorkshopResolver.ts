@@ -6,7 +6,7 @@ import {
   Int,
   Ctx,
   Root,
-  //Mutation,
+  Mutation,
   //InputType,
 } from 'type-graphql'
 import { Workshop } from '../objects/Workshop'
@@ -21,17 +21,16 @@ import { Client } from '../objects/Client'
 import { Advisor } from '../objects/Advisor'
 import { Authenticated } from '../../middleware/authChecker'
 
-//
-
 import {
   WorkshopsOrderBy,
   parseWorkshopOrderByArgs,
   WorkshopFilterOptions,
   parseWorkshopWhereArgs,
 } from '../searchOptions/WorkshopSearch'
-
-// input object for filtering, sorting, and pagination of workshops
-// volume is low, so offset pagination will be used
+import {
+  CreateWorkshopInput,
+  formatCreateWorkshopInput,
+} from '../searchOptions/workshopInput'
 
 @Resolver(Workshop)
 export class WorkshopResolver {
@@ -123,7 +122,6 @@ export class WorkshopResolver {
   /* ------------------------------ workshop CRUD ----------------------------- */
 
   // get workshop (field resolvers on sessions + dataloader)
-  // query parameters?
   @Authenticated()
   @Query(() => Workshop)
   getWorkshop(
@@ -133,8 +131,8 @@ export class WorkshopResolver {
     return ctx.prisma.workshops.findFirst({ where: { workshop_id } })
   }
 
-  // getAllWorkshops { deleted: false}
-  // add filters
+  // getAllWorkshops
+  // uses input object for filtering, sorting, and pagination
   @Authenticated()
   @Query(() => [Workshop])
   getAllWorkshops(
@@ -159,17 +157,36 @@ export class WorkshopResolver {
   }
   // getWorkshopWithFields
   // getAllWorkshopsWithFields
-  // getDeletedWorkshops { deleted: true}
-  // create workshop (generate sessions at same time) // no need for dataloader - these should always be one offs
 
-  //@Authenticated()
-  //@Mutation()
-  //addWorkshop() {}
+  // create workshop (generate sessions at same time)
+  @Authenticated()
+  @Mutation()
+  addWorkshop(
+    @Ctx() ctx: Context,
+    @Arg('workshopDetails', () => CreateWorkshopInput)
+    workshopDetails: CreateWorkshopInput
+  ) {
+    // create session object for nested session create
+    const formattedWorkshopInput = formatCreateWorkshopInput(workshopDetails)
+    // add validation
+    // confirm unique cohort name
+    // confirm no time conflicts for requested advisor
+    // confirm reasonable time based on region (note: set up as warning on frontend)
+    return ctx.prisma.workshops.create({
+      data: {
+        ...formattedWorkshopInput,
+        created_by: ctx.req.session.manager_id!,
+        //workshop_sessions: {},
+        //workshop_notes: {},
+        //managers: {},
+        // log
+        // license
+      },
+    })
+  }
+
   // update workshop // distinct from updating sessions, just for workshop meta data, again one off, but need to update change log
   // delete workshop (move to trash, can still be restored)
   // restore workshops
   // permadelete workshop (cascade delete sessions, workshop notes, change_log)
-  // should above be stored in a deleted_workshops jsonb? or just set status to deleted
 }
-
-// many tables I don't need to directly deal with and will update in tandem with workshops
