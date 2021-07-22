@@ -169,14 +169,29 @@ export class WorkshopResolver {
     @Arg('workshopDetails', () => CreateWorkshopInput)
     workshopDetails: CreateWorkshopInput,
     @Arg('sessionDetails', () => [CreateSessionInput])
-    sessionDetails: CreateSessionInput[]
+    sessionDetails: CreateSessionInput[],
+    @Arg('managers', () => [Int]) managers: number[],
+    @Arg('notes', { nullable: true }) notes: string[]
   ) {
+    // format sessions objects
     const sessions = sessionDetails.map((session) => ({
       ...session,
       session_status: SESSION_STATUS.REQUESTED,
       created_by: ctx.req.session.manager_id!,
     }))
-    // create session object for nested session create
+
+    // format workshop notes
+    const workshop_notes = notes.map((note) => ({
+      note,
+      created_by: ctx.req.session.manager_id!,
+      created_at: new Date(),
+    }))
+
+    // format managers of workshop
+    const managerAssignments = managers.map((manager_id) => ({
+      manager_id,
+      active: true,
+    }))
 
     // add validation
     // confirm unique cohort name
@@ -193,9 +208,9 @@ export class WorkshopResolver {
         // password for sign_up_link?
         launch_participant_sign_ups: false,
         workshop_sessions: { createMany: { data: sessions } },
-        //workshop_notes: {},
-        //managers: {},
-        // log
+        manager_assignments: { createMany: { data: managerAssignments } },
+        workshop_notes: { createMany: { data: workshop_notes } },
+        change_log: { create: { note: 'workshop created' } },
         // license
       },
     })
