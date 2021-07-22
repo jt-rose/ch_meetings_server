@@ -29,8 +29,11 @@ import {
 } from '../searchOptions/WorkshopSearch'
 import {
   CreateWorkshopInput,
-  formatCreateWorkshopInput,
+  //formatCreateWorkshopInput,
 } from '../searchOptions/workshopInput'
+import { CreateSessionInput } from '../searchOptions/SessionInput'
+import { SESSION_STATUS } from '../enums/SESSION_STATUS'
+import { nanoid } from 'nanoid'
 
 @Resolver(Workshop)
 export class WorkshopResolver {
@@ -160,23 +163,36 @@ export class WorkshopResolver {
 
   // create workshop (generate sessions at same time)
   @Authenticated()
-  @Mutation()
+  @Mutation(() => Workshop)
   addWorkshop(
     @Ctx() ctx: Context,
     @Arg('workshopDetails', () => CreateWorkshopInput)
-    workshopDetails: CreateWorkshopInput
+    workshopDetails: CreateWorkshopInput,
+    @Arg('sessionDetails', () => [CreateSessionInput])
+    sessionDetails: CreateSessionInput[]
   ) {
+    const sessions = sessionDetails.map((session) => ({
+      ...session,
+      session_status: SESSION_STATUS.REQUESTED,
+      created_by: ctx.req.session.manager_id!,
+    }))
     // create session object for nested session create
-    const formattedWorkshopInput = formatCreateWorkshopInput(workshopDetails)
+
     // add validation
     // confirm unique cohort name
     // confirm no time conflicts for requested advisor
     // confirm reasonable time based on region (note: set up as warning on frontend)
+
     return ctx.prisma.workshops.create({
       data: {
-        ...formattedWorkshopInput,
+        ...workshopDetails,
         created_by: ctx.req.session.manager_id!,
-        //workshop_sessions: {},
+        workshop_status: SESSION_STATUS.REQUESTED,
+        deleted: false,
+        participant_sign_up_link: nanoid(),
+        // password for sign_up_link?
+        launch_participant_sign_ups: false,
+        workshop_sessions: { createMany: { data: sessions } },
         //workshop_notes: {},
         //managers: {},
         // log

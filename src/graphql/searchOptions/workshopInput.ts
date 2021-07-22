@@ -1,7 +1,5 @@
 import { InputType, Field, Int } from 'type-graphql'
-import { nanoid } from 'nanoid'
 import { REGION } from '../enums/REGION'
-import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 
 // user submitted fields when creating a new workshop
 @InputType()
@@ -9,20 +7,17 @@ export class CreateWorkshopInput {
   @Field(() => Int, { nullable: true })
   group_id?: number
 
-  @Field()
+  @Field(() => Int)
   course_id: number
 
   @Field()
   cohort_name: string // add unique validation
 
-  @Field()
+  @Field(() => Int)
   requested_advisor_id: number
 
-  @Field()
-  backup_requested_advisor_id: number
-
-  @Field()
-  assigned_advisor_id: number
+  @Field(() => Int, { nullable: true })
+  backup_requested_advisor_id?: number
 
   @Field()
   workshop_location: string
@@ -62,24 +57,11 @@ export class CreateWorkshopInput {
   //managers: {},
 }
 
-// take user submitted fields and add server-generated fields
-export const formatCreateWorkshopInput = (
-  createWorkshopInput: CreateWorkshopInput
-) => {
-  return {
-    // apply user submitted fields
-    ...createWorkshopInput,
-    // set up server generated defaults
-    workshop_status: SESSION_STATUS.REQUESTED,
-    deleted: false,
-    participant_sign_up_link: nanoid(),
-    // password for sign_up_link?
-    launch_participant_sign_ups: false,
-  }
-}
-
 @InputType()
-export class EditWorkshopInput {}
+export class EditWorkshopInput {
+  @Field(() => Int, { nullable: true })
+  assigned_advisor_id: number
+}
 
 /* -------------------------- validation functions -------------------------- */
 
