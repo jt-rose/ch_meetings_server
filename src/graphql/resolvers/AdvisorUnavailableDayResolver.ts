@@ -44,7 +44,7 @@ const rejectIfAdvisorAlreadyScheduled = async (
     SELECT COUNT(*) FROM workshop_sessions
     LEFT JOIN workshops
     ON workshop_sessions.workshop_id = workshops.workshop_id
-    WHERE DATE(workshop_sessions.date_and_time) = ${day_unavailable}
+    WHERE DATE(workshop_sessions.start_time) = ${day_unavailable}
     AND workshops.assigned_advisor_id = ${advisor_id}
     `
 
