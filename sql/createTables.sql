@@ -121,8 +121,8 @@ CREATE TABLE workshops (
     -- start and end dates will be manually updated
     -- as workshop sessions are added, updated, deleted
     -- this will allow for much simpler sorting by date
-    workshop_start_date TIMESTAMPTZ NOT NULL,
-    workshop_end_date TIMESTAMPTZ NOT NULL,
+    workshop_start_time TIMESTAMPTZ NOT NULL,
+    workshop_end_time TIMESTAMPTZ NOT NULL,
     workshop_status SESSION_STATUS_ENUM NOT NULL,
     course_id INT REFERENCES courses (course_id) NOT NULL,
     cohort_name VARCHAR(255) NOT NULL,
@@ -168,15 +168,10 @@ CREATE TABLE workshop_sessions (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
     session_name VARCHAR(255) NOT NULL,
-    date_and_time TIMESTAMPTZ NOT NULL,
-    -- date and time are set to nullable
-    -- to accomodate requests where the date is not set yet
-    -- server or DB validation will be used
-    -- to mandate a date_and_time value
-    -- when session_status has moved out of 'REQUESTED'
+    start_time TIMESTAMPTZ NOT NULL,
+    end_time TIMESTAMPTZ NOT NULL,
     session_status SESSION_STATUS_ENUM NOT NULL,
-    duration_in_hours DECIMAL(2, 1) NOT NULL,
-    zoom_link VARCHAR(255)
+    meeting_link VARCHAR(255)
 );
 -- start time ranges for session requests can be entered
 -- time range will default on server to cover a 24 hour period
