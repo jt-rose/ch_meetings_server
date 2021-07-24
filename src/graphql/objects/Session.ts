@@ -13,16 +13,16 @@ export class WorkshopSession {
   session_name: string
 
   @Field(() => Date)
-  date_and_time: Date
+  start_time: Date
+
+  @Field(() => Date)
+  end_time: Date
 
   @Field(() => SESSION_STATUS)
   session_status: SESSION_STATUS
 
-  @Field() // float
-  duration_in_hours: number
-
   @Field({ nullable: true })
-  zoom_link: string
+  meeting_link: string
 
   @Field(() => Int)
   created_by: number

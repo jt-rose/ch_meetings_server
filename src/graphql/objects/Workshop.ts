@@ -71,10 +71,10 @@ export class Workshop {
   deleted: boolean
 
   @Field(() => Date)
-  workshop_start_date: Date
+  workshop_start_time: Date
 
   @Field(() => Date)
-  workshop_end_date: Date
+  workshop_end_time: Date
 
   @Field(() => SESSION_STATUS)
   workshop_status: SESSION_STATUS
