@@ -47,10 +47,10 @@ export class CreateWorkshopInput {
   in_person: boolean
 
   @Field()
-  workshop_start_date: Date
+  workshop_start_time: Date
 
   @Field()
-  workshop_end_date: Date
+  workshop_end_time: Date
 
   //workshop_sessions: {},
   //workshop_notes: {},
@@ -61,6 +61,8 @@ export class CreateWorkshopInput {
 export class EditWorkshopInput {
   @Field(() => Int, { nullable: true })
   assigned_advisor_id: number
+
+  // status
 }
 
 /* -------------------------- validation functions -------------------------- */

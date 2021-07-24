@@ -7,16 +7,16 @@ import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 @InputType()
 export class CreateSessionInput {
   @Field()
-  date_and_time: Date
+  start_time: Date
 
   @Field()
-  duration_in_hours: number
+  end_time: Date
 
   @Field()
   session_name: string
 
   @Field()
-  zoom_link: string
+  meeting_link: string
 }
 
 @InputType()

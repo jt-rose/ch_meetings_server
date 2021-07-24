@@ -69,11 +69,11 @@ export class WorkshopFilterOptions {
   // using the format "between 5/12 and 7/18"
   // format as { gte: 5/12}
   @Field({ nullable: true })
-  workshop_start_date?: Date
+  workshop_start_time?: Date
 
   // format as { lte: 7/18}
   @Field({ nullable: true })
-  workshop_end_date?: Date
+  workshop_end_time?: Date
 
   @Field({ nullable: true })
   workshop_groups?: number
@@ -94,8 +94,8 @@ export const parseWorkshopWhereArgs = (filters: WorkshopFilterOptions) => {
     deleted: filters.deleted,
     in_person: filters.in_person,
     open_air_id: filters.open_air_id,
-    workshop_start_date: { gte: filters.workshop_start_date },
-    workshop_end_date: { lte: filters.workshop_end_date },
+    workshop_start_time: { gte: filters.workshop_start_time },
+    workshop_end_time: { lte: filters.workshop_end_time },
     workshop_id: filters.workshop_id,
     workshop_status: {
       in: filters.workshop_status, //['REQUESTED', 'VETTING', 'HOLDING']

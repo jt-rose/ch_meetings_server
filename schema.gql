@@ -114,10 +114,44 @@ input CourseworkInput {
   coursework_name: String!
 }
 
+input CreateSessionInput {
+  end_time: DateTime!
+  meeting_link: String!
+  session_name: String!
+  start_time: DateTime!
+}
+
+input CreateWorkshopInput {
+  backup_requested_advisor_id: Int
+  class_size: Float!
+  client_id: Float!
+  cohort_name: String!
+  course_id: Int!
+  group_id: Int
+  in_person: Boolean!
+  open_air_id: String!
+  record_attendance: Boolean = false
+  requested_advisor_id: Int!
+  time_zone: String!
+  workshop_end_time: DateTime!
+  workshop_language: String!
+  workshop_location: String!
+  workshop_region: REGION!
+  workshop_start_time: DateTime!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+input EditSessionInput {
+  end_time: DateTime!
+  meeting_link: String!
+  session_name: String!
+  session_status: SESSION_STATUS!
+  start_time: DateTime!
+}
 
 type License {
   client: Client!
@@ -190,12 +224,15 @@ type Mutation {
   addCoursework(description: String, name: String!): Coursework!
   addManager(managerInput: ManagerInput!): Manager!
   addManagerToWorkshop(manager_id: Int!, workshop_id: Int!): ManagerAssignment!
+  addWorkshop(managers: [Int!]!, notes: [String!], sessionDetails: [CreateSessionInput!]!, workshopDetails: CreateWorkshopInput!): Workshop!
   changeAdvisorActiveStatus(active: Boolean!, advisor_id: Int!): Advisor!
   changeClientActiveStatus(active: Boolean!, client_id: Int!): Client!
   changeManagerActiveStatus(active: Boolean!, manager_id: Int!): Client!
   changeManagerAssignmentStatus(active: Boolean!, assignment_id: Int!): ManagerAssignment!
   changeMyPassword(newPassword: String!): Manager!
   changePasswordAdminAccess(manager_id: Int!, newPassword: String!): Manager!
+  createSession(sessionInfo: CreateSessionInput!, workshop_id: Int!): WorkshopSession!
+  deleteSession(sessionID: Float!): WorkshopSession!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
   editAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfoWithID!): AdvisorUnavailableDay!
@@ -204,6 +241,7 @@ type Mutation {
   editCoursework(courseworkInput: CourseworkInput!): Coursework!
   editLicenseAmount(licenseInput: LicenseInput!): License!
   editManager(managerInput: ManagerInput!, manager_id: Float!): Manager!
+  editSession(sessionID: Int!, updatedInfo: EditSessionInput!): WorkshopSession!
   forgotPassword(email: String!): Boolean!
   login(email: String!, password: String!): Manager!
   logout: Boolean!
@@ -234,7 +272,7 @@ type Query {
   getAllWorkshops(filters: WorkshopFilterOptions, orderBy: [WorkshopsOrderBy!], skip: Float, take: Float): [Workshop!]!
   getClient(client_id: Int!): Client
   getCourse(course_id: Int!): Course
-  getSession(sessionID: Float!): [WorkshopSession!]!
+  getSessions(sessionID: Float!): [WorkshopSession!]!
   getWorkshop(workshop_id: Int!): Workshop!
 }
 
@@ -308,13 +346,13 @@ type Workshop {
   requested_advisor_id: Int!
   sessions: [WorkshopSession!]!
   time_zone: String!
-  workshop_end_date: DateTime!
+  workshop_end_time: DateTime!
   workshop_id: Int!
   workshop_language: String!
   workshop_location: String!
   workshop_notes: [WorkshopNote!]!
   workshop_region: REGION!
-  workshop_start_date: DateTime!
+  workshop_start_time: DateTime!
   workshop_status: SESSION_STATUS!
 }
 
@@ -326,10 +364,10 @@ input WorkshopFilterOptions {
   group_id: Float
   in_person: Boolean
   open_air_id: String
-  workshop_end_date: DateTime
+  workshop_end_time: DateTime
   workshop_groups: Float
   workshop_id: Float
-  workshop_start_date: DateTime
+  workshop_start_time: DateTime
   workshop_status: [SESSION_STATUS!]
 }
 
@@ -344,13 +382,13 @@ type WorkshopNote {
 type WorkshopSession {
   created_at: DateTime!
   created_by: Int!
-  date_and_time: DateTime!
-  duration_in_hours: Float!
+  end_time: DateTime!
+  meeting_link: String
   session_name: String!
   session_status: SESSION_STATUS!
+  start_time: DateTime!
   workshop_id: Float!
   workshop_session_id: Int!
-  zoom_link: String
 }
 
 input WorkshopsOrderBy {

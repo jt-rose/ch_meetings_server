@@ -130,10 +130,10 @@ model workshop_sessions {
   created_at          DateTime            @default(now()) @db.Timestamptz(6)
   workshop_id         Int
   session_name        String              @db.VarChar(255)
-  date_and_time       DateTime            @db.Timestamptz(6)
+  start_time          DateTime            @db.Timestamptz(6)
+  end_time            DateTime            @db.Timestamptz(6)
   session_status      session_status_enum
-  duration_in_hours   Decimal             @db.Decimal(2, 1)
-  zoom_link           String?             @db.VarChar(255)
+  meeting_link        String?             @db.VarChar(255)
   managers            managers            @relation(fields: [created_by], references: [manager_id])
   workshops           workshops           @relation(fields: [workshop_id], references: [workshop_id])
 }
@@ -143,8 +143,8 @@ model workshops {
   group_id                                                 Int?
   created_by                                               Int
   created_at                                               DateTime                @default(now()) @db.Timestamptz(6)
-  workshop_start_date                                      DateTime                @db.Timestamptz(6)
-  workshop_end_date                                        DateTime                @db.Timestamptz(6)
+  workshop_start_time                                      DateTime                @db.Timestamptz(6)
+  workshop_end_time                                        DateTime                @db.Timestamptz(6)
   workshop_status                                          session_status_enum
   course_id                                                Int
   cohort_name                                              String                  @db.VarChar(255)
