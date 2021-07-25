@@ -1,10 +1,5 @@
-import { DateTime } from 'luxon'
-
 // specify the string argument should be in ISO form
 type ISOString = string
-
-// avoid browser inconsistencies by using luxon.DateTime
-export const now = () => DateTime.now().toISO()
 
 // check if requested session has conflict with an already scheduled session
 // this will also show conflicts if one session ends right as another begins
