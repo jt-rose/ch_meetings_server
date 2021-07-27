@@ -8,6 +8,7 @@ import {
   Root,
   Mutation,
   //InputType,
+  createUnionType,
 } from 'type-graphql'
 import { Workshop } from '../objects/Workshop'
 import { WorkshopSession } from '../objects/Session'
@@ -34,6 +35,22 @@ import {
 import { CreateSessionInput } from '../searchOptions/SessionInput'
 import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 import { nanoid } from 'nanoid'
+import { hasTimeConflict, TimeConflictError } from '../../utils/dateTime'
+
+// generate success / error union type when creating/ editing workshop
+const CreateWorkshopResultUnion = createUnionType({
+  name: 'CreateWorkshopResult',
+  types: () => [Workshop, TimeConflictError] as const,
+  resolveType: (value) => {
+    if ('timeConflicts' in value) {
+      return TimeConflictError
+    }
+    if ('workshop_id' in value) {
+      return Workshop
+    }
+    return undefined
+  },
+})
 
 @Resolver(Workshop)
 export class WorkshopResolver {
@@ -163,16 +180,43 @@ export class WorkshopResolver {
 
   // create workshop (generate sessions at same time)
   @Authenticated()
-  @Mutation(() => Workshop)
-  addWorkshop(
+  @Mutation(() => CreateWorkshopResultUnion)
+  async addWorkshop(
     @Ctx() ctx: Context,
     @Arg('workshopDetails', () => CreateWorkshopInput)
     workshopDetails: CreateWorkshopInput,
     @Arg('sessionDetails', () => [CreateSessionInput])
     sessionDetails: CreateSessionInput[],
     @Arg('managers', () => [Int]) managers: number[],
-    @Arg('notes', { nullable: true }) notes: string[]
+    @Arg('notes', () => [String], { nullable: true }) notes: string[]
   ) {
+    /* ---------------------- check for unique cohort name ---------------------- */
+
+    /* --------------------- check for insufficient licenses -------------------- */
+
+    /* -------------------- check for session time confilicts ------------------- */
+    // map start and end times used when checking for time conflicts
+    const requestedSessionTimes = sessionDetails.map((session) => ({
+      requestedStartTime: session.start_time,
+      requestedEndTime: session.end_time,
+    }))
+
+    // check for time conflicts
+    const timeConflicts = await hasTimeConflict({
+      advisor_id: workshopDetails.requested_advisor_id,
+      requests: requestedSessionTimes,
+      prisma: ctx.prisma,
+    })
+
+    // if time conflict found, reject with detail on where time conflict arose
+    if (timeConflicts) {
+      return {
+        error: true,
+        timeConflicts,
+      }
+    }
+
+    /* -------------- format sub fields and create workshop request ------------- */
     // format sessions objects
     const sessions = sessionDetails.map((session) => ({
       ...session,
@@ -192,11 +236,6 @@ export class WorkshopResolver {
       manager_id,
       active: true,
     }))
-
-    // add validation
-    // confirm unique cohort name
-    // confirm no time conflicts for requested advisor
-    // confirm reasonable time based on region (note: set up as warning on frontend)
 
     return ctx.prisma.workshops.create({
       data: {

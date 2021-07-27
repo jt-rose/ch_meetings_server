@@ -140,6 +140,8 @@ input CreateWorkshopInput {
   workshop_start_time: DateTime!
 }
 
+union CreateWorkshopResult = TimeConflictError | Workshop
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -224,7 +226,7 @@ type Mutation {
   addCoursework(description: String, name: String!): Coursework!
   addManager(managerInput: ManagerInput!): Manager!
   addManagerToWorkshop(manager_id: Int!, workshop_id: Int!): ManagerAssignment!
-  addWorkshop(managers: [Int!]!, notes: [String!], sessionDetails: [CreateSessionInput!]!, workshopDetails: CreateWorkshopInput!): Workshop!
+  addWorkshop(managers: [Int!]!, notes: [String!], sessionDetails: [CreateSessionInput!]!, workshopDetails: CreateWorkshopInput!): CreateWorkshopResult!
   changeAdvisorActiveStatus(active: Boolean!, advisor_id: Int!): Advisor!
   changeClientActiveStatus(active: Boolean!, client_id: Int!): Client!
   changeManagerActiveStatus(active: Boolean!, manager_id: Int!): Client!
@@ -293,6 +295,19 @@ enum SESSION_STATUS {
   REQUESTED
   SCHEDULED
   VETTING
+}
+
+type SameDaySession {
+  assigned_advisor_id: Int!
+  end_time: String!
+  start_time: String!
+  workshop_id: Int!
+  workshop_session_id: Int!
+}
+
+type TimeConflictError {
+  error: Boolean!
+  timeConflicts: [SameDaySession!]!
 }
 
 """distinguish between ordinary users and those with admin access"""
