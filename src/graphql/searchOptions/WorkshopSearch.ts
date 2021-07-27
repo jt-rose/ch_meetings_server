@@ -4,8 +4,8 @@ import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 /* ----------------------------- order by fields ---------------------------- */
 
 type SortByColumnName =
-  | 'workshop_start_date'
-  | 'workshop_end_date'
+  | 'workshop_start_time'
+  | 'workshop_end_time'
   | 'workshop_status'
 // client name alphabetical
 // course alphabetical
@@ -21,13 +21,13 @@ export class WorkshopsOrderBy {
 
 export const parseWorkshopOrderByArgs = (orderBy: WorkshopsOrderBy) => {
   switch (orderBy.column) {
-    case 'workshop_start_date':
+    case 'workshop_start_time':
       return {
-        workshop_start_date: orderBy.direction,
+        workshop_start_time: orderBy.direction,
       }
-    case 'workshop_end_date':
+    case 'workshop_end_time':
       return {
-        workshop_end_date: orderBy.direction,
+        workshop_end_time: orderBy.direction,
       }
     case 'workshop_status':
       return {
