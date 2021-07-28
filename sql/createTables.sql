@@ -125,9 +125,9 @@ CREATE TABLE workshops (
     workshop_end_time TIMESTAMPTZ NOT NULL,
     workshop_status SESSION_STATUS_ENUM NOT NULL,
     course_id INT REFERENCES courses (course_id) NOT NULL,
-    cohort_name VARCHAR(255) NOT NULL,
-    requested_advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
-    backup_requested_advisor_id INT REFERENCES advisors (advisor_id),
+    cohort_name VARCHAR(255) UNIQUE NOT NULL,
+    requested_advisor_id INT REFERENCES advisors (advisor_id),
+    -- nullable for no preference
     assigned_advisor_id INT REFERENCES advisors (advisor_id),
     -- workshop_location can refer to a physical address or zoom/ teams
     workshop_location VARCHAR(255) NOT NULL,
