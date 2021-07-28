@@ -21,6 +21,7 @@ import { Coursework } from '../objects/Coursework'
 import { Client } from '../objects/Client'
 import { Advisor } from '../objects/Advisor'
 import { Authenticated } from '../../middleware/authChecker'
+import { DateTime } from 'luxon'
 
 import {
   WorkshopsOrderBy,
@@ -70,14 +71,6 @@ export class WorkshopResolver {
     return ctx.prisma.workshops
       .findUnique({ where: { workshop_id: root.workshop_id } })
       .advisors_advisorsToworkshops_requested_advisor_id()
-  }
-
-  // backup requested advisor
-  @FieldResolver(() => [Advisor])
-  backupRequestedAdvisor(@Ctx() ctx: Context, @Root() root: Workshop) {
-    return ctx.prisma.workshops
-      .findUnique({ where: { workshop_id: root.workshop_id } })
-      .advisors_advisorsToworkshops_backup_requested_advisor_id()
   }
 
   // client
@@ -190,29 +183,70 @@ export class WorkshopResolver {
     @Arg('managers', () => [Int]) managers: number[],
     @Arg('notes', () => [String], { nullable: true }) notes: string[]
   ) {
-    /* ---------------------- check for unique cohort name ---------------------- */
-
-    /* --------------------- check for insufficient licenses -------------------- */
-
-    /* -------------------- check for session time confilicts ------------------- */
-    // map start and end times used when checking for time conflicts
-    const requestedSessionTimes = sessionDetails.map((session) => ({
-      requestedStartTime: session.start_time,
-      requestedEndTime: session.end_time,
-    }))
-
-    // check for time conflicts
-    const timeConflicts = await hasTimeConflict({
-      advisor_id: workshopDetails.requested_advisor_id,
-      requests: requestedSessionTimes,
-      prisma: ctx.prisma,
+    /* ------------- check for active client and sufficient licenses ------------ */
+    const clientWithLicenses = await ctx.prisma.clients.findFirst({
+      where: { client_id: workshopDetails.client_id },
+      include: {
+        licenses: { where: { course_id: workshopDetails.course_id } },
+      },
     })
 
-    // if time conflict found, reject with detail on where time conflict arose
-    if (timeConflicts) {
-      return {
-        error: true,
-        timeConflicts,
+    if (!clientWithLicenses) throw Error('No such client found!')
+    if (!clientWithLicenses.active) throw Error('Client is currently inactive!')
+    if (
+      clientWithLicenses.licenses[0].remaining_amount <
+      workshopDetails.class_size
+    )
+      throw Error('Not enough licenses for this course!')
+
+    /* --------------- if requested advisor check for availability -------------- */
+    if (workshopDetails.requested_advisor_id) {
+      /* -------- check that advisor is not inactive or marked as unavaialble that day -------- */
+
+      const advisorAvailability = await ctx.prisma.advisors.findFirst({
+        where: { advisor_id: workshopDetails.requested_advisor_id },
+        include: { unavailable_days: true },
+      })
+      if (!advisorAvailability) throw Error('No such advisor found!')
+      if (!advisorAvailability.active)
+        throw Error('Advisor is not currently active!')
+      const requestedDates = sessionDetails.map((session) =>
+        DateTime.fromJSDate(session.start_time).toISODate()
+      )
+      const unavailableDays = advisorAvailability.unavailable_days.map((day) =>
+        DateTime.fromJSDate(day.day_unavailable).toISODate()
+      )
+      const unavailableRequestedDates = unavailableDays.filter((date) =>
+        requestedDates.includes(date)
+      )
+      if (unavailableRequestedDates.length) {
+        return {
+          error: true,
+          unavailableDays: unavailableRequestedDates,
+        }
+      }
+
+      /* -------------------- check for session time confilicts ------------------- */
+
+      // map start and end times used when checking for time conflicts
+      const requestedSessionTimes = sessionDetails.map((session) => ({
+        requestedStartTime: session.start_time,
+        requestedEndTime: session.end_time,
+      }))
+
+      // check for time conflicts
+      const timeConflicts = await hasTimeConflict({
+        advisor_id: workshopDetails.requested_advisor_id,
+        requests: requestedSessionTimes,
+        prisma: ctx.prisma,
+      })
+
+      // if time conflict found, reject with detail on where time conflict arose
+      if (timeConflicts) {
+        return {
+          error: true,
+          timeConflicts,
+        }
       }
     }
 
