@@ -34,9 +34,6 @@ export class Workshop {
   requested_advisor_id: number
 
   @Field(() => Int)
-  backup_requested_advisor_id: number
-
-  @Field(() => Int)
   assigned_advisor_id: number
 
   @Field()
@@ -45,8 +42,8 @@ export class Workshop {
   @Field(() => REGION)
   workshop_region: REGION
 
-  @Field(() => Int, { nullable: true })
-  class_size?: number
+  @Field(() => Int)
+  class_size: number
 
   @Field(() => Int)
   client_id: number
@@ -91,13 +88,10 @@ export class Workshop {
   sessions: WorkshopSession[]
 
   @Field(() => Advisor, { nullable: true })
-  assigned_advisor: Advisor
-
-  @Field(() => Advisor)
-  requested_advisor: Advisor
+  assigned_advisor?: Advisor
 
   @Field(() => Advisor, { nullable: true })
-  backup_requested_advisor: Advisor
+  requested_advisor?: Advisor
 
   @Field(() => Client)
   client: Client

@@ -11,13 +11,10 @@ export class CreateWorkshopInput {
   course_id: number
 
   @Field()
-  cohort_name: string // add unique validation
-
-  @Field(() => Int)
-  requested_advisor_id: number
+  cohort_name: string
 
   @Field(() => Int, { nullable: true })
-  backup_requested_advisor_id?: number
+  requested_advisor_id?: number
 
   @Field()
   workshop_location: string
