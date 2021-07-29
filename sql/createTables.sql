@@ -17,6 +17,11 @@ CREATE TYPE USER_TYPE_ENUM AS ENUM (
     'USER',
     'ADMIN' -- 'CLIENT', if needed
 );
+CREATE TYPE RESERVED_LICENSE_STATUS_ENUM AS ENUM (
+    'RESERVED',
+    'FINALIZED',
+    'CANCELLED'
+);
 CREATE TABLE managers (
     manager_id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -209,21 +214,33 @@ CREATE TABLE workshop_notes (
     note TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
---CREATE TABLE session_notes (
---    note_id SERIAL PRIMARY KEY,
---    workshop_session_id INT REFERENCES workshop_sessions (workshop_session_id) NOT NULL,
---    note TEXT NOT NULL,
---    date_of_note TIMESTAMPTZ NOT NULL DEFAULT NOW()
---);
-CREATE TABLE licenses (
+-- Licenses will be tracked across two tables
+-- one for available licenses
+-- and one for licenses currently reserved for a scheduled workshop
+-- a third table will track changes to each of these tables
+-- for accounting purposes
+CREATE TABLE available_licenses (
     license_id SERIAL PRIMARY KEY,
     course_id INT REFERENCES courses(course_id) NOT NULL,
     client_id INT REFERENCES clients(client_id) NOT NULL,
-    remaining_amount INT NOT NULL
+    remaining_amount INT NOT NULL,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_updated TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE reserved_licenses (
+    reserved_license_id SERIAL PRIMARY KEY,
+    license_id INT REFERENCES available_licenses(license_id) NOT NULL,
+    reserved_amount INT NOT NULL,
+    reserved_status RESERVED_LICENSE_STATUS_ENUM NOT NULL,
+    workshop_id INT REFERENCES workshops(workshop_id) NOT NULL,
+    created_by INT REFERENCES managers(manager_id) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_updated TIMESTAMPTZ NOT NULL
 );
 CREATE TABLE license_changes (
     license_change_id SERIAL PRIMARY KEY,
-    license_id INT REFERENCES licenses(license_id) NOT NULL,
+    license_id INT REFERENCES available_licenses(license_id) NOT NULL,
     updated_amount INT NOT NULL,
     amount_change INT NOT NULL,
     workshop_id INT REFERENCES workshops(workshop_id),
