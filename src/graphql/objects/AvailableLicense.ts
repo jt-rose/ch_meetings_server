@@ -4,7 +4,7 @@ import { Client } from './Client'
 import { LicenseChange } from './LicenseChange'
 
 @ObjectType()
-export class License {
+export class AvailableLicense {
   @Field(() => Int)
   license_id: number
 
@@ -16,6 +16,15 @@ export class License {
 
   @Field(() => Int)
   remaining_amount: number
+
+  @Field(() => Int)
+  created_by: number
+
+  @Field(() => Date)
+  created_at: Date
+
+  @Field(() => Date)
+  last_updated: Date
 
   /* ----------------------------- field resolvers ---------------------------- */
   @Field(() => Course)

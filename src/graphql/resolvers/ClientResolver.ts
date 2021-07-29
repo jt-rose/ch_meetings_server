@@ -11,7 +11,7 @@ import {
 import { Context } from '../../utils/context'
 import { Client } from '../objects/Client'
 import { ClientNote } from '../objects/ClientNote'
-import { License } from '../objects/License'
+import { AvailableLicense } from '../objects/AvailableLicense'
 import { Workshop } from '../objects/Workshop'
 
 @Resolver(Client)
@@ -24,11 +24,11 @@ export class ClientResolver {
       .client_notes()
   }
 
-  @FieldResolver(() => [License])
+  @FieldResolver(() => [AvailableLicense])
   licenses(@Ctx() ctx: Context, @Root() root: Client) {
     return ctx.prisma.clients
       .findUnique({ where: { client_id: root.client_id } })
-      .licenses()
+      .available_licenses()
   }
 
   @FieldResolver(() => [Workshop])
@@ -108,7 +108,7 @@ export class ClientResolver {
     // search for client and related workshops
     const clientAndWorkshops = await ctx.prisma.clients.findFirst({
       where: { client_id },
-      include: { workshops: true, licenses: true },
+      include: { workshops: true, available_licenses: true },
     })
 
     // reject if no client found
@@ -123,18 +123,24 @@ export class ClientResolver {
     }
 
     // reject if outstanding licenses
-    if (clientAndWorkshops.licenses.find((x) => x.remaining_amount !== 0)) {
+    if (
+      clientAndWorkshops.available_licenses.find(
+        (x) => x.remaining_amount !== 0
+      )
+    ) {
       throw Error('Cannot remove client with outstanding licenses')
     }
 
     // safe to delete if client present but without workshops/ licenses
     // transaction used to remove all related fields together
-    const licenseIDs = clientAndWorkshops.licenses.map((x) => x.license_id)
+    const licenseIDs = clientAndWorkshops.available_licenses.map(
+      (x) => x.license_id
+    )
 
     const removeLicenseChanges = ctx.prisma.license_changes.deleteMany({
       where: { license_id: { in: licenseIDs } },
     })
-    const removeLicenses = ctx.prisma.licenses.deleteMany({
+    const removeLicenses = ctx.prisma.available_licenses.deleteMany({
       where: { client_id },
     })
     const removeClientNotes = ctx.prisma.client_notes.deleteMany({

@@ -187,14 +187,14 @@ export class WorkshopResolver {
     const clientWithLicenses = await ctx.prisma.clients.findFirst({
       where: { client_id: workshopDetails.client_id },
       include: {
-        licenses: { where: { course_id: workshopDetails.course_id } },
+        available_licenses: { where: { course_id: workshopDetails.course_id } },
       },
     })
 
     if (!clientWithLicenses) throw Error('No such client found!')
     if (!clientWithLicenses.active) throw Error('Client is currently inactive!')
     if (
-      clientWithLicenses.licenses[0].remaining_amount <
+      clientWithLicenses.available_licenses[0].remaining_amount <
       workshopDetails.class_size
     )
       throw Error('Not enough licenses for this course!')

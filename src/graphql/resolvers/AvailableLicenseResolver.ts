@@ -9,10 +9,10 @@ import {
   InputType,
   Field,
 } from 'type-graphql'
-import { License } from '../objects/License'
+import { AvailableLicense } from '../objects/AvailableLicense'
 import { LicenseChange } from '../objects/LicenseChange'
-import { Course } from './../objects/Course'
-import { Context } from './../../utils/context'
+import { Course } from '../objects/Course'
+import { Context } from '../../utils/context'
 import { Client } from '../objects/Client'
 import { Authenticated } from '../../middleware/authChecker'
 
@@ -37,27 +37,29 @@ class LicenseInput {
   workshop_id?: number
 }
 
-@Resolver(License)
-export class LicenseResolver {
+@Resolver(AvailableLicense)
+export class AvailableLicenseResolver {
   /* ----------------------------- field resolvers ---------------------------- */
 
   @FieldResolver(() => Course)
-  course(@Ctx() ctx: Context, @Root() root: License) {
-    return ctx.prisma.licenses
+  course(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
+    return ctx.prisma.available_licenses
       .findUnique({ where: { license_id: root.license_id } })
       .courses()
   }
 
   @FieldResolver(() => Client)
-  client(@Ctx() ctx: Context, @Root() root: License) {
-    return ctx.prisma.licenses
+  client(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
+    return ctx.prisma.available_licenses
       .findUnique({ where: { license_id: root.license_id } })
       .clients()
   }
 
+  // reservedLicenses
+
   @FieldResolver(() => [LicenseChange])
-  license_changes(@Ctx() ctx: Context, @Root() root: License) {
-    return ctx.prisma.licenses
+  license_changes(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
+    return ctx.prisma.available_licenses
       .findUnique({ where: { license_id: root.license_id } })
       .license_changes()
   }
@@ -67,7 +69,7 @@ export class LicenseResolver {
   // read function will be managed via field resolver on clients
 
   @Authenticated()
-  @Mutation(() => License)
+  @Mutation(() => AvailableLicense)
   async editLicenseAmount(
     @Ctx() ctx: Context,
     @Arg('licenseInput') licenseInput: LicenseInput
@@ -82,11 +84,13 @@ export class LicenseResolver {
     } = licenseInput
 
     if (!license_id) {
-      return ctx.prisma.licenses.create({
+      return ctx.prisma.available_licenses.create({
         data: {
           client_id,
           course_id,
           remaining_amount,
+          last_updated: new Date(),
+          created_by: ctx.req.session.manager_id!,
           license_changes: {
             create: {
               amount_change: remaining_amount,
@@ -99,7 +103,7 @@ export class LicenseResolver {
         },
       })
     }
-    const currentLicense = await ctx.prisma.licenses.findFirst({
+    const currentLicense = await ctx.prisma.available_licenses.findFirst({
       where: { license_id },
       include: { license_changes: true },
     })
@@ -109,7 +113,7 @@ export class LicenseResolver {
     }
 
     const amount_change = remaining_amount - currentLicense.remaining_amount
-    return ctx.prisma.licenses.update({
+    return ctx.prisma.available_licenses.update({
       where: { license_id },
       data: {
         remaining_amount,

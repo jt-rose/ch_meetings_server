@@ -14,7 +14,7 @@ import { UnavailableDayResolver } from './graphql/resolvers/AdvisorUnavailableDa
 import { CourseworkResolver } from './graphql/resolvers/CourseworkResolver'
 import { ManagerResolver } from './graphql/resolvers/ManagerResolver'
 import { ManagerAssignmentsResolver } from './graphql/resolvers/ManagerAssignmentResolver'
-import { LicenseResolver } from './graphql/resolvers/LicenseResolver'
+import { AvailableLicenseResolver } from './graphql/resolvers/AvailableLicenseResolver'
 import { WorkshopResolver } from './graphql/resolvers/WorkshopResolver'
 
 /* ---------------------- generates the graphQL schema ---------------------- */
@@ -37,7 +37,7 @@ const generateSchemaType =
         CourseworkResolver,
         ManagerResolver,
         ManagerAssignmentsResolver,
-        LicenseResolver,
+        AvailableLicenseResolver,
       ],
       validate: false,
       // automatically create `schema.gql` file with schema definition in project's working directory
