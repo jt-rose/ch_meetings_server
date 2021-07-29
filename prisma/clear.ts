@@ -4,7 +4,8 @@ import { resetAutoInc } from './resetAutoInc'
 export async function clear() {
   // remove licenses
   await prisma.license_changes.deleteMany()
-  await prisma.licenses.deleteMany()
+  await prisma.reserved_licenses.deleteMany()
+  await prisma.available_licenses.deleteMany()
 
   // remove managers related data
   await prisma.manager_clients.deleteMany()
