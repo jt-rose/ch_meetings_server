@@ -1,5 +1,5 @@
 import { InputType, Field } from 'type-graphql'
-import { SESSION_STATUS } from '../enums/SESSION_STATUS'
+import { SESSION_STATUS } from '../../enums/SESSION_STATUS'
 
 // user input for creating a session
 // the workshop_id, session status,, and created_at/ created_by info

@@ -1,5 +1,5 @@
 import { InputType, Field, Int } from 'type-graphql'
-import { REGION } from '../enums/REGION'
+import { REGION } from '../../enums/REGION'
 
 // user submitted fields when creating a new workshop
 @InputType()

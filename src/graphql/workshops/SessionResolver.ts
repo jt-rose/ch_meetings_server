@@ -1,9 +1,9 @@
 import { Resolver, Query, Mutation, Arg, Int, Ctx } from 'type-graphql'
-import { WorkshopSession } from '../objects/Session'
+import { WorkshopSession } from './Session'
 import {
   CreateSessionInput,
   EditSessionInput,
-} from '../searchOptions/SessionInput'
+} from './searchOptions/SessionInput'
 import { Context } from '../../utils/context'
 import { Authenticated } from '../../middleware/authChecker'
 

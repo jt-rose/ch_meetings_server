@@ -1,5 +1,5 @@
 import { Field, InputType } from 'type-graphql'
-import { SESSION_STATUS } from '../enums/SESSION_STATUS'
+import { SESSION_STATUS } from '../../enums/SESSION_STATUS'
 
 /* ----------------------------- order by fields ---------------------------- */
 

@@ -10,16 +10,16 @@ import {
   //InputType,
   createUnionType,
 } from 'type-graphql'
-import { Workshop } from '../objects/Workshop'
-import { WorkshopSession } from '../objects/Session'
-import { WorkshopNote } from '../objects/WorkshopNote'
-import { ChangeLog } from '../objects/WorkshopChangeLog'
-import { Manager } from '../objects/Manager'
+import { Workshop } from './Workshop'
+import { WorkshopSession } from './Session'
+import { WorkshopNote } from './WorkshopNote'
+import { ChangeLog } from './WorkshopChangeLog'
+import { Manager } from '../managers/Manager'
 import { Context } from '../../utils/context'
-import { Course } from '../objects/Course'
-import { Coursework } from '../objects/Coursework'
-import { Client } from '../objects/Client'
-import { Advisor } from '../objects/Advisor'
+import { Course } from '../courses/Course'
+import { Coursework } from '../courses/Coursework'
+import { Client } from '../clients/Client'
+import { Advisor } from '../advisors/Advisor'
 import { Authenticated } from '../../middleware/authChecker'
 import { DateTime } from 'luxon'
 
@@ -28,12 +28,12 @@ import {
   parseWorkshopOrderByArgs,
   WorkshopFilterOptions,
   parseWorkshopWhereArgs,
-} from '../searchOptions/WorkshopSearch'
+} from './searchOptions/WorkshopSearch'
 import {
   CreateWorkshopInput,
   //formatCreateWorkshopInput,
-} from '../searchOptions/workshopInput'
-import { CreateSessionInput } from '../searchOptions/SessionInput'
+} from './searchOptions/workshopInput'
+import { CreateSessionInput } from './searchOptions/SessionInput'
 import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 import { nanoid } from 'nanoid'
 import { hasTimeConflict, TimeConflictError } from '../../utils/dateTime'
