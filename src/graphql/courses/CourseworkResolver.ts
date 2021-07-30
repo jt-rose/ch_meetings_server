@@ -11,9 +11,9 @@ import {
   Field,
 } from 'type-graphql'
 import { Context } from '../../utils/context'
-import { Coursework } from '../objects/Coursework'
-import { Course } from '../objects/Course'
-import { CoursesToCoursework } from '../objects/CoursesToCoursework'
+import { Coursework } from './Coursework'
+import { Course } from './Course'
+import { CoursesToCoursework } from './CoursesToCoursework'
 
 // coursework input
 @InputType()

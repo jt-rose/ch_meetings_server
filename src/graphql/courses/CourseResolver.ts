@@ -9,8 +9,8 @@ import {
   Int,
 } from 'type-graphql'
 import { Context } from '../../utils/context'
-import { Course, CourseInput } from '../objects/Course'
-import { Coursework } from '../objects/Coursework'
+import { Course, CourseInput } from './Course'
+import { Coursework } from './Coursework'
 
 @Resolver(Course)
 export class CourseResolver {
