@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from 'type-graphql'
-import { Client } from './Client'
-import { Workshop } from './Workshop'
-import { USER_TYPE } from './../enums/USER_TYPE'
+import { Client } from '../clients/Client'
+import { Workshop } from '../workshops/Workshop'
+import { USER_TYPE } from '../enums/USER_TYPE'
 
 @ObjectType()
 export class Manager {

@@ -1,5 +1,5 @@
 import { Resolver, Ctx, Arg, Int, Mutation } from 'type-graphql'
-import { ManagerAssignment } from '../objects/ManagerAssignment'
+import { ManagerAssignment } from './ManagerAssignment'
 import { Context } from '../../utils/context'
 
 @Resolver(ManagerAssignment)
