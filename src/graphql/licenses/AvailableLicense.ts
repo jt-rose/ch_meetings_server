@@ -1,7 +1,8 @@
 import { ObjectType, Field, Int } from 'type-graphql'
-import { Course } from './Course'
-import { Client } from './Client'
+import { Course } from '../courses/Course'
+import { Client } from '../clients/Client'
 import { LicenseChange } from './LicenseChange'
+import { ReservedLicense } from './ReservedLicenses'
 
 @ObjectType()
 export class AvailableLicense {
@@ -32,6 +33,9 @@ export class AvailableLicense {
 
   @Field(() => Client)
   client: Client
+
+  @Field(() => [ReservedLicense])
+  reserved_licenses: ReservedLicense[]
 
   @Field(() => [LicenseChange])
   license_changes: LicenseChange[]

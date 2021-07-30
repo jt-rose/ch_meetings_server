@@ -9,12 +9,13 @@ import {
   InputType,
   Field,
 } from 'type-graphql'
-import { AvailableLicense } from '../objects/AvailableLicense'
-import { LicenseChange } from '../objects/LicenseChange'
-import { Course } from '../objects/Course'
+import { AvailableLicense } from './AvailableLicense'
+import { LicenseChange } from './LicenseChange'
+import { Course } from '../courses/Course'
 import { Context } from '../../utils/context'
-import { Client } from '../objects/Client'
+import { Client } from '../clients/Client'
 import { Authenticated } from '../../middleware/authChecker'
+import { ReservedLicense } from './ReservedLicenses'
 
 @InputType()
 class LicenseInput {
@@ -55,7 +56,12 @@ export class AvailableLicenseResolver {
       .clients()
   }
 
-  // reservedLicenses
+  @FieldResolver(() => [ReservedLicense])
+  reservedLicenses(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
+    return ctx.prisma.available_licenses
+      .findUnique({ where: { license_id: root.license_id } })
+      .reserved_licenses()
+  }
 
   @FieldResolver(() => [LicenseChange])
   license_changes(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
@@ -68,9 +74,13 @@ export class AvailableLicenseResolver {
 
   // read function will be managed via field resolver on clients
 
+  // add or edit a license amount
+  // NOTE: adjusting the amount due to reserved licenses being used
+  // should be handled by the ReservedLicenses resolver
+  // this will instead be for adding new licenses and correcting clerical issues
   @Authenticated()
   @Mutation(() => AvailableLicense)
-  async editLicenseAmount(
+  async upsertLicenses(
     @Ctx() ctx: Context,
     @Arg('licenseInput') licenseInput: LicenseInput
   ) {
@@ -83,6 +93,7 @@ export class AvailableLicenseResolver {
       workshop_id,
     } = licenseInput
 
+    // if no license provided, create a new license set
     if (!license_id) {
       return ctx.prisma.available_licenses.create({
         data: {
@@ -103,6 +114,8 @@ export class AvailableLicenseResolver {
         },
       })
     }
+
+    // if license_id provided, confirm in database
     const currentLicense = await ctx.prisma.available_licenses.findFirst({
       where: { license_id },
       include: { license_changes: true },
@@ -112,6 +125,7 @@ export class AvailableLicenseResolver {
       throw Error('no such license found!')
     }
 
+    // update license amount
     const amount_change = remaining_amount - currentLicense.remaining_amount
     return ctx.prisma.available_licenses.update({
       where: { license_id },
@@ -129,4 +143,18 @@ export class AvailableLicenseResolver {
       },
     })
   }
+
+  // check if license type already exists and add to it if so
+  // reserveLicenses
+  // editReservedLicenses
+  // removeReservedLicenses - actually, no, save for record
+}
+
+@Resolver(ReservedLicense)
+export class ReservedLicenseResolver {
+  /* ----------------------------- field resolvers ---------------------------- */
+
+  /* ----------------------------- CRUD operations ---------------------------- */
+  reserveLicenses() {}
+  editReservedLicenses() {}
 }

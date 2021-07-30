@@ -1,5 +1,5 @@
 import { ObjectType, Field, Int } from 'type-graphql'
-import { Workshop } from './Workshop'
+import { Workshop } from '../workshops/Workshop'
 import { AvailableLicense } from './AvailableLicense'
 import { LicenseChange } from './LicenseChange'
 
