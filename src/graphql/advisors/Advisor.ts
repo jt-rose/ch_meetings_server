@@ -3,7 +3,7 @@ import { AdvisorLanguage } from './AdvisorLanguage'
 import { AdvisorRegion } from './AdvisorRegion'
 import { AdvisorUnavailableDay } from './AdvisorUnavailableDay'
 import { AdvisorNote } from './AdvisorNote'
-import { Workshop } from './Workshop'
+import { Workshop } from '../workshops/Workshop'
 
 @ObjectType()
 export class Advisor {

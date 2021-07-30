@@ -8,11 +8,11 @@ import {
   FieldResolver,
   Root,
 } from 'type-graphql'
-import { Advisor } from '../objects/Advisor'
-import { AdvisorLanguage } from '../objects/AdvisorLanguage'
-import { AdvisorRegion } from '../objects/AdvisorRegion'
-import { AdvisorUnavailableDay } from '../objects/AdvisorUnavailableDay'
-import { AdvisorNote } from '../objects/AdvisorNote'
+import { Advisor } from './Advisor'
+import { AdvisorLanguage } from './AdvisorLanguage'
+import { AdvisorRegion } from './AdvisorRegion'
+import { AdvisorUnavailableDay } from './AdvisorUnavailableDay'
+import { AdvisorNote } from './AdvisorNote'
 import { Context } from '../../utils/context'
 import { Authenticated, AdminOnly } from '../../middleware/authChecker'
 
@@ -73,18 +73,8 @@ export class AdvisorResolver {
         include: { workshop_sessions: true },
       })
 
-    // get workshops where advisor is requested as a backup
-    const backupRequest = await ctx.prisma.advisors
-      .findUnique({ where: { advisor_id: root.advisor_id } })
-      .workshops_advisorsToworkshops_backup_requested_advisor_id({
-        include: { workshop_sessions: true },
-      })
-
     // combine both lists and remove workshops that are already complete
-    const upcomingRequestedWorkshops = [
-      ...firstRequest,
-      ...backupRequest,
-    ].filter((workshop) =>
+    const upcomingRequestedWorkshops = firstRequest.filter((workshop) =>
       workshop.workshop_sessions.some(
         (session) => session.session_status === 'REQUESTED'
       )
@@ -193,10 +183,7 @@ export class AdvisorResolver {
     // reject if advisor has been requested
     const hasBeenRequested = await ctx.prisma.workshops.findFirst({
       where: {
-        OR: [
-          { requested_advisor_id: advisor_id },
-          { backup_requested_advisor_id: advisor_id },
-        ],
+        requested_advisor_id: advisor_id,
       },
     })
     if (hasBeenRequested) {

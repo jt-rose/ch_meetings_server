@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { AdvisorUnavailableDay } from '../objects/AdvisorUnavailableDay'
+import { AdvisorUnavailableDay } from './AdvisorUnavailableDay'
 import {
   Resolver,
   Arg,

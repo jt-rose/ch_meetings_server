@@ -1,5 +1,5 @@
 import { Resolver, Arg, Ctx, Int, Mutation } from 'type-graphql'
-import { AdvisorNote } from '../objects/AdvisorNote'
+import { AdvisorNote } from './AdvisorNote'
 import { Context } from '../../utils/context'
 import { Authenticated } from '../../middleware/authChecker'
 

@@ -1,5 +1,5 @@
 import { Resolver, Arg, Ctx, Int, Mutation } from 'type-graphql'
-import { AdvisorRegion } from '../objects/AdvisorRegion'
+import { AdvisorRegion } from './AdvisorRegion'
 import { REGION } from '../enums/REGION'
 import { Context } from '../../utils/context'
 import { Authenticated } from '../../middleware/authChecker'
