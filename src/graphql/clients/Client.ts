@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from 'type-graphql'
 import { ClientNote } from './ClientNote'
-import { AvailableLicense } from './AvailableLicense'
-import { Workshop } from './Workshop'
+import { AvailableLicense } from '../licenses/AvailableLicense'
+import { Workshop } from '../workshops/Workshop'
 
 @ObjectType()
 export class Client {

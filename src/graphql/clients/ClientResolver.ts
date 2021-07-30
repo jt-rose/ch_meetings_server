@@ -9,10 +9,10 @@ import {
   Int,
 } from 'type-graphql'
 import { Context } from '../../utils/context'
-import { Client } from '../objects/Client'
-import { ClientNote } from '../objects/ClientNote'
-import { AvailableLicense } from '../objects/AvailableLicense'
-import { Workshop } from '../objects/Workshop'
+import { Client } from './Client'
+import { ClientNote } from './ClientNote'
+import { AvailableLicense } from '../licenses/AvailableLicense'
+import { Workshop } from '../workshops/Workshop'
 
 @Resolver(Client)
 export class ClientResolver {
