@@ -1,7 +1,6 @@
 import { ObjectType, Field, Int } from 'type-graphql'
 import { Workshop } from '../workshops/Workshop'
 import { AvailableLicense } from './AvailableLicense'
-import { LicenseChange } from './LicenseChange'
 
 @ObjectType()
 export class ReservedLicense {
@@ -29,10 +28,7 @@ export class ReservedLicense {
 
   /* ----------------------------- field resolvers ---------------------------- */
   @Field(() => [AvailableLicense])
-  available_licenses: AvailableLicense[]
-
-  @Field(() => [LicenseChange])
-  license_changes: LicenseChange[]
+  available_licenses: AvailableLicense
 
   @Field(() => Workshop)
   workshop: Workshop

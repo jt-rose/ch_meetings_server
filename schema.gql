@@ -46,6 +46,21 @@ type AdvisorUnavailableDay {
   unavailable_id: Int!
 }
 
+type AvailableLicense {
+  client: Client!
+  client_id: Int!
+  course: Course!
+  course_id: Int!
+  created_at: DateTime!
+  created_by: Int!
+  last_updated: DateTime!
+  license_changes: [LicenseChange!]!
+  license_id: Int!
+  remaining_amount: Int!
+  reservedLicenses: [ReservedLicense!]!
+  reserved_licenses: [ReservedLicense!]!
+}
+
 type ChangeLog {
   created_at: DateTime!
   log_id: Int!
@@ -55,13 +70,14 @@ type ChangeLog {
 
 type Client {
   active: Boolean!
+  available_licenses: [AvailableLicense!]!
   business_unit: String
   client_id: Int!
   client_name: String!
   client_notes: [ClientNote!]!
   created_at: DateTime!
   created_by: Int!
-  licenses: [License!]!
+  licenses: [AvailableLicense!]!
   workshops: [Workshop!]!
 }
 
@@ -122,7 +138,6 @@ input CreateSessionInput {
 }
 
 input CreateWorkshopInput {
-  backup_requested_advisor_id: Int
   class_size: Float!
   client_id: Float!
   cohort_name: String!
@@ -131,7 +146,7 @@ input CreateWorkshopInput {
   in_person: Boolean!
   open_air_id: String!
   record_attendance: Boolean = false
-  requested_advisor_id: Int!
+  requested_advisor_id: Int
   time_zone: String!
   workshop_end_time: DateTime!
   workshop_language: String!
@@ -147,22 +162,18 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+input EditLicenseInput {
+  change_note: String!
+  license_id: Int!
+  remaining_amount: Int!
+}
+
 input EditSessionInput {
   end_time: DateTime!
   meeting_link: String!
   session_name: String!
   session_status: SESSION_STATUS!
   start_time: DateTime!
-}
-
-type License {
-  client: Client!
-  client_id: Int!
-  course: Course!
-  course_id: Int!
-  license_changes: [LicenseChange!]!
-  license_id: Int!
-  remaining_amount: Int!
 }
 
 type LicenseChange {
@@ -178,12 +189,9 @@ type LicenseChange {
 }
 
 input LicenseInput {
-  change_note: String!
   client_id: Int!
   course_id: Int!
-  license_id: Int
   remaining_amount: Int!
-  workshop_id: Int
 }
 
 type Manager {
@@ -224,15 +232,18 @@ type Mutation {
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
   addCoursework(description: String, name: String!): Coursework!
+  addLicenses(licenseInput: LicenseInput!): AvailableLicense!
   addManager(managerInput: ManagerInput!): Manager!
   addManagerToWorkshop(manager_id: Int!, workshop_id: Int!): ManagerAssignment!
   addWorkshop(managers: [Int!]!, notes: [String!], sessionDetails: [CreateSessionInput!]!, workshopDetails: CreateWorkshopInput!): CreateWorkshopResult!
+  adjustReservedLicenseAmount(amount_change: Int!, change_note: String, reserved_license_id: Int!): AvailableLicense!
   changeAdvisorActiveStatus(active: Boolean!, advisor_id: Int!): Advisor!
   changeClientActiveStatus(active: Boolean!, client_id: Int!): Client!
   changeManagerActiveStatus(active: Boolean!, manager_id: Int!): Client!
   changeManagerAssignmentStatus(active: Boolean!, assignment_id: Int!): ManagerAssignment!
   changeMyPassword(newPassword: String!): Manager!
   changePasswordAdminAccess(manager_id: Int!, newPassword: String!): Manager!
+  confirmReservedLicensesUsed(final_amount_used: Int!, reserved_license_id: Int!): AvailableLicense!
   createSession(sessionInfo: CreateSessionInput!, workshop_id: Int!): WorkshopSession!
   deleteSession(sessionID: Float!): WorkshopSession!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
@@ -241,7 +252,7 @@ type Mutation {
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
   editCoursework(courseworkInput: CourseworkInput!): Coursework!
-  editLicenseAmount(licenseInput: LicenseInput!): License!
+  editLicenses(licenseInput: EditLicenseInput!): AvailableLicense!
   editManager(managerInput: ManagerInput!, manager_id: Float!): Manager!
   editSession(sessionID: Int!, updatedInfo: EditSessionInput!): WorkshopSession!
   forgotPassword(email: String!): Boolean!
@@ -259,6 +270,8 @@ type Mutation {
   removeFromCourseMaterial(course_and_coursework_id: Int!): CoursesToCoursework!
   removeManager(manager_id: Float!): Manager!
   removeManagerFromWorkshop(assignment_id: Int!): ManagerAssignment!
+  removeReservedLicenses(reserved_license_id: Int!): AvailableLicense!
+  reserveLicenses(license_id: Int!, reserved_amount: Int!, workshop_id: Int!): AvailableLicense!
   resetPassword(newPassword: String!, token: String!): Manager!
 }
 
@@ -285,6 +298,17 @@ enum REGION {
   EMEA
   LATAM
   NAM
+}
+
+type ReservedLicense {
+  available_licenses: [AvailableLicense!]!
+  created_at: DateTime!
+  created_by: Int!
+  last_updated: DateTime!
+  license_id: Int!
+  reserved_amount: Int!
+  reserved_license_id: Int!
+  workshop: Workshop!
 }
 
 """status of workshops and individual session requests"""
@@ -333,12 +357,9 @@ type Workshop {
   assignedAdvisor: [Advisor!]!
   assigned_advisor: Advisor
   assigned_advisor_id: Int!
-  backupRequestedAdvisor: [Advisor!]!
-  backup_requested_advisor: Advisor
-  backup_requested_advisor_id: Int!
   changeLog: [ChangeLog!]!
   change_log: [ChangeLog!]!
-  class_size: Int
+  class_size: Int!
   client: Client!
   client_id: Int!
   cohort_name: String!
@@ -357,7 +378,7 @@ type Workshop {
   participant_sign_up_link: String!
   record_attendance: Boolean!
   requestedAdvisor: [Advisor!]!
-  requested_advisor: Advisor!
+  requested_advisor: Advisor
   requested_advisor_id: Int!
   sessions: [WorkshopSession!]!
   time_zone: String!
