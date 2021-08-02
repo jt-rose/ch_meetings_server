@@ -193,10 +193,11 @@ export class WorkshopResolver {
 
     if (!clientWithLicenses) throw Error('No such client found!')
     if (!clientWithLicenses.active) throw Error('Client is currently inactive!')
-    if (
-      clientWithLicenses.available_licenses[0].remaining_amount <
+
+    const updatedAvailableLicenseAmount =
+      clientWithLicenses.available_licenses[0].remaining_amount -
       workshopDetails.class_size
-    )
+    if (updatedAvailableLicenseAmount < 0)
       throw Error('Not enough licenses for this course!')
 
     /* --------------- if requested advisor check for availability -------------- */
@@ -271,7 +272,11 @@ export class WorkshopResolver {
       active: true,
     }))
 
-    return ctx.prisma.workshops.create({
+    // format create workshop and edit available licenses queries
+    // which will be run in a transaction
+    const license_id = clientWithLicenses.available_licenses[0].license_id
+
+    const createWorkshop = ctx.prisma.workshops.create({
       data: {
         ...workshopDetails,
         created_by: ctx.req.session.manager_id!,
@@ -284,13 +289,201 @@ export class WorkshopResolver {
         manager_assignments: { createMany: { data: managerAssignments } },
         workshop_notes: { createMany: { data: workshop_notes } },
         change_log: { create: { note: 'workshop created' } },
-        // license
+        // reserved license changes will be run in a nested create
+        // to capture the generated workshop id
+        reserved_licenses: {
+          create: {
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+            last_updated: new Date(),
+            reserved_amount: workshopDetails.class_size,
+            reserved_status: 'RESERVED',
+            license_id,
+          },
+        },
+        license_changes: {
+          create: {
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+            amount_change: -workshopDetails.class_size,
+            updated_amount: updatedAvailableLicenseAmount,
+            change_note: `${workshopDetails.class_size} licenses reserved for workshop`,
+            license_id,
+          },
+        },
       },
     })
+
+    const createLicenseChanges = ctx.prisma.available_licenses.update({
+      where: { license_id },
+      data: {
+        remaining_amount: updatedAvailableLicenseAmount,
+        last_updated: new Date(),
+      },
+    })
+
+    // run transaction creating workshop and updating available and reserved licenses
+    const result = await ctx.prisma.$transaction([
+      createWorkshop,
+      createLicenseChanges,
+    ])
+
+    // return created workshop
+    return result[0]
   }
 
   // update workshop // distinct from updating sessions, just for workshop meta data, again one off, but need to update change log
+  // when updating/ deleting workshop/ restoring, need to update license counts
+  // what if editing course type?
+
   // delete workshop (move to trash, can still be restored)
+  @Authenticated()
+  @Mutation(() => Workshop)
+  async deleteWorkshop(
+    @Ctx() ctx: Context,
+    @Arg('workshop_id', () => Int) workshop_id: number
+  ) {
+    // get reservedLicenses
+    const reservedLicenses = await ctx.prisma.reserved_licenses.findFirst({
+      where: { workshop_id },
+      include: { available_licenses: true },
+    })
+    if (!reservedLicenses)
+      throw Error('No such workshop / resereved licenses found!')
+    const updatedAvailableLicenseAmount =
+      reservedLicenses.available_licenses.remaining_amount +
+      reservedLicenses.reserved_amount
+    // switch status to cancelled and deleted to true
+    // update workshop change log
+    // update session status
+    const deleteWorkshop = ctx.prisma.workshops.update({
+      where: { workshop_id },
+      data: {
+        deleted: true,
+        workshop_status: 'CANCELLED',
+        workshop_sessions: {
+          updateMany: {
+            where: { workshop_id },
+            data: { session_status: 'CANCELLED' },
+          },
+        },
+        workshop_notes: {
+          create: {
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+            note: 'workshop deleted',
+          },
+        },
+      },
+    })
+    // update available licenses
+    const updateAvailableLicenses = ctx.prisma.available_licenses.update({
+      where: { license_id: reservedLicenses.license_id },
+      data: {
+        last_updated: new Date(),
+        // add reserved license amount back to available licenses
+        remaining_amount: updatedAvailableLicenseAmount,
+        license_changes: {
+          create: {
+            amount_change: reservedLicenses.reserved_amount,
+            updated_amount: updatedAvailableLicenseAmount,
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+            change_note: `workshop #${workshop_id} removed and ${reservedLicenses.reserved_amount} reserved licenses added back to available licenses`,
+          },
+        },
+        reserved_licenses: {
+          updateMany: {
+            where: { workshop_id },
+            data: {
+              last_updated: new Date(),
+              reserved_status: 'CANCELLED',
+            },
+          },
+        },
+      },
+    })
+
+    // run workshop delete and license updates as transaction
+    const result = await ctx.prisma.$transaction([
+      deleteWorkshop,
+      updateAvailableLicenses,
+    ])
+
+    // return deleted workshop info
+    return result[0]
+  }
   // restore workshops
-  // permadelete workshop (cascade delete sessions, workshop notes, change_log)
+  @Authenticated()
+  @Mutation(() => Workshop)
+  async restoreWorkshop(
+    @Ctx() ctx: Context,
+    @Arg('workshop_id', () => Int) workshop_id: number
+  ) {
+    // get reservedLicenses
+    const reservedLicenses = await ctx.prisma.reserved_licenses.findFirst({
+      where: { workshop_id },
+      include: { available_licenses: true },
+    })
+    if (!reservedLicenses)
+      throw Error('No such workshop / resereved licenses found!')
+    const updatedAvailableLicenseAmount =
+      reservedLicenses.available_licenses.remaining_amount -
+      reservedLicenses.reserved_amount
+    if (updatedAvailableLicenseAmount < 0) {
+      throw Error(
+        'Not enough available licenses to reserve this workshop again!'
+      )
+      // add optional updated reserved amount for recreating workshop but with fewer licenses?
+    }
+    // switch status to requested and deleted to false
+    // update workshop change log
+    // update session status 0 check dates again?
+    const restoreWorkshop = ctx.prisma.workshops.update({
+      where: { workshop_id },
+      data: {
+        workshop_status: 'REQUESTED',
+        deleted: false,
+        workshop_sessions: {},
+        workshop_notes: {},
+      },
+    })
+
+    // update available and reserved licenses
+    const updateLicenseAmounts = ctx.prisma.available_licenses.update({
+      where: { license_id: reservedLicenses.license_id },
+      data: {
+        last_updated: new Date(),
+        // add reserved license amount back to available licenses
+        remaining_amount: updatedAvailableLicenseAmount,
+        license_changes: {
+          create: {
+            amount_change: -reservedLicenses.reserved_amount,
+            updated_amount: updatedAvailableLicenseAmount,
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+            change_note: `workshop #${workshop_id} restored and ${reservedLicenses.reserved_amount} reserved licenses removed from available licenses`,
+          },
+        },
+        reserved_licenses: {
+          updateMany: {
+            where: { workshop_id },
+            data: {
+              last_updated: new Date(),
+              reserved_status: 'RESERVED',
+            },
+          },
+        },
+      },
+    })
+
+    // run restore workshop and update licenses as transaction
+    const result = await ctx.prisma.$transaction([
+      restoreWorkshop,
+      updateLicenseAmounts,
+    ])
+
+    // return restored workshop
+    return result[0]
+  }
 }
