@@ -119,7 +119,7 @@ export class AvailableLicenseResolver {
   // this will instead be for adding new licenses and correcting clerical issues
   @Authenticated()
   @Mutation(() => AvailableLicense)
-  async editLicenses(
+  async editAvailableLicenses(
     @Ctx() ctx: Context,
     @Arg('licenseInput') licenseInput: EditLicenseInput
   ) {

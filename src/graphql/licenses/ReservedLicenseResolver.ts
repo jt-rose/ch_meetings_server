@@ -31,6 +31,10 @@ export class ReservedLicenseResolver {
       .workshops()
   }
 
+  // reserved licenses will be managed through workshop requests
+  // so the below functions will not be needed
+  // as it is important to have these paired with workshop requests
+  /*
   // CRUD Uperations
   @Authenticated()
   @Mutation(() => AvailableLicense)
@@ -176,6 +180,7 @@ export class ReservedLicenseResolver {
       },
     })
   }
+  */
 
   @Authenticated()
   @Mutation(() => AvailableLicense)
