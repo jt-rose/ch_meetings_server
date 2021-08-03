@@ -117,6 +117,7 @@ export class ManagerResolver {
     })
   }
 
+  @Authenticated()
   @Query(() => [Manager])
   getAllManagers(@Ctx() ctx: Context) {
     return ctx.prisma.managers.findMany()
@@ -184,6 +185,7 @@ export class ManagerResolver {
     return ctx.prisma.managers.delete({ where: { manager_id } })
   }
 
+  @AdminOnly()
   @Mutation(() => Client)
   async changeManagerActiveStatus(
     @Ctx() ctx: Context,
@@ -242,9 +244,8 @@ export class ManagerResolver {
         throw Error('incorrect username/password')
       }
       ctx.req.session.manager_id = manager.manager_id
-      if (manager.user_type === 'ADMIN') {
-        ctx.req.session.admin = manager.manager_id
-      }
+      ctx.req.session.role = manager.user_type
+
       return manager
     } catch (err) {
       return err
@@ -295,7 +296,7 @@ export class ManagerResolver {
     })
   }
 
-  // admin - change password of any user or admin
+  // admin - change password of any user, coordinator, or admin
   @AdminOnly()
   @Mutation(() => Manager)
   async changePasswordAdminAccess(

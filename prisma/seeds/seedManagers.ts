@@ -38,7 +38,29 @@ export const seedManagers = async (prisma: PrismaClient) => {
     },
   })
 
-  const managers = [manager1, manager2, manager3]
+  const coordinator = await prisma.managers.create({
+    data: {
+      //manager_id: 4,
+      first_name: 'Ezra',
+      last_name: 'Metz',
+      email: 'ezra.metz@company.net',
+      email_password: await argon2.hash('SuperSecret12345!'),
+      user_type: 'COORDINATOR',
+    },
+  })
+
+  const CEO = await prisma.managers.create({
+    data: {
+      //manager_id: 5,
+      first_name: 'Luna',
+      last_name: 'Renzi',
+      email: 'luna.renzi@company.net',
+      email_password: await argon2.hash('MyPasswordIsPassword12345!'),
+      user_type: 'SUPERADMIN',
+    },
+  })
+
+  const managers = [manager1, manager2, manager3, coordinator]
   const allManagersSeeded = managers.every((x) => x)
   if (!allManagersSeeded) {
     console.log(`Managers seeded into database: false`)

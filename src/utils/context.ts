@@ -14,11 +14,12 @@ export type HTTPContext = {
 }
 
 type Prisma = typeof prisma
+export type UserRole = 'USER' | 'COORDINATOR' | 'ADMIN' | 'SUPERADMIN'
 
 // extend express-sessions with custom fields
 interface IGetSessionInfo extends Session {
   manager_id?: number
-  admin?: number
+  role?: UserRole
 }
 
 // define customized req and res fields
@@ -39,7 +40,7 @@ export const createContext = ({ req, res }: IReqRes): HTTPContext => ({
 // mock context for server-side unit testing
 interface MockContext {
   req: {
-    session: { manager_id?: number; admin?: number; destroy: () => void }
+    session: { manager_id?: number; role?: UserRole; destroy: () => void }
     ip: string
   }
   res: { clearCookie: () => void }
@@ -47,9 +48,23 @@ interface MockContext {
   prisma: Prisma
 }
 
-// generate a mock context for a user without admin access
+// generate a mock context for a base user without admin access
 export const createMockUserContext = (): MockContext => ({
-  req: { session: { manager_id: 2, destroy: () => {} }, ip: 'mock-ip:1111' },
+  req: {
+    session: { manager_id: 2, role: 'USER', destroy: () => {} },
+    ip: 'mock-ip:1111',
+  },
+  res: { clearCookie: () => {} },
+  redis,
+  prisma,
+})
+
+// generate a mock context for a coordinator without admin access
+export const createMockCoordinatorContext = (): MockContext => ({
+  req: {
+    session: { manager_id: 4, role: 'COORDINATOR', destroy: () => {} },
+    ip: 'mock-ip:1111',
+  },
   res: { clearCookie: () => {} },
   redis,
   prisma,
@@ -58,7 +73,18 @@ export const createMockUserContext = (): MockContext => ({
 // generate a mock context for an admin
 export const createMockAdminContext = (): MockContext => ({
   req: {
-    session: { manager_id: 1, admin: 1, destroy: () => {} },
+    session: { manager_id: 1, role: 'ADMIN', destroy: () => {} },
+    ip: 'mock-ip:1111',
+  },
+  res: { clearCookie: () => {} },
+  redis,
+  prisma,
+})
+
+// generate a mock context for a superadmin
+export const createMockSuperAdminContext = (): MockContext => ({
+  req: {
+    session: { manager_id: 5, role: 'SUPERADMIN', destroy: () => {} },
     ip: 'mock-ip:1111',
   },
   res: { clearCookie: () => {} },
