@@ -69,8 +69,8 @@ export class ManagerResolver {
 
   /* ----------------------------- CRUD operations ---------------------------- */
 
-  // add new manager as normal user or admin
-  // only accessible by admins
+  // add new manager as normal user, coordinator, or admin
+  // only accessible by admins and superadmins
   @AdminOnly()
   @Mutation(() => Manager)
   async addManager(
@@ -79,6 +79,13 @@ export class ManagerResolver {
   ) {
     const { first_name, last_name, email, email_password, user_type } =
       managerInput
+
+    if (
+      user_type === USER_TYPE.SUPERADMIN &&
+      ctx.req.session.role !== 'SUPERADMIN'
+    ) {
+      throw Error('A super admin can only be created by another super admin!')
+    }
 
     // confirm valid email and password
     if (!validateEmail(email)) {
@@ -130,7 +137,15 @@ export class ManagerResolver {
     @Arg('manager_id') manager_id: number,
     @Arg('managerInput', () => ManagerInput) managerInput: ManagerInput
   ) {
-    const { first_name, last_name, email, email_password } = managerInput
+    const { first_name, last_name, email, email_password, user_type } =
+      managerInput
+
+    if (
+      user_type === USER_TYPE.SUPERADMIN &&
+      ctx.req.session.role !== 'SUPERADMIN'
+    ) {
+      throw Error('A super admin can only be edited by another super admin!')
+    }
     // confirm valid email and password
     if (!validateEmail(email)) {
       throw Error(
@@ -164,27 +179,12 @@ export class ManagerResolver {
         last_name,
         email,
         email_password: hashedPassword,
+        user_type,
       },
     })
   }
 
-  @AdminOnly()
-  @Mutation(() => Manager)
-  async removeManager(
-    @Ctx() ctx: Context,
-    @Arg('manager_id') manager_id: number
-  ) {
-    const assignments = await ctx.prisma.manager_assignments.count({
-      where: { manager_id },
-    })
-    if (assignments > 0) {
-      throw Error(
-        'This manager has past or current workshop assignments and cannot be deleted'
-      )
-    }
-    return ctx.prisma.managers.delete({ where: { manager_id } })
-  }
-
+  // managers will be deactivated, rather than deleted completely, in order to preserve records of activity
   @AdminOnly()
   @Mutation(() => Client)
   async changeManagerActiveStatus(
