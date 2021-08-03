@@ -21,14 +21,6 @@ model advisors {
   workshops_advisorsToworkshops_requested_advisor_id workshops[]        @relation("advisorsToworkshops_requested_advisor_id")
 }
 
-model change_log {
-  log_id      Int       @id @default(autoincrement())
-  workshop_id Int
-  note        String
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
-  workshops   workshops @relation(fields: [workshop_id], references: [workshop_id])
-}
-
 model clients {
   client_id          Int                  @id @default(autoincrement())
   client_name        String               @db.VarChar(255)
@@ -93,6 +85,7 @@ model managers {
   manager_assignments  manager_assignments[]
   manager_clients      manager_clients[]
   reserved_licenses    reserved_licenses[]
+  workshop_change_log  workshop_change_log[]
   workshop_group_notes workshop_group_notes[]
   workshop_groups      workshop_groups[]
   workshop_notes       workshop_notes[]
@@ -169,10 +162,10 @@ model workshops {
   managers                                          managers                @relation(fields: [created_by], references: [manager_id])
   workshop_groups                                   workshop_groups?        @relation(fields: [group_id], references: [group_id])
   advisors_advisorsToworkshops_requested_advisor_id advisors?               @relation("advisorsToworkshops_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
-  change_log                                        change_log[]
   license_changes                                   license_changes[]
   manager_assignments                               manager_assignments[]
   reserved_licenses                                 reserved_licenses[]
+  workshop_change_log                               workshop_change_log[]
   workshop_coursework                               workshop_coursework[]
   workshop_notes                                    workshop_notes[]
   workshop_participants                             workshop_participants[]
@@ -313,6 +306,16 @@ model reserved_licenses {
   managers            managers                     @relation(fields: [created_by], references: [manager_id])
   available_licenses  available_licenses           @relation(fields: [license_id], references: [license_id])
   workshops           workshops                    @relation(fields: [workshop_id], references: [workshop_id])
+}
+
+model workshop_change_log {
+  log_id      Int       @id @default(autoincrement())
+  workshop_id Int
+  note        String
+  created_by  Int?
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  managers    managers? @relation(fields: [created_by], references: [manager_id])
+  workshops   workshops @relation(fields: [workshop_id], references: [workshop_id])
 }
 
 enum session_status_enum {

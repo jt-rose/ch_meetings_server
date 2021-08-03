@@ -189,10 +189,12 @@ CREATE TABLE workshop_sessions (
 --    earliest_start_time TIMESTAMPTZ NOT NULL,
 --    latest_start_time TIMESTAMPTZ NOT NULL
 --);
-CREATE TABLE change_log (
+CREATE TABLE workshop_change_log (
     log_id SERIAL PRIMARY KEY,
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
     note TEXT NOT NULL,
+    created_by INT REFERENCES managers (manager_id),
+    -- nullable for system updates not connected to a manager
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE TABLE manager_assignments (
