@@ -11,6 +11,9 @@ export class ChangeLog {
   @Field()
   note: string
 
+  @Field(() => Int)
+  created_by: number
+
   @Field(() => Date)
   created_at: Date
 }
