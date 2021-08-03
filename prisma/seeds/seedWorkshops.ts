@@ -125,16 +125,18 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      change_log: {
+      workshop_change_log: {
         create: [
           {
             //log_id: 1,
             note: 'workshop request created',
+            created_by: 1,
             created_at: new Date('Nov 15 2020 15:23:00 GMT'),
           },
           {
             //log_id: 2,
             note: 'workshop assigned',
+            created_by: 1,
             created_at: new Date('Nov 17 2020 17:44:00 GMT'),
           },
         ],
@@ -239,15 +241,17 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      change_log: {
+      workshop_change_log: {
         create: [
           {
             //log_id: 3,
+            created_by: 1,
             note: 'workshop request created',
             created_at: new Date('Jan 12 2021 15:23:00 GMT'),
           },
           {
             //log_id: 4,
+            created_by: 1,
             note: 'workshop assigned',
             created_at: new Date('Jan 29 2021 15:23:00 GMT'),
           },
@@ -326,16 +330,18 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      change_log: {
+      workshop_change_log: {
         create: [
           {
             //log_id: 5,
             note: 'workshop request created',
+            created_by: 1,
             created_at: new Date('Feb 03 2021 13:01:00 GMT'),
           },
           {
             //log_id: 6,
             note: 'workshop assigned',
+            created_by: 1,
             created_at: new Date('Feb 10 2021 16:56:00 GMT'),
           },
         ],
@@ -429,21 +435,24 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      change_log: {
+      workshop_change_log: {
         create: [
           {
             //log_id: 7,
             note: 'workshop request created',
+            created_by: 1,
             created_at: new Date('Nov 01 2020 14:03:00 GMT'),
           },
           {
             //log_id: 8,
             note: 'workshop assigned',
+            created_by: 1,
             created_at: new Date('Nov 17 2020 16:16:00 GMT'),
           },
           {
             //log_id: 9,
             note: 'session 3 timing conflict for client. Reset to vetting while gathering new dates',
+            created_by: 1,
             created_at: new Date('Nov 18 2020 11:34:00 GMT'),
           },
         ],
@@ -519,16 +528,18 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      change_log: {
+      workshop_change_log: {
         create: [
           {
             //log_id: 10,
             note: 'workshop request created',
+            created_by: 1,
             created_at: new Date('Dec 20 2020 12:24:00 GMT'),
           },
           {
             //log_id: 11,
             note: 'workshop location changed',
+            created_by: 1,
             created_at: new Date('Dec 22 2020 18:24:00 GMT'),
           },
         ],
@@ -645,16 +656,18 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
           },
         ],
       },
-      change_log: {
+      workshop_change_log: {
         create: [
           {
             //log_id: 12,
             note: 'workshop request created',
+            created_by: 1,
             created_at: new Date('Mar 03 2021 13:39:00 GMT'),
           },
           {
             //log_id: 13,
             note: 'session 1 and 4 confirmed, waiting for confirmation on 2 and 3',
+            created_by: 1,
             created_at: new Date('Mar 28 2021 20:47:00 GMT'),
           },
         ],
@@ -692,16 +705,18 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       workshop_end_time: new Date('Mar 12 2022 12:00:00 GMT'),
       deleted: true,
 
-      change_log: {
+      workshop_change_log: {
         create: [
           {
             //log_id: 14,
             note: 'workshop request created',
+            created_by: 1,
             created_at: new Date('Mar 03 2021 13:39:00 GMT'),
           },
           {
             //log_id: 15,
             note: 'workshop deleted',
+            created_by: 1,
             created_at: new Date('Mar 28 2021 20:47:00 GMT'),
           },
         ],

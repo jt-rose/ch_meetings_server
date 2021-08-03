@@ -118,7 +118,7 @@ export class WorkshopResolver {
   changeLog(@Ctx() ctx: Context, @Root() root: Workshop) {
     return ctx.prisma.workshops
       .findUnique({ where: { workshop_id: root.workshop_id } })
-      .change_log()
+      .workshop_change_log()
   }
 
   // managers
@@ -288,7 +288,13 @@ export class WorkshopResolver {
         workshop_sessions: { createMany: { data: sessions } },
         manager_assignments: { createMany: { data: managerAssignments } },
         workshop_notes: { createMany: { data: workshop_notes } },
-        change_log: { create: { note: 'workshop created' } },
+        workshop_change_log: {
+          create: {
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+            note: 'workshop request created',
+          },
+        },
         // reserved license changes will be run in a nested create
         // to capture the generated workshop id
         reserved_licenses: {
@@ -341,7 +347,8 @@ export class WorkshopResolver {
   @Mutation(() => Workshop)
   async deleteWorkshop(
     @Ctx() ctx: Context,
-    @Arg('workshop_id', () => Int) workshop_id: number
+    @Arg('workshop_id', () => Int) workshop_id: number,
+    @Arg('note', { nullable: true }) note?: string
   ) {
     // get reservedLicenses
     const reservedLicenses = await ctx.prisma.reserved_licenses.findFirst({
@@ -353,6 +360,17 @@ export class WorkshopResolver {
     const updatedAvailableLicenseAmount =
       reservedLicenses.available_licenses.remaining_amount +
       reservedLicenses.reserved_amount
+
+    // format optional note
+    const create_workshop_note = note
+      ? {
+          create: {
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+            note,
+          },
+        }
+      : {}
     // switch status to cancelled and deleted to true
     // update workshop change log
     // update session status
@@ -367,12 +385,15 @@ export class WorkshopResolver {
             data: { session_status: 'CANCELLED' },
           },
         },
-        workshop_notes: {
+        workshop_change_log: {
           create: {
             created_by: ctx.req.session.manager_id!,
             created_at: new Date(),
             note: 'workshop deleted',
           },
+        },
+        workshop_notes: {
+          ...create_workshop_note,
         },
       },
     })

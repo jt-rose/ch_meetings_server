@@ -40,7 +40,7 @@ export const resetAutoInc = async () => {
   await prisma.$queryRaw`ALTER SEQUENCE workshop_coursework_workshop_coursework_id_seq RESTART WITH 1;`
   await prisma.$queryRaw`ALTER SEQUENCE workshop_session_sets_session_set_id_seq RESTART WITH 1;`
   await prisma.$queryRaw`ALTER SEQUENCE workshop_sessions_workshop_session_id_seq RESTART WITH 1;`
-  await prisma.$queryRaw`ALTER SEQUENCE change_log_log_id_seq RESTART WITH 1;`
+  await prisma.$queryRaw`ALTER SEQUENCE workshop_change_log_log_id_seq RESTART WITH 1;`
   await prisma.$queryRaw`ALTER SEQUENCE manager_assignments_assignment_id_seq RESTART WITH 1;`
   await prisma.$queryRaw`ALTER SEQUENCE manager_clients_manager_client_id_seq RESTART WITH 1;`
   await prisma.$queryRaw`ALTER SEQUENCE workshop_notes_note_id_seq RESTART WITH 1;`

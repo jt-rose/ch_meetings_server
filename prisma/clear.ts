@@ -12,7 +12,7 @@ export async function clear() {
   await prisma.manager_assignments.deleteMany()
 
   //remove workshops and related data
-  await prisma.change_log.deleteMany()
+  await prisma.workshop_change_log.deleteMany()
   await prisma.workshop_sessions.deleteMany()
   await prisma.workshop_notes.deleteMany()
   await prisma.workshop_coursework.deleteMany()
