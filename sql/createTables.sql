@@ -55,10 +55,11 @@ CREATE TABLE advisors (
     last_name VARCHAR(255) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE
 );
-CREATE TABLE unavailable_days (
+CREATE TABLE advisor_unavailable_times (
     unavailable_id SERIAL PRIMARY KEY,
     advisor_id INT REFERENCES advisors (advisor_id) NOT NULL,
-    day_unavailable DATE NOT NULL,
+    unavailable_start_time TIMESTAMPTZ NOT NULL,
+    unavailable_end_time TIMESTAMPTZ NOT NULL,
     note TEXT
 );
 CREATE TABLE languages (

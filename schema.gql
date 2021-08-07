@@ -63,6 +63,7 @@ type AvailableLicense {
 
 type ChangeLog {
   created_at: DateTime!
+  created_by: Int!
   log_id: Int!
   note: String!
   workshop_id: Int!
@@ -236,7 +237,7 @@ type Mutation {
   addManager(managerInput: ManagerInput!): Manager!
   addManagerToWorkshop(manager_id: Int!, workshop_id: Int!): ManagerAssignment!
   addWorkshop(managers: [Int!]!, notes: [String!], sessionDetails: [CreateSessionInput!]!, workshopDetails: CreateWorkshopInput!): CreateWorkshopResult!
-  adjustReservedLicenseAmount(amount_change: Int!, change_note: String, reserved_license_id: Int!): AvailableLicense!
+  assignAdvisortoWorkshop(advisor_id: Int!, note: String, workshop_id: Int!): Workshop!
   changeAdvisorActiveStatus(active: Boolean!, advisor_id: Int!): Advisor!
   changeClientActiveStatus(active: Boolean!, client_id: Int!): Client!
   changeManagerActiveStatus(active: Boolean!, manager_id: Int!): Client!
@@ -246,13 +247,14 @@ type Mutation {
   confirmReservedLicensesUsed(final_amount_used: Int!, reserved_license_id: Int!): AvailableLicense!
   createSession(sessionInfo: CreateSessionInput!, workshop_id: Int!): WorkshopSession!
   deleteSession(sessionID: Float!): WorkshopSession!
+  deleteWorkshop(note: String, workshop_id: Int!): Workshop!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
   editAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfoWithID!): AdvisorUnavailableDay!
+  editAvailableLicenses(licenseInput: EditLicenseInput!): AvailableLicense!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
   editCoursework(courseworkInput: CourseworkInput!): Coursework!
-  editLicenses(licenseInput: EditLicenseInput!): AvailableLicense!
   editManager(managerInput: ManagerInput!, manager_id: Float!): Manager!
   editSession(sessionID: Int!, updatedInfo: EditSessionInput!): WorkshopSession!
   forgotPassword(email: String!): Boolean!
@@ -260,6 +262,7 @@ type Mutation {
   logout: Boolean!
   registerAsCourseMaterial(course_id: Int!, coursework_id: Int!): CoursesToCoursework!
   removeAdvisor(advisor_id: Int!): Advisor!
+  removeAdvisorFromWorkshop(note: String, workshop_id: Int!): Workshop!
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
   removeAdvisorNote(note_id: Int!): AdvisorNote!
   removeAdvisorRegion(region_id: Int!): AdvisorRegion!
@@ -268,11 +271,9 @@ type Mutation {
   removeCourse(course_id: Int!): Course!
   removeCoursework(coursework_id: Int!): Coursework!
   removeFromCourseMaterial(course_and_coursework_id: Int!): CoursesToCoursework!
-  removeManager(manager_id: Float!): Manager!
   removeManagerFromWorkshop(assignment_id: Int!): ManagerAssignment!
-  removeReservedLicenses(reserved_license_id: Int!): AvailableLicense!
-  reserveLicenses(license_id: Int!, reserved_amount: Int!, workshop_id: Int!): AvailableLicense!
   resetPassword(newPassword: String!, token: String!): Manager!
+  restoreWorkshop(workshop_id: Int!): Workshop!
 }
 
 type Query {
@@ -334,9 +335,11 @@ type TimeConflictError {
   timeConflicts: [SameDaySession!]!
 }
 
-"""distinguish between ordinary users and those with admin access"""
+"""distinguish different types of users with different permissions"""
 enum USER_TYPE {
   ADMIN
+  COORDINATOR
+  SUPERADMIN
   USER
 }
 
@@ -354,7 +357,7 @@ input UnavailableDayInfoWithID {
 }
 
 type Workshop {
-  assignedAdvisor: [Advisor!]!
+  assignedAdvisor: [Advisor!]
   assigned_advisor: Advisor
   assigned_advisor_id: Int!
   changeLog: [ChangeLog!]!
@@ -377,7 +380,7 @@ type Workshop {
   open_air_id: String!
   participant_sign_up_link: String!
   record_attendance: Boolean!
-  requestedAdvisor: [Advisor!]!
+  requestedAdvisor: [Advisor!]
   requested_advisor: Advisor
   requested_advisor_id: Int!
   sessions: [WorkshopSession!]!
