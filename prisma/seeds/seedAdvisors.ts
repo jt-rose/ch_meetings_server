@@ -37,27 +37,13 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
           },
         ],
       },
-      unavailable_days: {
+      advisor_unavailable_times: {
         createMany: {
           data: [
             {
               // unavailable_id: 1,
-              day_unavailable: new Date('2021-10-22T01:00:00Z'),
-              note: 'On Vacation',
-            },
-            {
-              // unavailable_id: 2,
-              day_unavailable: new Date('2021-10-23T01:00:00Z'),
-              note: 'On Vacation',
-            },
-            {
-              // unavailable_id: 3,
-              day_unavailable: new Date('2021-10-24T01:00:00Z'),
-              note: 'On Vacation',
-            },
-            {
-              // unavailable_id: 4,
-              day_unavailable: new Date('2021-10-25T01:00:00Z'),
+              unavailable_start_time: new Date('2021-10-22T01:00:00Z'),
+              unavailable_end_time: new Date('2021-10-25T01:00:00Z'),
               note: 'On Vacation',
             },
           ],
@@ -100,16 +86,18 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
           ],
         },
       },
-      unavailable_days: {
+      advisor_unavailable_times: {
         createMany: {
           data: [
             {
-              // unavailable_id: 5,
-              day_unavailable: new Date('2021-06-22T01:00:00Z'),
+              // unavailable_id: 2,
+              unavailable_start_time: new Date('2021-06-22T01:00:00Z'),
+              unavailable_end_time: new Date('2021-06-22T23:59:59Z'),
             },
             {
-              // unavailable_id: 6,
-              day_unavailable: new Date('2021-12-25T01:00:00Z'),
+              // unavailable_id: 3,
+              unavailable_start_time: new Date('2021-12-25T01:00:00Z'),
+              unavailable_end_time: new Date('2021-12-25T23:59:59Z'),
             },
           ],
         },
@@ -151,10 +139,11 @@ export const seedAdvisors = async (prisma: PrismaClient) => {
           ],
         },
       },
-      unavailable_days: {
+      advisor_unavailable_times: {
         create: {
           //unavailable_id: 7,
-          day_unavailable: new Date('2021-11-30T01:00:00Z'),
+          unavailable_start_time: new Date('2021-11-30T01:00:00Z'),
+          unavailable_end_time: new Date('2021-11-30T23:59:59Z'),
           note: 'May be unavailable - best to avoid this date',
         },
       },

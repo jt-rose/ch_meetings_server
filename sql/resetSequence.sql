@@ -5,7 +5,7 @@ ALTER SEQUENCE clients_client_id_seq RESTART WITH 1;
 ALTER SEQUENCE client_notes_note_id_seq RESTART WITH 1;
 ALTER SEQUENCE managers_manager_id_seq RESTART WITH 1;
 ALTER SEQUENCE advisors_advisor_id_seq RESTART WITH 1;
-ALTER SEQUENCE unavailable_days_unavailable_id_seq RESTART WITH 1;
+ALTER SEQUENCE advisor_unavailable_times_unavailable_id_seq RESTART WITH 1;
 ALTER SEQUENCE languages_language_id_seq RESTART WITH 1;
 ALTER SEQUENCE regions_region_id_seq RESTART WITH 1;
 ALTER SEQUENCE advisor_notes_note_id_seq RESTART WITH 1;

@@ -8,17 +8,17 @@ datasource db {
 }
 
 model advisors {
-  advisor_id                                         Int                @id @default(autoincrement())
-  email                                              String             @unique @db.VarChar(255)
-  first_name                                         String             @db.VarChar(255)
-  last_name                                          String             @db.VarChar(255)
-  active                                             Boolean            @default(true)
+  advisor_id                                         Int                         @id @default(autoincrement())
+  email                                              String                      @unique @db.VarChar(255)
+  first_name                                         String                      @db.VarChar(255)
+  last_name                                          String                      @db.VarChar(255)
+  active                                             Boolean                     @default(true)
   advisor_notes                                      advisor_notes[]
+  advisor_unavailable_times                          advisor_unavailable_times[]
   languages                                          languages[]
   regions                                            regions[]
-  unavailable_days                                   unavailable_days[]
-  workshops_advisorsToworkshops_assigned_advisor_id  workshops[]        @relation("advisorsToworkshops_assigned_advisor_id")
-  workshops_advisorsToworkshops_requested_advisor_id workshops[]        @relation("advisorsToworkshops_requested_advisor_id")
+  workshops_advisorsToworkshops_assigned_advisor_id  workshops[]                 @relation("advisorsToworkshops_assigned_advisor_id")
+  workshops_advisorsToworkshops_requested_advisor_id workshops[]                 @relation("advisorsToworkshops_requested_advisor_id")
 }
 
 model clients {
@@ -98,14 +98,6 @@ model regions {
   advisor_id     Int
   advisor_region region_enum
   advisors       advisors    @relation(fields: [advisor_id], references: [advisor_id])
-}
-
-model unavailable_days {
-  unavailable_id  Int      @id @default(autoincrement())
-  advisor_id      Int
-  day_unavailable DateTime @db.Date
-  note            String?
-  advisors        advisors @relation(fields: [advisor_id], references: [advisor_id])
 }
 
 model workshop_notes {
@@ -316,6 +308,15 @@ model workshop_change_log {
   created_at  DateTime  @default(now()) @db.Timestamptz(6)
   managers    managers? @relation(fields: [created_by], references: [manager_id])
   workshops   workshops @relation(fields: [workshop_id], references: [workshop_id])
+}
+
+model advisor_unavailable_times {
+  unavailable_id         Int      @id @default(autoincrement())
+  advisor_id             Int
+  unavailable_start_time DateTime @db.Timestamptz(6)
+  unavailable_end_time   DateTime @db.Timestamptz(6)
+  note                   String?
+  advisors               advisors @relation(fields: [advisor_id], references: [advisor_id])
 }
 
 enum session_status_enum {

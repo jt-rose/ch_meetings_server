@@ -60,7 +60,7 @@ export const seedManagers = async (prisma: PrismaClient) => {
     },
   })
 
-  const managers = [manager1, manager2, manager3, coordinator]
+  const managers = [manager1, manager2, manager3, coordinator, CEO]
   const allManagersSeeded = managers.every((x) => x)
   if (!allManagersSeeded) {
     console.log(`Managers seeded into database: false`)
