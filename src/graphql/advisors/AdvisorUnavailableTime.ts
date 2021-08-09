@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from 'type-graphql'
 
 @ObjectType()
-export class AdvisorUnavailableDay {
+export class AdvisorUnavailableTime {
   @Field(() => Int)
   unavailable_id: number
 
@@ -9,7 +9,10 @@ export class AdvisorUnavailableDay {
   advisor_id: number
 
   @Field(() => Date)
-  day_unavailable: Date
+  unavailable_start_time: Date
+
+  @Field(() => Date)
+  unavailable_end_time: Date
 
   @Field(() => String, { nullable: true })
   note?: string
