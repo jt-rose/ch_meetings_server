@@ -11,7 +11,7 @@ import {
 import { Advisor } from './Advisor'
 import { AdvisorLanguage } from './AdvisorLanguage'
 import { AdvisorRegion } from './AdvisorRegion'
-import { AdvisorUnavailableDay } from './AdvisorUnavailableDay'
+import { AdvisorUnavailableTime } from './AdvisorUnavailableTime'
 import { AdvisorNote } from './AdvisorNote'
 import { Context } from '../../utils/context'
 import { Authenticated, AdminOnly } from '../../middleware/authChecker'
@@ -39,13 +39,13 @@ export class AdvisorResolver {
       .regions()
   }
 
-  @FieldResolver(() => [AdvisorUnavailableDay])
-  unavailable_days(@Ctx() ctx: Context, @Root() advisor: Advisor) {
+  @FieldResolver(() => [AdvisorUnavailableTime])
+  unavailable_times(@Ctx() ctx: Context, @Root() advisor: Advisor) {
     return ctx.prisma.advisors
       .findUnique({
         where: { advisor_id: advisor.advisor_id },
       })
-      .unavailable_days()
+      .advisor_unavailable_times()
   }
 
   @FieldResolver(() => [AdvisorNote])
@@ -201,9 +201,10 @@ export class AdvisorResolver {
       where: { advisor_id },
     })
 
-    const removeUnavailableDays = ctx.prisma.unavailable_days.deleteMany({
-      where: { advisor_id },
-    })
+    const removeUnavailableDays =
+      ctx.prisma.advisor_unavailable_times.deleteMany({
+        where: { advisor_id },
+      })
 
     const removeAdvisorNotes = ctx.prisma.advisor_notes.deleteMany({
       where: { advisor_id },

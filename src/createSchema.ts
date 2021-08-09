@@ -10,7 +10,7 @@ import { AdvisorResolver } from './graphql/advisors/AdvisorResolver'
 import { LanguageResolver } from './graphql/advisors/LanguageResolver'
 import { RegionResolver } from './graphql/advisors/AdvisorRegionResolver'
 import { AdvisorNoteResolver } from './graphql/advisors/AdvisorNoteResolver'
-import { UnavailableDayResolver } from './graphql/advisors/AdvisorUnavailableDayResolver'
+import { AdvisorUnavailableTimeResolver } from './graphql/advisors/AdvisorUnavailableTimesResolver'
 import { CourseworkResolver } from './graphql/courses/CourseworkResolver'
 import { ManagerResolver } from './graphql/managers/ManagerResolver'
 import { ManagerAssignmentsResolver } from './graphql/managers/ManagerAssignmentResolver'
@@ -34,7 +34,7 @@ const generateSchemaType =
         LanguageResolver,
         RegionResolver,
         AdvisorNoteResolver,
-        UnavailableDayResolver,
+        AdvisorUnavailableTimeResolver,
         CourseworkResolver,
         ManagerResolver,
         ManagerAssignmentsResolver,
