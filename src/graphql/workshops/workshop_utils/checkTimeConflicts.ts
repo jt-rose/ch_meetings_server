@@ -105,11 +105,13 @@ const formatTimeConflicts = (timeConflicts: TimeConflict[][]) =>
 // and checks each start/end time set for availability
 // returning time conflicts found for each, or false if none found
 const formatQueryforTimeConflicts =
-  (
+  (queryConfig: {
     query:
       | typeof findAdvisorUnavailableTimeConflicts
       | typeof findAdvisorSessionConflicts
-  ) =>
+    conflictType: string
+    errorMessage: string
+  }) =>
   async (config: {
     advisor_id: number
     requests: {
@@ -122,7 +124,7 @@ const formatQueryforTimeConflicts =
 
     // map individual queries
     const timeConflictQueries = requests.map((request) =>
-      query({
+      queryConfig.query({
         advisor_id,
         requestedStartTime: request.requestedStartTime,
         requestedEndTime: request.requestedEndTime,
@@ -137,7 +139,12 @@ const formatQueryforTimeConflicts =
 
     // return formatted time conflicts if found
     if (timeConflictsFound.every((conflicts) => conflicts.length !== 0)) {
-      return formatTimeConflicts(timeConflictsFound)
+      return {
+        error: true,
+        conflictType: queryConfig.conflictType,
+        errorMessage: queryConfig.errorMessage,
+        conflicts: formatTimeConflicts(timeConflictsFound),
+      }
     }
 
     // return false if no time conflcits found
@@ -145,12 +152,19 @@ const formatQueryforTimeConflicts =
   }
 
 // check for specific time conflicts
-export const hasUnavailableTimesConflict = formatQueryforTimeConflicts(
-  findAdvisorUnavailableTimeConflicts
-)
-export const hasSessionTimeConflict = formatQueryforTimeConflicts(
-  findAdvisorSessionConflicts
-)
+export const hasUnavailableTimesConflict = formatQueryforTimeConflicts({
+  query: findAdvisorUnavailableTimeConflicts,
+  conflictType: 'Unavailable Times Conflict',
+  errorMessage:
+    'This advisor is already scheduled to be unavailable at this time',
+})
+
+export const hasSessionTimeConflict = formatQueryforTimeConflicts({
+  query: findAdvisorSessionConflicts,
+  conflictType: 'Workshop Session Conflict',
+  errorMessage:
+    'This advisor is currently scheduled for a workshop session at this time',
+})
 
 // check for any time conflict
 export const hasTimeConflict = async (config: {
@@ -174,6 +188,12 @@ export const hasTimeConflict = async (config: {
 export class TimeConflictError {
   @Field()
   error: boolean
+
+  @Field()
+  conflictType: string
+
+  @Field()
+  errorMessage: string
 
   @Field(() => [TimeConflict])
   timeConflicts: TimeConflict[]
