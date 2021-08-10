@@ -131,7 +131,7 @@ export class AdvisorUnavailableTimeResolver {
     // and return time conflict error if any other time conflicts remain
     if (unavailableConflicts) {
       const unavailableConflictsWithoutSelf =
-        unavailableConflicts.conflicts.filter(
+        unavailableConflicts.timeConflicts.filter(
           (conflict) => conflict.unavailable_id !== unavailable_id
         )
       if (unavailableConflictsWithoutSelf.length) {

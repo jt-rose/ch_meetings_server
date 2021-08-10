@@ -119,7 +119,7 @@ const formatQueryforTimeConflicts =
       requestedEndTime: Date
     }[]
     prisma: PrismaClient
-  }) => {
+  }): Promise<TimeConflictError | false> => {
     const { advisor_id, requests, prisma } = config
 
     // map individual queries
@@ -140,10 +140,9 @@ const formatQueryforTimeConflicts =
     // return formatted time conflicts if found
     if (timeConflictsFound.every((conflicts) => conflicts.length !== 0)) {
       return {
-        error: true,
         conflictType: queryConfig.conflictType,
         errorMessage: queryConfig.errorMessage,
-        conflicts: formatTimeConflicts(timeConflictsFound),
+        timeConflicts: formatTimeConflicts(timeConflictsFound),
       }
     }
 
@@ -154,14 +153,14 @@ const formatQueryforTimeConflicts =
 // check for specific time conflicts
 export const hasUnavailableTimesConflict = formatQueryforTimeConflicts({
   query: findAdvisorUnavailableTimeConflicts,
-  conflictType: 'Unavailable Times Conflict',
+  conflictType: 'Advisor Unavailable Times',
   errorMessage:
     'This advisor is already scheduled to be unavailable at this time',
 })
 
 export const hasSessionTimeConflict = formatQueryforTimeConflicts({
   query: findAdvisorSessionConflicts,
-  conflictType: 'Workshop Session Conflict',
+  conflictType: 'Workshop Session',
   errorMessage:
     'This advisor is currently scheduled for a workshop session at this time',
 })
@@ -186,9 +185,6 @@ export const hasTimeConflict = async (config: {
 
 @ObjectType()
 export class TimeConflictError {
-  @Field()
-  error: boolean
-
   @Field()
   conflictType: string
 
