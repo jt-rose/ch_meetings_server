@@ -201,7 +201,7 @@ export const seedLicenses = async (prisma: PrismaClient) => {
     ],
   })
 
-  if (licenseChanges.count !== 12) {
+  if (licenseChanges.count !== 13) {
     console.log(`All license changes seeded: false`)
   }
 }
