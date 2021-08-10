@@ -15,5 +15,5 @@ export class AdvisorUnavailableTime {
   unavailable_end_time: Date
 
   @Field(() => String, { nullable: true })
-  note?: string
+  note?: string | null
 }

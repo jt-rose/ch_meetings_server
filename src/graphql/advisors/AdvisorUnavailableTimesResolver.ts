@@ -40,7 +40,7 @@ class UnavailableTimeInfoWithID extends UnavailableTimeInfo {
 }
 
 // generate success / error union type when creating/ editing workshop
-const UnavailableTimeResultUnion = createUnionType({
+const UnavailableTimeResult = createUnionType({
   name: 'UnavailableTimeResult',
   types: () => [AdvisorUnavailableTime, TimeConflictError] as const,
   resolveType: (value) => {
@@ -61,12 +61,12 @@ const UnavailableTimeResultUnion = createUnionType({
 @Resolver(AdvisorUnavailableTime)
 export class AdvisorUnavailableTimeResolver {
   @Authenticated()
-  @Mutation(() => UnavailableTimeResultUnion)
+  @Mutation(() => UnavailableTimeResult)
   async addAdvisorUnavailableDay(
     @Ctx() ctx: Context,
     @Arg('unavailable_time_info', () => UnavailableTimeInfo)
     unavailable_time_info: UnavailableTimeInfo
-  ) {
+  ): Promise<typeof UnavailableTimeResult> {
     const { advisor_id, unavailable_start_time, unavailable_end_time, note } =
       unavailable_time_info
 
@@ -89,7 +89,7 @@ export class AdvisorUnavailableTimeResolver {
   }
 
   @Authenticated()
-  @Mutation(() => UnavailableTimeResultUnion)
+  @Mutation(() => UnavailableTimeResult)
   async editAdvisorUnavailableDay(
     @Ctx() ctx: Context,
     @Arg('unavailable_time_info', () => UnavailableTimeInfoWithID)

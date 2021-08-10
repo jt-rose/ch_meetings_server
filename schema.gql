@@ -14,7 +14,8 @@ type Advisor {
   last_name: String!
   regions: [AdvisorRegion!]!
   requested_workshops: [Workshop!]!
-  unavailable_days: [AdvisorUnavailableDay!]!
+  unavailable_days: [AdvisorUnavailableTime!]!
+  unavailable_times: [AdvisorUnavailableTime!]!
 }
 
 type AdvisorLanguage {
@@ -39,11 +40,12 @@ type AdvisorRegion {
   region_id: Int!
 }
 
-type AdvisorUnavailableDay {
+type AdvisorUnavailableTime {
   advisor_id: Int!
-  day_unavailable: DateTime!
   note: String
+  unavailable_end_time: DateTime!
   unavailable_id: Int!
+  unavailable_start_time: DateTime!
 }
 
 type AvailableLicense {
@@ -229,7 +231,7 @@ type Mutation {
   addAdvisorLanguage(advisor_id: Float!, language: String!): AdvisorLanguage!
   addAdvisorNote(advisor_id: Int!, advisor_note: String!): AdvisorNote!
   addAdvisorRegion(advisor_id: Int!, advisor_region: REGION!): AdvisorRegion!
-  addAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfo!): AdvisorUnavailableDay!
+  addAdvisorUnavailableDay(unavailable_time_info: UnavailableTimeInfo!): UnavailableTimeResult!
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
   addCoursework(description: String, name: String!): Coursework!
@@ -250,7 +252,7 @@ type Mutation {
   deleteWorkshop(note: String, workshop_id: Int!): Workshop!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
-  editAdvisorUnavailableDay(unavailable_day_info: UnavailableDayInfoWithID!): AdvisorUnavailableDay!
+  editAdvisorUnavailableDay(unavailable_time_info: UnavailableTimeInfoWithID!): UnavailableTimeResult!
   editAvailableLicenses(licenseInput: EditLicenseInput!): AvailableLicense!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
@@ -266,7 +268,7 @@ type Mutation {
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
   removeAdvisorNote(note_id: Int!): AdvisorNote!
   removeAdvisorRegion(region_id: Int!): AdvisorRegion!
-  removeAdvisorUnavailableDay(unavailable_id: Int!): AdvisorUnavailableDay!
+  removeAdvisorUnavailableDay(unavailable_id: Int!): AdvisorUnavailableTime!
   removeClient(client_id: Int!): Client!
   removeCourse(course_id: Int!): Course!
   removeCoursework(coursework_id: Int!): Coursework!
@@ -322,17 +324,21 @@ enum SESSION_STATUS {
   VETTING
 }
 
-type SameDaySession {
-  assigned_advisor_id: Int!
+type TimeConflict {
+  advisor_id: Int!
   end_time: String!
+  note: String
   start_time: String!
-  workshop_id: Int!
-  workshop_session_id: Int!
+  unavailable_id: Int
+  workshop_id: Int
+  workshop_session_id: Int
 }
 
 type TimeConflictError {
+  conflictType: String!
   error: Boolean!
-  timeConflicts: [SameDaySession!]!
+  errorMessage: String!
+  timeConflicts: [TimeConflict!]!
 }
 
 """distinguish different types of users with different permissions"""
@@ -343,18 +349,22 @@ enum USER_TYPE {
   USER
 }
 
-input UnavailableDayInfo {
+input UnavailableTimeInfo {
   advisor_id: Int!
-  day_unavailable: DateTime!
   note: String
+  unavailable_end_time: DateTime!
+  unavailable_start_time: DateTime!
 }
 
-input UnavailableDayInfoWithID {
+input UnavailableTimeInfoWithID {
   advisor_id: Int!
-  day_unavailable: DateTime!
   note: String
+  unavailable_end_time: DateTime!
   unavailable_id: Int!
+  unavailable_start_time: DateTime!
 }
+
+union UnavailableTimeResult = AdvisorUnavailableTime | TimeConflictError
 
 type Workshop {
   assignedAdvisor: [Advisor!]
