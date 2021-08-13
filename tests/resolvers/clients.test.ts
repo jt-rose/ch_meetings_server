@@ -165,7 +165,11 @@ describe('Client Resolvers', function () {
                   change_note: 'added to program',
                 },
                 {
-                  change_note: 'Completed workshop: Workshop-ID 1',
+                  change_note: 'Reserved 23 licenses for workshop ID: 1',
+                },
+                {
+                  change_note:
+                    'Completed workshop: Workshop-ID 1, finalized use of 23 licenses',
                 },
               ],
             },
