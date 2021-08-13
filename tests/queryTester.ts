@@ -2,6 +2,7 @@ import axios from 'axios'
 import { expect } from 'chai'
 import { PrismaPromise } from '@prisma/client'
 import { ApolloServer } from 'apollo-server-express'
+import { TimeConflictError } from '../src/graphql/workshops/workshop_utils/checkTimeConflicts'
 
 /* ------------------------ test against live server ------------------------ */
 
@@ -50,6 +51,19 @@ export const confirmError =
     expect(response.data).to.eql(null)
     expect(response.errors?.[0].message.includes(config.expectedErrorMessage))
       .to.be.true
+  }
+
+/* ------------------------ test time conflict error ------------------------ */
+
+export const confirmTimeConflictError =
+  (apollo: ApolloServer) =>
+  async (config: {
+    gqlScript: string
+    timeConflictError: TimeConflictError
+  }) => {
+    const response = await apollo.executeOperation({ query: config.gqlScript })
+    // confirm valid gql response
+    expect(response.data).to.eql(config.timeConflictError)
   }
 
 /* ------------------- check database for expected update ------------------- */

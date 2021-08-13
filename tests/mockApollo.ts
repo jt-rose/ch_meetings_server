@@ -6,12 +6,15 @@ import {
   createMockUserContext,
   createMockAdminContext,
   CreateContext,
+  createMockCoordinatorContext,
+  createMockSuperAdminContext,
 } from '../src/utils/context'
 import {
   confirmResponse,
   confirmError,
   confirmDBUpdate,
   confirmDBRemoval,
+  confirmTimeConflictError,
 } from './queryTester'
 
 // reduce some boilerplate when generating mock versions of apollo
@@ -25,6 +28,7 @@ const createMockApollo = (createContext: CreateContext) => async () => {
     confirmError: confirmError(apollo),
     confirmDBUpdate,
     confirmDBRemoval,
+    confirmTimeConflictError: confirmTimeConflictError(apollo),
   }
 }
 
@@ -48,7 +52,18 @@ export interface MockApolloTestRunners {
   confirmDBRemoval: (config: {
     databaseQuery: PrismaPromise<number>
   }) => Promise<void>
+
+  confirmTimeConflictError: (config: {
+    gqlScript: string
+    timeConflictError: any
+  }) => Promise<void>
 }
 
 export const createMockApolloUser = createMockApollo(createMockUserContext)
 export const createMockApolloAdmin = createMockApollo(createMockAdminContext)
+export const createMockApolloCoordinator = createMockApollo(
+  createMockCoordinatorContext
+)
+export const createMockApolloSuperAdmin = createMockApollo(
+  createMockSuperAdminContext
+)
