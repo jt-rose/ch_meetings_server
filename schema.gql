@@ -231,7 +231,7 @@ type Mutation {
   addAdvisorLanguage(advisor_id: Float!, language: String!): AdvisorLanguage!
   addAdvisorNote(advisor_id: Int!, advisor_note: String!): AdvisorNote!
   addAdvisorRegion(advisor_id: Int!, advisor_region: REGION!): AdvisorRegion!
-  addAdvisorUnavailableDay(unavailable_time_info: UnavailableTimeInfo!): UnavailableTimeResult!
+  addAdvisorUnavailableTime(unavailable_time_info: UnavailableTimeInfo!): UnavailableTimeResult!
   addClient(business_unit: String, client_name: String!): Client!
   addCourse(courseData: CourseInput!): Course!
   addCoursework(description: String, name: String!): Coursework!
@@ -252,7 +252,7 @@ type Mutation {
   deleteWorkshop(note: String, workshop_id: Int!): Workshop!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
-  editAdvisorUnavailableDay(unavailable_time_info: UnavailableTimeInfoWithID!): UnavailableTimeResult!
+  editAdvisorUnavailableTime(unavailable_time_info: UnavailableTimeInfoWithID!): UnavailableTimeResult!
   editAvailableLicenses(licenseInput: EditLicenseInput!): AvailableLicense!
   editClient(business_unit: String, client_id: Int!, client_name: String!): Client!
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
@@ -268,7 +268,7 @@ type Mutation {
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
   removeAdvisorNote(note_id: Int!): AdvisorNote!
   removeAdvisorRegion(region_id: Int!): AdvisorRegion!
-  removeAdvisorUnavailableDay(unavailable_id: Int!): AdvisorUnavailableTime!
+  removeAdvisorUnavailableTime(unavailable_id: Int!): AdvisorUnavailableTime!
   removeClient(client_id: Int!): Client!
   removeCourse(course_id: Int!): Course!
   removeCoursework(coursework_id: Int!): Coursework!
@@ -336,7 +336,6 @@ type TimeConflict {
 
 type TimeConflictError {
   conflictType: String!
-  error: Boolean!
   errorMessage: String!
   timeConflicts: [TimeConflict!]!
 }

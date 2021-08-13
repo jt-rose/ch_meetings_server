@@ -17,6 +17,7 @@ import {
   hasSessionTimeConflict,
   TimeConflictError,
 } from '../workshops/workshop_utils/checkTimeConflicts'
+//import { DateTime } from 'luxon'
 
 @InputType()
 class UnavailableTimeInfo {
@@ -44,7 +45,7 @@ const UnavailableTimeResult = createUnionType({
   name: 'UnavailableTimeResult',
   types: () => [AdvisorUnavailableTime, TimeConflictError] as const,
   resolveType: (value) => {
-    if ('conflicts' in value) {
+    if ('timeConflicts' in value) {
       return TimeConflictError
     }
     if ('unavailable_id' in value) {
@@ -62,7 +63,7 @@ const UnavailableTimeResult = createUnionType({
 export class AdvisorUnavailableTimeResolver {
   @Authenticated()
   @Mutation(() => UnavailableTimeResult)
-  async addAdvisorUnavailableDay(
+  async addAdvisorUnavailableTime(
     @Ctx() ctx: Context,
     @Arg('unavailable_time_info', () => UnavailableTimeInfo)
     unavailable_time_info: UnavailableTimeInfo
@@ -71,7 +72,7 @@ export class AdvisorUnavailableTimeResolver {
       unavailable_time_info
 
     const timeConflicts = await hasTimeConflict({
-      advisor_id: 1,
+      advisor_id,
       prisma: ctx.prisma,
       requests: [
         {
@@ -84,13 +85,18 @@ export class AdvisorUnavailableTimeResolver {
     if (timeConflicts) return timeConflicts
 
     return ctx.prisma.advisor_unavailable_times.create({
-      data: { advisor_id, unavailable_start_time, unavailable_end_time, note },
+      data: {
+        advisor_id,
+        unavailable_start_time,
+        unavailable_end_time,
+        note,
+      },
     })
   }
 
   @Authenticated()
   @Mutation(() => UnavailableTimeResult)
-  async editAdvisorUnavailableDay(
+  async editAdvisorUnavailableTime(
     @Ctx() ctx: Context,
     @Arg('unavailable_time_info', () => UnavailableTimeInfoWithID)
     unavailable_time_info: UnavailableTimeInfoWithID
@@ -117,7 +123,8 @@ export class AdvisorUnavailableTimeResolver {
     if (sessionConflicts) return sessionConflicts
 
     const unavailableConflicts = await hasUnavailableTimesConflict({
-      advisor_id: 1,
+      advisor_id,
+      editing_id: unavailable_id,
       prisma: ctx.prisma,
       requests: [
         {
@@ -150,7 +157,7 @@ export class AdvisorUnavailableTimeResolver {
 
   @Authenticated()
   @Mutation(() => AdvisorUnavailableTime)
-  async removeAdvisorUnavailableDay(
+  async removeAdvisorUnavailableTime(
     @Ctx() ctx: Context,
     @Arg('unavailable_id', () => Int) unavailable_id: number
   ) {
