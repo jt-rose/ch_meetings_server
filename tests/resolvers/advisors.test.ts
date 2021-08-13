@@ -80,8 +80,9 @@ describe('Advisor Resolvers', function () {
     regions {
       advisor_region
     }
-    unavailable_days {
-      day_unavailable
+    unavailable_times {
+      unavailable_start_time
+      unavailable_end_time
     }
     }
   } 
@@ -101,18 +102,10 @@ describe('Advisor Resolvers', function () {
               advisor_region: 'NAM',
             },
           ],
-          unavailable_days: [
+          unavailable_times: [
             {
-              day_unavailable: '2021-10-22T00:00:00.000Z',
-            },
-            {
-              day_unavailable: '2021-10-23T00:00:00.000Z',
-            },
-            {
-              day_unavailable: '2021-10-24T00:00:00.000Z',
-            },
-            {
-              day_unavailable: '2021-10-25T00:00:00.000Z',
+              unavailable_start_time: '2021-10-22T01:00:00.000Z',
+              unavailable_end_time: '2021-10-25T01:00:00.000Z',
             },
           ],
         },
@@ -147,11 +140,7 @@ describe('Advisor Resolvers', function () {
               workshop_id: 4,
             },
           ],
-          requested_workshops: [
-            {
-              workshop_id: 6,
-            },
-          ],
+          requested_workshops: [],
         },
       },
     })
@@ -247,7 +236,7 @@ describe('Advisor Resolvers', function () {
         'Email "henri@email.net" is already registered with an advisor in our system',
     })
   })
-  it('delete advisor and remove related languages, regions, and unavailable_days', async function () {
+  it('delete advisor and remove related languages, regions, and unavailable_times', async function () {
     await mockAdmin.confirmResponse({
       gqlScript: `
     mutation {
@@ -294,7 +283,7 @@ describe('Advisor Resolvers', function () {
 
     // unavailable days removed
     await mockAdmin.confirmDBRemoval({
-      databaseQuery: prisma.unavailable_days.count({
+      databaseQuery: prisma.advisor_unavailable_times.count({
         where: { advisor_id: 5 },
       }),
     })
@@ -316,13 +305,13 @@ describe('Advisor Resolvers', function () {
     await mockAdmin.confirmError({
       gqlScript: `
     mutation {
-  removeAdvisor(advisor_id: 4) {
+  removeAdvisor(advisor_id: 2) {
     email
   }
 }
     `,
       expectedErrorMessage:
-        'Advisor #4 has been requested for workshops. Please clear this request before removing the advisor.',
+        'Advisor #2 cannot be deleted because this advisor currently has past or present workshops assigned',
     })
   })
   it('change advisor active status', async function () {
