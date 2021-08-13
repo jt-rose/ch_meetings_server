@@ -119,6 +119,16 @@ describe('Manager Resolvers', function () {
             active: true,
             email: 'gina.haskell@company.net',
           },
+          {
+            manager_id: 4,
+            active: true,
+            email: 'ezra.metz@company.net',
+          },
+          {
+            manager_id: 5,
+            active: true,
+            email: 'luna.renzi@company.net',
+          },
         ],
       },
     })
@@ -231,6 +241,18 @@ describe('Manager Resolvers', function () {
                 client_id: 4,
               },
             ],
+          },
+          {
+            manager_id: 4,
+            email: 'ezra.metz@company.net',
+            workshops: [],
+            clients: [],
+          },
+          {
+            manager_id: 5,
+            email: 'luna.renzi@company.net',
+            workshops: [],
+            clients: [],
           },
         ],
       },
