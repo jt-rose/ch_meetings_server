@@ -89,7 +89,9 @@ export class AvailableLicenseResolver {
     // check if client already has licenses for this course type, and reject if so
 
     const courseLicensesAlreadyExist =
-      await ctx.prisma.available_licenses.findFirst({ where: { course_id } })
+      await ctx.prisma.available_licenses.findFirst({
+        where: { client_id, course_id },
+      })
     if (courseLicensesAlreadyExist) {
       throw Error('Requested course licenses for this client already exist!')
     }

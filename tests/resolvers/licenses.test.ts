@@ -17,25 +17,31 @@ describe('License Resolvers', function () {
   it('add licenses to client', async function () {
     await mockUser.confirmResponse({
       gqlScript: `
-    mutation {
-  editLicenseAmount(licenseInput: {client_id: 1, course_id: 1, remaining_amount: 200, change_note: "test adding new license", workshop_id: 1}) {
-    license_id
-    client_id
-    remaining_amount
-    license_changes {
-      change_note
-    }
-  }
-}
+      mutation {
+        addLicenses(licenseInput: { client_id: 1, course_id: 2, remaining_amount: 999}) {
+          license_id
+          client_id
+          course_id
+          remaining_amount
+          license_changes {
+            updated_amount
+            amount_change
+            change_note
+          }
+        }
+      }
     `,
       expectedResult: {
-        editLicenseAmount: {
+        addLicenses: {
           license_id: 11,
           client_id: 1,
-          remaining_amount: 200,
+          course_id: 2,
+          remaining_amount: 999,
           license_changes: [
             {
-              change_note: 'test adding new license',
+              updated_amount: 999,
+              amount_change: 999,
+              change_note: '999 licenses for course #2 added for client id 1',
             },
           ],
         },
@@ -46,31 +52,52 @@ describe('License Resolvers', function () {
   it('update licenses for client', async function () {
     await mockUser.confirmResponse({
       gqlScript: `
-    mutation {
-  editLicenseAmount(licenseInput: {license_id: 1, client_id: 1, course_id: 1, remaining_amount: 200, change_note: "test updating license", workshop_id: 1}) {
-    license_id
-    client_id
-    remaining_amount
-    license_changes {
-      change_note
-    }
-  }
-}
+      mutation {
+        editAvailableLicenses(licenseInput: { license_id: 1, remaining_amount: 300, change_note: "increase licenses"}) {
+        license_id
+          course_id
+          client_id
+          remaining_amount
+          license_changes {
+            license_change_id
+            updated_amount
+            amount_change
+            change_note
+          }
+        }
+      }
     `,
       expectedResult: {
-        editLicenseAmount: {
+        editAvailableLicenses: {
           license_id: 1,
+          course_id: 1,
           client_id: 1,
-          remaining_amount: 200,
+          remaining_amount: 300,
           license_changes: [
             {
+              license_change_id: 1,
+              updated_amount: 220,
+              amount_change: 220,
               change_note: 'added to program',
             },
             {
-              change_note: 'Completed workshop: Workshop-ID 1',
+              license_change_id: 2,
+              updated_amount: 193,
+              amount_change: -23,
+              change_note: 'Reserved 23 licenses for workshop ID: 1',
             },
             {
-              change_note: 'test updating license',
+              license_change_id: 3,
+              updated_amount: 193,
+              amount_change: 0,
+              change_note:
+                'Completed workshop: Workshop-ID 1, finalized use of 23 licenses',
+            },
+            {
+              license_change_id: 14,
+              updated_amount: 300,
+              amount_change: 107,
+              change_note: 'increase licenses',
             },
           ],
         },
@@ -81,16 +108,16 @@ describe('License Resolvers', function () {
   it('reject editing license when license not found', async function () {
     await mockUser.confirmError({
       gqlScript: `
-    mutation {
-  editLicenseAmount(licenseInput: {license_id: 100, client_id: 1, course_id: 1, remaining_amount: 200, change_note: "test adding new license", workshop_id: 1}) {
-    license_id
-    client_id
-    remaining_amount
-    license_changes {
-      change_note
-    }
-  }
-}
+      mutation {
+        editAvailableLicenses(licenseInput: {license_id: 100, remaining_amount: 200, change_note: "test adding new license"}) {
+          license_id
+          client_id
+          remaining_amount
+          license_changes {
+            change_note
+          }
+        }
+      }
     `,
       expectedErrorMessage: 'no such license found!',
     })
@@ -132,7 +159,9 @@ describe('License Resolvers', function () {
       },
     })
   })
+  it('convert licenses from one course to another')
   /* ---------------------- test license field resolvers ---------------------- */
+  it('retreive reserved licenses')
   it('retreive field resolvers on license object', async function () {
     await mockUser.confirmResponse({
       gqlScript: `
@@ -142,7 +171,6 @@ describe('License Resolvers', function () {
     licenses {
       license_id
       license_changes {
-        license_change_id
         amount_change
         updated_amount
         change_note
@@ -163,16 +191,20 @@ describe('License Resolvers', function () {
               license_id: 1,
               license_changes: [
                 {
-                  license_change_id: 1,
                   amount_change: 220,
                   updated_amount: 220,
                   change_note: 'added to program',
                 },
                 {
-                  license_change_id: 2,
                   amount_change: -23,
                   updated_amount: 193,
-                  change_note: 'Completed workshop: Workshop-ID 1',
+                  change_note: 'Reserved 23 licenses for workshop ID: 1',
+                },
+                {
+                  amount_change: 0,
+                  change_note:
+                    'Completed workshop: Workshop-ID 1, finalized use of 23 licenses',
+                  updated_amount: 193,
                 },
               ],
               client_id: 1,
@@ -184,7 +216,6 @@ describe('License Resolvers', function () {
               license_id: 2,
               license_changes: [
                 {
-                  license_change_id: 3,
                   amount_change: 35,
                   updated_amount: 35,
                   change_note: 'added to program',
@@ -200,4 +231,9 @@ describe('License Resolvers', function () {
       },
     })
   })
+  it('create reserved license amount and update available licenses')
+  it('reject reserving licenses when no current licenses found')
+  it(
+    'reject reserving licenses when reserved amount is higher than available license amount'
+  )
 })
