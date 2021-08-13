@@ -20,23 +20,31 @@ import { Course } from '../courses/Course'
 import { Coursework } from '../courses/Coursework'
 import { Client } from '../clients/Client'
 import { Advisor } from '../advisors/Advisor'
-import { Authenticated } from '../../middleware/authChecker'
-import { DateTime } from 'luxon'
+import {
+  Authenticated,
+  CoordinatorOrAdminOnly,
+} from '../../middleware/authChecker'
+//import { DateTime } from 'luxon'
 
 import {
   WorkshopsOrderBy,
   parseWorkshopOrderByArgs,
   WorkshopFilterOptions,
   parseWorkshopWhereArgs,
-} from './searchOptions/WorkshopSearch'
+} from './workshop_utils/WorkshopSearch'
 import {
   CreateWorkshopInput,
   //formatCreateWorkshopInput,
-} from './searchOptions/workshopInput'
-import { CreateSessionInput } from './searchOptions/SessionInput'
+} from './workshop_utils/workshopInput'
+import { CreateSessionInput } from './workshop_utils/SessionInput'
 import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 import { nanoid } from 'nanoid'
-import { hasTimeConflict, TimeConflictError } from '../../utils/dateTime'
+import {
+  /*hasTimeConflict,*/ TimeConflictError,
+} from './workshop_utils/checkTimeConflicts'
+import { rejectInactiveAdvisor } from './workshop_utils/confirmActiveAdvisor'
+import { hasTimeConflict } from './workshop_utils/checkTimeConflicts'
+import { confirmAvailableLicenses } from './workshop_utils/confirmLicenses'
 
 // generate success / error union type when creating/ editing workshop
 const CreateWorkshopResultUnion = createUnionType({
@@ -58,7 +66,7 @@ export class WorkshopResolver {
   /* ----------------------------- field resolvers ---------------------------- */
 
   // assigned advisor
-  @FieldResolver(() => [Advisor])
+  @FieldResolver(() => [Advisor], { nullable: true })
   assignedAdvisor(@Ctx() ctx: Context, @Root() root: Workshop) {
     return ctx.prisma.workshops
       .findUnique({ where: { workshop_id: root.workshop_id } })
@@ -66,7 +74,7 @@ export class WorkshopResolver {
   }
 
   // requested advisor
-  @FieldResolver(() => [Advisor])
+  @FieldResolver(() => [Advisor], { nullable: true })
   requestedAdvisor(@Ctx() ctx: Context, @Root() root: Workshop) {
     return ctx.prisma.workshops
       .findUnique({ where: { workshop_id: root.workshop_id } })
@@ -183,7 +191,22 @@ export class WorkshopResolver {
     @Arg('managers', () => [Int]) managers: number[],
     @Arg('notes', () => [String], { nullable: true }) notes: string[]
   ) {
+    /* ----------------------- reject if inactive advisor ----------------------- */
+    if (workshopDetails.requested_advisor_id) {
+      await rejectInactiveAdvisor(
+        workshopDetails.requested_advisor_id,
+        ctx.prisma
+      )
+    }
+
     /* ------------- check for active client and sufficient licenses ------------ */
+    const { clientWithLicenses, updatedAvailableLicenseAmount } =
+      await confirmAvailableLicenses({
+        prisma: ctx.prisma,
+        client_id: workshopDetails.client_id,
+        course_id: workshopDetails.course_id,
+        class_size: workshopDetails.class_size,
+      }) /*
     const clientWithLicenses = await ctx.prisma.clients.findFirst({
       where: { client_id: workshopDetails.client_id },
       include: {
@@ -198,59 +221,24 @@ export class WorkshopResolver {
       clientWithLicenses.available_licenses[0].remaining_amount -
       workshopDetails.class_size
     if (updatedAvailableLicenseAmount < 0)
-      throw Error('Not enough licenses for this course!')
+      throw Error('Not enough licenses for this course!')*/
 
     /* --------------- if requested advisor check for availability -------------- */
     if (workshopDetails.requested_advisor_id) {
-      /* -------- check that advisor is not inactive or marked as unavaialble that day -------- */
-
-      const advisorAvailability = await ctx.prisma.advisors.findFirst({
-        where: { advisor_id: workshopDetails.requested_advisor_id },
-        include: { unavailable_days: true },
-      })
-      if (!advisorAvailability) throw Error('No such advisor found!')
-      if (!advisorAvailability.active)
-        throw Error('Advisor is not currently active!')
-      const requestedDates = sessionDetails.map((session) =>
-        DateTime.fromJSDate(session.start_time).toISODate()
-      )
-      const unavailableDays = advisorAvailability.unavailable_days.map((day) =>
-        DateTime.fromJSDate(day.day_unavailable).toISODate()
-      )
-      const unavailableRequestedDates = unavailableDays.filter((date) =>
-        requestedDates.includes(date)
-      )
-      if (unavailableRequestedDates.length) {
-        return {
-          error: true,
-          unavailableDays: unavailableRequestedDates,
-        }
-      }
-
-      /* -------------------- check for session time confilicts ------------------- */
-
-      // map start and end times used when checking for time conflicts
-      const requestedSessionTimes = sessionDetails.map((session) => ({
-        requestedStartTime: session.start_time,
-        requestedEndTime: session.end_time,
-      }))
-
-      // check for time conflicts
-      const timeConflicts = await hasTimeConflict({
-        advisor_id: workshopDetails.requested_advisor_id,
-        requests: requestedSessionTimes,
+      /*const sessionTimes = sessionDetails.map((session) => ({
+        start_time: session.start_time,
+        end_time: session.end_time,
+      }))*/
+      // mapping needed?
+      await hasTimeConflict({
         prisma: ctx.prisma,
+        advisor_id: workshopDetails.requested_advisor_id,
+        requests: sessionDetails.map((session) => ({
+          requestedStartTime: session.start_time,
+          requestedEndTime: session.end_time,
+        })),
       })
-
-      // if time conflict found, reject with detail on where time conflict arose
-      if (timeConflicts) {
-        return {
-          error: true,
-          timeConflicts,
-        }
-      }
     }
-
     /* -------------- format sub fields and create workshop request ------------- */
     // format sessions objects
     const sessions = sessionDetails.map((session) => ({
@@ -506,5 +494,97 @@ export class WorkshopResolver {
 
     // return restored workshop
     return result[0]
+  }
+
+  @CoordinatorOrAdminOnly()
+  @Mutation(() => Workshop)
+  async assignAdvisortoWorkshop(
+    @Ctx() ctx: Context,
+    @Arg('workshop_id', () => Int) workshop_id: number,
+    @Arg('advisor_id', () => Int) advisor_id: number,
+    @Arg('note', { nullable: true }) note?: string
+  ) {
+    // confirm available
+    ///////////////////////////
+
+    // format note if provided
+    const workshop_notes = note
+      ? {
+          create: {
+            note,
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+          },
+        }
+      : {}
+
+    // set advisor
+    // update workshop and session status
+    // add change log note + note
+    return ctx.prisma.workshops.update({
+      where: { workshop_id },
+      data: {
+        assigned_advisor_id: advisor_id,
+        workshop_status: 'SCHEDULED',
+        workshop_sessions: {
+          updateMany: {
+            where: { workshop_id },
+            data: { session_status: 'SCHEDULED' },
+          },
+        },
+        workshop_change_log: {
+          create: {
+            note: `Advisor #${advisor_id} assigned to workshop and status changed to "SCHEDULED"`,
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+          },
+        },
+        workshop_notes,
+      },
+    })
+  }
+
+  @CoordinatorOrAdminOnly()
+  @Mutation(() => Workshop)
+  async removeAdvisorFromWorkshop(
+    @Ctx() ctx: Context,
+    @Arg('workshop_id', () => Int) workshop_id: number,
+    @Arg('note', { nullable: true }) note?: string
+  ) {
+    // format note if provided
+    const workshop_notes = note
+      ? {
+          create: {
+            note,
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+          },
+        }
+      : {}
+
+    // remove advisor
+    // update workshop and session status
+    // add change log note + note
+    return ctx.prisma.workshops.update({
+      where: { workshop_id },
+      data: {
+        assigned_advisor_id: null,
+        workshop_status: 'REQUESTED',
+        workshop_sessions: {
+          updateMany: {
+            where: { workshop_id },
+            data: { session_status: 'REQUESTED' },
+          },
+        },
+        workshop_change_log: {
+          create: {
+            note: `Advisor removed from workshop and status reset to "REQUESTED"`,
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+          },
+        },
+        workshop_notes,
+      },
+    })
   }
 }
