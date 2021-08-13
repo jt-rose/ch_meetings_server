@@ -42,6 +42,7 @@ export class TimeConflict {
 // function arguments for generating for sql queries
 interface FindTimeConflictsConfig {
   advisor_id: number
+  editing_id?: number
   requestedStartTime: Date
   requestedEndTime: Date
   prisma: PrismaClient
@@ -55,9 +56,16 @@ const findAdvisorUnavailableTimeConflicts = (
 SELECT unavailable_id, unavailable_start_time AS start_time, unavailable_end_time AS end_time, note, advisor_id
 FROM advisor_unavailable_times
 WHERE advisor_id = ${config.advisor_id}
-AND ((unavailable_start_time BETWEEN ${config.requestedStartTime} AND ${config.requestedEndTime})
-OR (unavailable_end_time BETWEEN ${config.requestedStartTime} AND ${config.requestedEndTime})
-OR (unavailable_start_time <= ${config.requestedStartTime} AND unavailable_end_time >= ${config.requestedEndTime}))
+AND unavailable_id != ${config.editing_id || -1}
+AND ((${
+  config.requestedStartTime
+} BETWEEN unavailable_start_time AND unavailable_end_time)
+OR (${
+  config.requestedEndTime
+} BETWEEN unavailable_start_time AND unavailable_end_time)
+OR (${config.requestedStartTime} <= unavailable_start_time AND ${
+  config.requestedEndTime
+} >= unavailable_end_time))
 `
 
 // create a sql query that will run in a transaction
@@ -68,9 +76,12 @@ SELECT ws.workshop_session_id, ws.start_time, ws.end_time, ws.workshop_id, works
 FROM workshop_sessions AS ws
 JOIN workshops ON ws.workshop_id = workshops.workshop_id
 WHERE workshops.assigned_advisor_id = ${config.advisor_id}
-AND ((ws.start_time BETWEEN ${config.requestedStartTime} AND ${config.requestedEndTime})
-OR (ws.end_time BETWEEN ${config.requestedStartTime} AND ${config.requestedEndTime})
-OR (ws.start_time <= ${config.requestedStartTime} AND ws.end_time >= ${config.requestedEndTime}))
+AND ws.workshop_session_id != ${config.editing_id || -1}
+AND ((${config.requestedStartTime} BETWEEN ws.start_time AND ws.end_time)
+OR (${config.requestedEndTime} BETWEEN ws.start_time AND ws.end_time)
+OR (${config.requestedStartTime} <= ws.start_time AND ${
+  config.requestedEndTime
+} >= ws.end_time))
 `
 
 /* -------------------- format discovered time conflicts -------------------- */
@@ -114,18 +125,20 @@ const formatQueryforTimeConflicts =
   }) =>
   async (config: {
     advisor_id: number
+    editing_id?: number
     requests: {
       requestedStartTime: Date
       requestedEndTime: Date
     }[]
     prisma: PrismaClient
   }): Promise<TimeConflictError | false> => {
-    const { advisor_id, requests, prisma } = config
+    const { advisor_id, editing_id, requests, prisma } = config
 
     // map individual queries
     const timeConflictQueries = requests.map((request) =>
       queryConfig.query({
         advisor_id,
+        editing_id,
         requestedStartTime: request.requestedStartTime,
         requestedEndTime: request.requestedEndTime,
         prisma,
