@@ -202,7 +202,7 @@ export class AvailableLicenseResolver {
           create: {
             amount_change: -conversionAmount,
             updated_amount: updatedRemainingAmount,
-            change_note: '',
+            change_note: `${conversionAmount} licenses converted to course #${targetCourse}`,
             created_by: ctx.req.session.manager_id!,
             created_at: new Date(),
           },
@@ -212,11 +212,21 @@ export class AvailableLicenseResolver {
 
     // check for course licenses that will have licenses moved into
     const targetLicense = checkForLicenses.find(
-      (license) => license.course_id === targetCourse
+      (license) =>
+        license.course_id === targetCourse &&
+        license.client_id === currentLicense.client_id
     )
 
     // if no target license already exists, remove original licenses and create target licenses
     if (!targetLicense) {
+      // confirm target course exists
+      const targetCourseExists = await ctx.prisma.courses.findFirst({
+        where: { course_id: targetCourse },
+      })
+      if (!targetCourseExists) {
+        throw Error('No such course exists to move licenses into!')
+      }
+
       // batch query to add licenses toa  new license entity
       const createNewLicenses = ctx.prisma.available_licenses.create({
         data: {
@@ -252,7 +262,7 @@ export class AvailableLicenseResolver {
 
     // reject if current license and target license are the same
     if (targetLicense.license_id === license_id) {
-      throw Error('Cannot convert licenses from and to the samc course!')
+      throw Error('Cannot convert licenses from and to the same course!')
     }
 
     // remove licenses from original course license and add to license amount for a different course
@@ -262,7 +272,7 @@ export class AvailableLicenseResolver {
     const addToExistingLicenses = ctx.prisma.available_licenses.update({
       where: { license_id: targetLicense.license_id },
       data: {
-        remaining_amount: targetLicense?.remaining_amount! + conversionAmount,
+        remaining_amount: targetLicense.remaining_amount + conversionAmount,
         license_changes: {
           create: {
             created_by: ctx.req.session.manager_id!,

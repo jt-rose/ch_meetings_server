@@ -247,6 +247,7 @@ type Mutation {
   changeMyPassword(newPassword: String!): Manager!
   changePasswordAdminAccess(manager_id: Int!, newPassword: String!): Manager!
   confirmReservedLicensesUsed(final_amount_used: Int!, reserved_license_id: Int!): AvailableLicense!
+  convertAvailableLicenses(conversionAmount: Int!, license_id: Int!, targetCourse: Int!): [AvailableLicense!]!
   createSession(sessionInfo: CreateSessionInput!, workshop_id: Int!): WorkshopSession!
   deleteSession(sessionID: Float!): WorkshopSession!
   deleteWorkshop(note: String, workshop_id: Int!): Workshop!
