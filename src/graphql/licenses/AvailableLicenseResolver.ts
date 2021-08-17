@@ -160,4 +160,125 @@ export class AvailableLicenseResolver {
       },
     })
   }
+
+  // convert client's licenses from one course to another
+  @Authenticated()
+  @Mutation(() => [AvailableLicense])
+  async convertAvailableLicenses(
+    @Ctx() ctx: Context,
+    @Arg('license_id', () => Int) license_id: number,
+    @Arg('targetCourse', () => Int) targetCourse: number,
+    @Arg('conversionAmount', () => Int) conversionAmount: number
+  ) {
+    // check for course licenses to convert between
+    const checkForLicenses = await ctx.prisma.available_licenses.findMany({
+      where: { OR: [{ license_id }, { course_id: targetCourse }] },
+    })
+
+    // reject if no license found to remove licenses from
+    const currentLicense = checkForLicenses.find(
+      (license) => license.license_id === license_id
+    )
+    if (!currentLicense) {
+      throw Error('No such license exists!')
+    }
+
+    // confirm license count will not drop below 0 upon change
+    const updatedRemainingAmount =
+      currentLicense.remaining_amount - conversionAmount
+    if (updatedRemainingAmount < 0) {
+      throw Error('Not enough licenses to convert this amount!')
+    }
+
+    //
+
+    // batch query to remove licenses from original license
+    const removeOriginalLicenses = ctx.prisma.available_licenses.update({
+      where: { license_id },
+      data: {
+        remaining_amount: updatedRemainingAmount,
+        last_updated: new Date(),
+        license_changes: {
+          create: {
+            amount_change: -conversionAmount,
+            updated_amount: updatedRemainingAmount,
+            change_note: '',
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+          },
+        },
+      },
+    })
+
+    // check for course licenses that will have licenses moved into
+    const targetLicense = checkForLicenses.find(
+      (license) => license.course_id === targetCourse
+    )
+
+    // if no target license already exists, remove original licenses and create target licenses
+    if (!targetLicense) {
+      // batch query to add licenses toa  new license entity
+      const createNewLicenses = ctx.prisma.available_licenses.create({
+        data: {
+          remaining_amount: conversionAmount,
+          course_id: targetCourse,
+          client_id: currentLicense.client_id,
+          created_by: ctx.req.session.manager_id!,
+          created_at: new Date(),
+          last_updated: new Date(),
+
+          license_changes: {
+            create: {
+              created_by: ctx.req.session.manager_id!,
+              created_at: new Date(),
+              amount_change: conversionAmount,
+              updated_amount: conversionAmount,
+              change_note: `${conversionAmount} licenses converted from license #${license_id} to new licenses for course #${targetCourse}`,
+            },
+          },
+        },
+      })
+
+      // run queries in a transaction
+      return ctx.prisma.$transaction([
+        removeOriginalLicenses,
+        createNewLicenses,
+      ])
+    }
+
+    // if target license exists, confirm the the course type
+    // reject if it is the same course
+    // remove original licenses and update the target license amount
+
+    // reject if current license and target license are the same
+    if (targetLicense.license_id === license_id) {
+      throw Error('Cannot convert licenses from and to the samc course!')
+    }
+
+    // remove licenses from original course license and add to license amount for a different course
+    // if licenses for that course do not exist, create them with this amount
+
+    // batch query to add licenses to existing license entity
+    const addToExistingLicenses = ctx.prisma.available_licenses.update({
+      where: { license_id: targetLicense.license_id },
+      data: {
+        remaining_amount: targetLicense?.remaining_amount! + conversionAmount,
+        license_changes: {
+          create: {
+            created_by: ctx.req.session.manager_id!,
+            created_at: new Date(),
+            amount_change: conversionAmount,
+            updated_amount: conversionAmount,
+            change_note: `${conversionAmount} licenses converted from license #${license_id} to new licenses for course #${targetCourse}`,
+          },
+        },
+      },
+    })
+
+    // run both queries ina  transaction
+    return ctx.prisma.$transaction([
+      removeOriginalLicenses,
+      addToExistingLicenses,
+    ])
+  }
 }
