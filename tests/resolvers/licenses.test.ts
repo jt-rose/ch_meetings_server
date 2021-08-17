@@ -159,7 +159,179 @@ describe('License Resolvers', function () {
       },
     })
   })
-  it('convert licenses from one course to another')
+  it('convert licenses from one course to another, creating new license', async function () {
+    await mockUser.confirmResponse({
+      gqlScript: `
+      mutation {
+        convertAvailableLicenses(license_id: 1, targetCourse: 4, conversionAmount: 10) {
+          remaining_amount
+          course_id
+  client_id
+  license_changes {
+    amount_change
+    updated_amount
+    change_note
+  }
+        }
+      }
+      `,
+      expectedResult: {
+        convertAvailableLicenses: [
+          {
+            remaining_amount: 183,
+            course_id: 1,
+            client_id: 1,
+            license_changes: [
+              {
+                amount_change: 220,
+                updated_amount: 220,
+                change_note: 'added to program',
+              },
+              {
+                amount_change: -23,
+                updated_amount: 193,
+                change_note: 'Reserved 23 licenses for workshop ID: 1',
+              },
+              {
+                amount_change: 0,
+                updated_amount: 193,
+                change_note:
+                  'Completed workshop: Workshop-ID 1, finalized use of 23 licenses',
+              },
+              {
+                amount_change: -10,
+                updated_amount: 183,
+                change_note: '10 licenses converted to course #4',
+              },
+            ],
+          },
+          {
+            remaining_amount: 10,
+            course_id: 4,
+            client_id: 1,
+            license_changes: [
+              {
+                amount_change: 10,
+                updated_amount: 10,
+                change_note:
+                  '10 licenses converted from license #1 to new licenses for course #4',
+              },
+            ],
+          },
+        ],
+      },
+    })
+  })
+  it('convert licenses from one course to another, adding to existing license', async function () {
+    await mockUser.confirmResponse({
+      gqlScript: `
+      mutation {
+        convertAvailableLicenses(license_id: 5, targetCourse: 3, conversionAmount: 10) {
+          remaining_amount
+          course_id
+  client_id
+  license_changes {
+    amount_change
+    updated_amount
+    change_note
+  }
+        }
+      }
+      `,
+      expectedResult: {
+        convertAvailableLicenses: [
+          {
+            remaining_amount: 53,
+            course_id: 1,
+            client_id: 4,
+            license_changes: [
+              {
+                amount_change: 63,
+                updated_amount: 63,
+                change_note: 'added to program',
+              },
+              {
+                amount_change: -10,
+                updated_amount: 53,
+                change_note: '10 licenses converted to course #3',
+              },
+            ],
+          },
+          {
+            remaining_amount: 30,
+            course_id: 3,
+            client_id: 4,
+            license_changes: [
+              {
+                amount_change: 20,
+                updated_amount: 20,
+                change_note: 'added to program',
+              },
+              {
+                amount_change: 10,
+                updated_amount: 10,
+                change_note:
+                  '10 licenses converted from license #5 to new licenses for course #3',
+              },
+            ],
+          },
+        ],
+      },
+    })
+  })
+  it('reject converting licenses when current license not found', async function () {
+    await mockUser.confirmError({
+      gqlScript: `
+      mutation {
+        convertAvailableLicenses(license_id: 999, targetCourse: 3, conversionAmount: 100) {
+          remaining_amount
+          course_id
+        }
+      }
+      `,
+      expectedErrorMessage: 'No such license exists!',
+    })
+  })
+  it('reject converting licenses when target course not found', async function () {
+    await mockUser.confirmError({
+      gqlScript: `
+      mutation {
+        convertAvailableLicenses(license_id: 1, targetCourse: 999, conversionAmount: 10) {
+          remaining_amount
+          course_id
+        }
+      }
+      `,
+      expectedErrorMessage: 'No such course exists to move licenses into!',
+    })
+  })
+  it('reject converting licenses when conversion amount exceeds current license total', async function () {
+    await mockUser.confirmError({
+      gqlScript: `
+        mutation {
+          convertAvailableLicenses(license_id: 1, targetCourse: 3, conversionAmount: 99999) {
+            remaining_amount
+            course_id
+          }
+        }
+        `,
+      expectedErrorMessage: 'Not enough licenses to convert this amount!',
+    })
+  })
+  it('reject converting licenses when target course is same as current license course', async function () {
+    await mockUser.confirmError({
+      gqlScript: `
+        mutation {
+          convertAvailableLicenses(license_id: 1, targetCourse: 1, conversionAmount: 10) {
+            remaining_amount
+            course_id
+          }
+        }
+        `,
+      expectedErrorMessage:
+        'Cannot convert licenses from and to the same course!',
+    })
+  })
   /* ---------------------- test license field resolvers ---------------------- */
   it('retreive reserved licenses')
   it('retreive field resolvers on license object', async function () {
