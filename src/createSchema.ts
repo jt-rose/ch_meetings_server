@@ -17,6 +17,7 @@ import { ManagerAssignmentsResolver } from './graphql/managers/ManagerAssignment
 import { AvailableLicenseResolver } from './graphql/licenses/AvailableLicenseResolver'
 import { ReservedLicenseResolver } from './graphql/licenses/ReservedLicenseResolver'
 import { WorkshopResolver } from './graphql/workshops/WorkshopResolver'
+import { WorkshopGroupResolver } from './graphql/workshops/WorkshopGroupResolver'
 
 /* ---------------------- generates the graphQL schema ---------------------- */
 // authChecker is applied as an arg, allowing for DI if needed
@@ -28,6 +29,7 @@ const generateSchemaType =
       resolvers: [
         WorkshopResolver,
         WorkshopSessionResolver,
+        WorkshopGroupResolver,
         ClientResolver,
         CourseResolver,
         AdvisorResolver,
