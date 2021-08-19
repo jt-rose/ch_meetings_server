@@ -11,7 +11,7 @@ import {
 } from 'type-graphql'
 import { Authenticated } from '../../middleware/authChecker'
 import { Workshop } from './Workshop'
-import { WorkshopGroup, WorkshopGroupNote } from './WorkshopGroup'
+import { WorkshopGroup } from './WorkshopGroup'
 
 @Resolver(WorkshopGroup)
 export class WorkshopGroupResolver {
@@ -24,16 +24,6 @@ export class WorkshopGroupResolver {
     return ctx.prisma.workshop_groups
       .findUnique({ where: { group_id: workshop_group.group_id } })
       .workshops()
-  }
-
-  @FieldResolver(() => WorkshopGroupNote)
-  group_notes(
-    @Ctx() ctx: Context,
-    @Root('workshop_group') workshop_group: WorkshopGroup
-  ) {
-    return ctx.prisma.workshop_groups
-      .findUnique({ where: { group_id: workshop_group.group_id } })
-      .workshop_group_notes()
   }
 
   /* ----------------------------- CRUD operations ---------------------------- */
@@ -60,8 +50,12 @@ export class WorkshopGroupResolver {
   async addWorkshopGroup(
     @Ctx() ctx: Context,
     @Arg('group_name') group_name: string,
-    @Arg('workshop_ids', () => [Int]) workshop_ids: number[]
+    @Arg('group_description', { nullable: true })
+    group_description: string,
+    @Arg('workshop_ids', () => [Int])
+    workshop_ids: number[]
   ) {
+    /*
     // reject if name already taken
     const nameAlreadyTaken = await ctx.prisma.workshop_groups.findFirst({
       where: { group_name },
@@ -69,42 +63,34 @@ export class WorkshopGroupResolver {
     if (nameAlreadyTaken) {
       throw Error(`Group name ${group_name} already in use!`)
     }
-
+    */
     // reject if workshop not found
-    const workshops = await ctx.prisma.workshops.findMany({
-      where: { workshop_id: { in: workshop_ids } },
-    })
-    if (workshops.length !== workshop_ids.length) {
-      // get workshop IDs without matching workshops
-      const missingIDs = workshops
-        .map((ws) => ws.workshop_id)
-        .filter((wsid) => !workshop_ids.includes(wsid))
-      // throw error referencing missing IDs
-      throw Error(`No matching workshop found for workshop ID: ${missingIDs}`)
+    if (workshop_ids) {
+      const workshops = await ctx.prisma.workshops.findMany({
+        where: { workshop_id: { in: workshop_ids } },
+      })
+
+      if (workshops.length !== workshop_ids.length) {
+        // get workshop IDs without matching workshops
+        const missingIDs = workshops
+          .map((ws) => ws.workshop_id)
+          .filter((wsid) => !workshop_ids.includes(wsid))
+        // throw error referencing missing IDs
+        throw Error(`No matching workshop found for workshop ID: ${missingIDs}`)
+      }
     }
 
     // create group and add optional members
-    const createWorkshopGroup = ctx.prisma.workshop_groups.create({
+    return ctx.prisma.workshop_groups.create({
       data: {
         group_name,
+        group_description,
         created_by: ctx.req.session.manager_id!,
         workshops: {
           connect: workshop_ids.map((wsid) => ({ workshop_id: wsid })),
         },
       },
     })
-    const changeLogAdditions = workshop_ids.map((workshop_id) => ({
-      note: `added to workshop group "${group_name}"`,
-      workshop_id,
-      created_by: ctx.req.session.manager_id!,
-      created_at: new Date(),
-    }))
-    const addChangeLogs = ctx.prisma.workshop_change_log.createMany({
-      data: changeLogAdditions,
-    })
-
-    // run as transaction
-    return ctx.prisma.$transaction([createWorkshopGroup, addChangeLogs])
   }
 
   // assign workshop to workshop group
@@ -165,22 +151,24 @@ export class WorkshopGroupResolver {
   async editWorkshopGroup(
     @Ctx() ctx: Context,
     @Arg('group_id', () => Int) group_id: number,
-    @Arg('new_group_name') new_group_name: string
+    @Arg('group_name') group_name: string,
+    @Arg('group_description', { nullable: true })
+    group_description: string
   ) {
     const workshopGroups = await ctx.prisma.workshop_groups.findMany({
-      where: { OR: [{ group_id }, { group_name: new_group_name }] },
+      where: { OR: [{ group_id }, { group_name }] },
     })
     if (workshopGroups.every((group) => group.group_id !== group_id)) {
       throw Error('No such workshop group found!')
     }
 
-    if (workshopGroups.find((group) => group.group_name === new_group_name)) {
-      throw Error(`Group name "${new_group_name}" already in use!`)
+    if (workshopGroups.find((group) => group.group_name === group_name)) {
+      throw Error(`Group name \"${group_name}\" already in use!`)
     }
 
     return ctx.prisma.workshop_groups.update({
       where: { group_id },
-      data: { group_name: new_group_name },
+      data: { group_name, group_description },
     })
   }
 
@@ -224,11 +212,6 @@ export class WorkshopGroupResolver {
       data: changeLogUpdates,
     })
 
-    // remove related group notes
-    const removeWorkshopGroupNotes = ctx.prisma.workshop_group_notes.deleteMany(
-      { where: { group_id } }
-    )
-
     // delete workshop group
     const removeWorkshopGroup = ctx.prisma.workshop_groups.delete({
       where: { group_id },
@@ -238,7 +221,6 @@ export class WorkshopGroupResolver {
     return ctx.prisma.$transaction([
       removeWorkshopsFromGroup,
       addChangeLogs,
-      removeWorkshopGroupNotes,
       removeWorkshopGroup,
     ])
   }

@@ -239,7 +239,7 @@ type Mutation {
   addManager(managerInput: ManagerInput!): Manager!
   addManagerToWorkshop(manager_id: Int!, workshop_id: Int!): ManagerAssignment!
   addWorkshop(managers: [Int!]!, notes: [String!], sessionDetails: [CreateSessionInput!]!, workshopDetails: CreateWorkshopInput!): CreateWorkshopResult!
-  addWorkshopGroup(group_name: String!, workshop_ids: [Int!]!): WorkshopGroup!
+  addWorkshopGroup(group_description: String, group_name: String!, workshop_ids: [Int!]!): WorkshopGroup!
   assignAdvisortoWorkshop(advisor_id: Int!, note: String, workshop_id: Int!): Workshop!
   assignWorkshopToWorkshopGroup(group_id: Int!, workshop_id: Int!): Workshop!
   changeAdvisorActiveStatus(active: Boolean!, advisor_id: Int!): Advisor!
@@ -262,7 +262,7 @@ type Mutation {
   editCoursework(courseworkInput: CourseworkInput!): Coursework!
   editManager(managerInput: ManagerInput!, manager_id: Float!): Manager!
   editSession(sessionID: Int!, updatedInfo: EditSessionInput!): WorkshopSession!
-  editWorkshopGroup(group_id: Int!, new_group_name: String!): WorkshopGroup!
+  editWorkshopGroup(group_description: String, group_id: Int!, group_name: String!): WorkshopGroup!
   forgotPassword(email: String!): Boolean!
   login(email: String!, password: String!): Manager!
   logout: Boolean!
@@ -429,18 +429,10 @@ input WorkshopFilterOptions {
 
 type WorkshopGroup {
   created_by: Int!
+  group_description: String
   group_id: Int!
   group_name: String!
-  group_notes: [WorkshopGroupNote!]!
   workshops: [Workshop!]!
-}
-
-type WorkshopGroupNote {
-  created_at: DateTime!
-  created_by: Int!
-  group_id: Int!
-  note: String!
-  note_id: Int!
 }
 
 type WorkshopNote {
