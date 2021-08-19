@@ -9,12 +9,7 @@ export const seedWorkshops = async (prisma: PrismaClient) => {
       created_by: 2,
 
       group_name: 'Acme Cohorts 2020-2021',
-      workshop_group_notes: {
-        create: {
-          created_by: 2,
-          note: 'Group of Cohorts using V2 training materials',
-        },
-      },
+      group_description: 'Group of Cohorts using V2 training materials',
     },
   })
 

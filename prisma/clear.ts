@@ -17,7 +17,6 @@ export async function clear() {
   await prisma.workshop_notes.deleteMany()
   await prisma.workshop_coursework.deleteMany()
   await prisma.workshops.deleteMany()
-  await prisma.workshop_group_notes.deleteMany()
   await prisma.workshop_groups.deleteMany()
 
   // remove advisors and related data
