@@ -68,29 +68,28 @@ model manager_assignments {
 }
 
 model managers {
-  manager_id           Int                    @id @default(autoincrement())
-  first_name           String                 @db.VarChar(255)
-  last_name            String                 @db.VarChar(255)
-  email                String                 @unique @db.VarChar(255)
-  email_password       String                 @db.VarChar(255)
-  user_type            user_type_enum
-  active               Boolean                @default(true)
-  advisor_notes        advisor_notes[]
-  available_licenses   available_licenses[]
-  client_notes         client_notes[]
-  clients              clients[]
-  courses              courses[]
-  coursework           coursework[]
-  license_changes      license_changes[]
-  manager_assignments  manager_assignments[]
-  manager_clients      manager_clients[]
-  reserved_licenses    reserved_licenses[]
-  workshop_change_log  workshop_change_log[]
-  workshop_group_notes workshop_group_notes[]
-  workshop_groups      workshop_groups[]
-  workshop_notes       workshop_notes[]
-  workshop_sessions    workshop_sessions[]
-  workshops            workshops[]
+  manager_id          Int                   @id @default(autoincrement())
+  first_name          String                @db.VarChar(255)
+  last_name           String                @db.VarChar(255)
+  email               String                @unique @db.VarChar(255)
+  email_password      String                @db.VarChar(255)
+  user_type           user_type_enum
+  active              Boolean               @default(true)
+  advisor_notes       advisor_notes[]
+  available_licenses  available_licenses[]
+  client_notes        client_notes[]
+  clients             clients[]
+  courses             courses[]
+  coursework          coursework[]
+  license_changes     license_changes[]
+  manager_assignments manager_assignments[]
+  manager_clients     manager_clients[]
+  reserved_licenses   reserved_licenses[]
+  workshop_change_log workshop_change_log[]
+  workshop_groups     workshop_groups[]
+  workshop_notes      workshop_notes[]
+  workshop_sessions   workshop_sessions[]
+  workshops           workshops[]
 }
 
 model regions {
@@ -242,23 +241,13 @@ model license_changes {
   workshops          workshops?         @relation(fields: [workshop_id], references: [workshop_id])
 }
 
-model workshop_group_notes {
-  note_id         Int             @id @default(autoincrement())
-  created_by      Int
-  created_at      DateTime        @default(now()) @db.Timestamptz(6)
-  group_id        Int
-  note            String
-  managers        managers        @relation(fields: [created_by], references: [manager_id])
-  workshop_groups workshop_groups @relation(fields: [group_id], references: [group_id])
-}
-
 model workshop_groups {
-  group_id             Int                    @id @default(autoincrement())
-  group_name           String                 @db.VarChar(255)
-  created_by           Int
-  managers             managers               @relation(fields: [created_by], references: [manager_id])
-  workshop_group_notes workshop_group_notes[]
-  workshops            workshops[]
+  group_id          Int         @id @default(autoincrement())
+  group_name        String      @unique @db.VarChar(255)
+  group_description String?
+  created_by        Int
+  managers          managers    @relation(fields: [created_by], references: [manager_id])
+  workshops         workshops[]
 }
 
 model workshop_participants {

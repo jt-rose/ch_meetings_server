@@ -105,15 +105,9 @@ CREATE TABLE courses_and_coursework (
 );
 CREATE TABLE workshop_groups (
     group_id SERIAL PRIMARY KEY,
-    group_name VARCHAR(255) NOT NULL,
+    group_name VARCHAR(255) UNIQUE NOT NULL,
+    group_description TEXT,
     created_by INT REFERENCES managers(manager_id) NOT NULL
-);
-CREATE TABLE workshop_group_notes (
-    note_id SERIAL PRIMARY KEY,
-    created_by INT REFERENCES managers(manager_id) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    group_id INT REFERENCES workshop_groups(group_id) NOT NULL,
-    note TEXT NOT NULL
 );
 -- initially, separating a workshop request from the workshop entity
 -- was considered, but since much of the data is shared, this did not make sense
