@@ -265,3 +265,8 @@ CREATE TABLE workshop_participants (
     workshop_id INT REFERENCES workshops(workshop_id) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE TABLE error_log (
+    error_id SERIAL PRIMARY KEY,
+    error_response JSON NOT NULL,
+    error_time TIMESTAMPTZ NOT NULL
+);

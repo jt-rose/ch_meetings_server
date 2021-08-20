@@ -308,6 +308,12 @@ model advisor_unavailable_times {
   advisors               advisors @relation(fields: [advisor_id], references: [advisor_id])
 }
 
+model error_log {
+  error_id       Int      @id @default(autoincrement())
+  error_response Json     @db.Json
+  error_time     DateTime @db.Timestamptz(6)
+}
+
 enum session_status_enum {
   REQUESTED
   VETTING
