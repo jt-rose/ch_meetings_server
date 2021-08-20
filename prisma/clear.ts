@@ -2,6 +2,9 @@ import { prisma } from '../src/prisma'
 import { resetAutoInc } from './resetAutoInc'
 
 export async function clear() {
+  // remove error logs
+  await prisma.error_log.deleteMany()
+
   // remove licenses
   await prisma.license_changes.deleteMany()
   await prisma.reserved_licenses.deleteMany()

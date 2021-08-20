@@ -46,4 +46,5 @@ export const resetAutoInc = async () => {
   await prisma.$queryRaw`ALTER SEQUENCE available_licenses_license_id_seq RESTART WITH 1;`
   await prisma.$queryRaw`ALTER SEQUENCE reserved_licenses_reserved_license_id_seq RESTART WITH 1;`
   await prisma.$queryRaw`ALTER SEQUENCE license_changes_license_change_id_seq RESTART WITH 1;`
+  await prisma.$queryRaw`ALTER SEQUENCE error_log_error_id_seq RESTART WITH 1;`
 }
