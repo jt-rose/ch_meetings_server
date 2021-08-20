@@ -15,6 +15,7 @@ import { AdvisorUnavailableTime } from './AdvisorUnavailableTime'
 import { AdvisorNote } from './AdvisorNote'
 import { Context } from '../../utils/context'
 import { Authenticated, AdminOnly } from '../../middleware/authChecker'
+import { CustomError } from '../../middleware/errorHandler'
 
 @Resolver(Advisor)
 export class AdvisorResolver {
@@ -117,7 +118,7 @@ export class AdvisorResolver {
       where: { email },
     })
     if (emailRegistered) {
-      throw Error(
+      throw new CustomError(
         `Advisor with email "${email}" already registered in the system`
       )
     }
@@ -143,7 +144,7 @@ export class AdvisorResolver {
         where: { email },
       })
       if (currentlyUsed) {
-        throw Error(
+        throw new CustomError(
           `Email "${email}" is already registered with an advisor in our system`
         )
       }
@@ -175,7 +176,7 @@ export class AdvisorResolver {
       where: { assigned_advisor_id: advisor_id },
     })
     if (hasWorkshops) {
-      throw Error(
+      throw new CustomError(
         `Advisor #${advisor_id} cannot be deleted because this advisor currently has past or present workshops assigned`
       )
     }
@@ -187,7 +188,7 @@ export class AdvisorResolver {
       },
     })
     if (hasBeenRequested) {
-      throw Error(
+      throw new CustomError(
         `Advisor #${advisor_id} has been requested for workshops. Please clear this request before removing the advisor.`
       )
     }
@@ -241,7 +242,7 @@ export class AdvisorResolver {
         .flatMap((x) => x.workshop_sessions)
         .some((session) => session.session_status !== 'COMPLETED')
       if (hasActiveWorkshops) {
-        throw Error(
+        throw new CustomError(
           'Advisor cannote be deactivated as they have upcoming workshops scheduled'
         )
       }

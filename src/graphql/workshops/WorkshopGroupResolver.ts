@@ -12,15 +12,13 @@ import {
 import { Authenticated } from '../../middleware/authChecker'
 import { Workshop } from './Workshop'
 import { WorkshopGroup } from './WorkshopGroup'
+import { CustomError } from '../../middleware/errorHandler'
 
 @Resolver(WorkshopGroup)
 export class WorkshopGroupResolver {
   /* ----------------------------- field resolvers ---------------------------- */
   @FieldResolver(() => Workshop)
-  workshops(
-    @Ctx() ctx: Context,
-    @Root('workshop_group') workshop_group: WorkshopGroup
-  ) {
+  workshops(@Ctx() ctx: Context, @Root() workshop_group: WorkshopGroup) {
     return ctx.prisma.workshop_groups
       .findUnique({ where: { group_id: workshop_group.group_id } })
       .workshops()
@@ -61,7 +59,7 @@ export class WorkshopGroupResolver {
       where: { group_name },
     })
     if (nameAlreadyTaken) {
-      throw Error(`Group name ${group_name} already in use!`)
+      throw new CustomError(`Group name ${group_name} already in use!`)
     }
     */
     // reject if workshop not found
@@ -75,8 +73,10 @@ export class WorkshopGroupResolver {
         const missingIDs = workshops
           .map((ws) => ws.workshop_id)
           .filter((wsid) => !workshop_ids.includes(wsid))
-        // throw error referencing missing IDs
-        throw Error(`No matching workshop found for workshop ID: ${missingIDs}`)
+        // throw new CustomError referencing missing IDs
+        throw new CustomError(
+          `No matching workshop found for workshop ID: ${missingIDs}`
+        )
       }
     }
 
@@ -105,7 +105,7 @@ export class WorkshopGroupResolver {
       where: { group_id },
     })
     if (!workshopGroup) {
-      throw Error('No such Workshop Group found!')
+      throw new CustomError('No such Workshop Group found!')
     }
 
     return ctx.prisma.workshops.update({
@@ -159,11 +159,11 @@ export class WorkshopGroupResolver {
       where: { OR: [{ group_id }, { group_name }] },
     })
     if (workshopGroups.every((group) => group.group_id !== group_id)) {
-      throw Error('No such workshop group found!')
+      throw new CustomError('No such workshop group found!')
     }
 
     if (workshopGroups.find((group) => group.group_name === group_name)) {
-      throw Error(`Group name \"${group_name}\" already in use!`)
+      throw new CustomError(`Group name \"${group_name}\" already in use!`)
     }
 
     return ctx.prisma.workshop_groups.update({
@@ -187,7 +187,7 @@ export class WorkshopGroupResolver {
 
     // reject if no workshop group found
     if (!groupsAndWorkshops) {
-      throw Error('No such workshop group found!')
+      throw new CustomError('No such workshop group found!')
     }
 
     const changeLogUpdates = groupsAndWorkshops.workshops.map((workshop) => ({
@@ -218,10 +218,12 @@ export class WorkshopGroupResolver {
     })
 
     // run all updates in a transaction
-    return ctx.prisma.$transaction([
+    const result = await ctx.prisma.$transaction([
       removeWorkshopsFromGroup,
       addChangeLogs,
       removeWorkshopGroup,
     ])
+
+    return result[0]
   }
 }

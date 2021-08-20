@@ -21,6 +21,7 @@ import argon2 from 'argon2'
 import { sendEmail } from '../../utils/sendEmail'
 import { v4 } from 'uuid'
 import { Authenticated, AdminOnly } from '../../middleware/authChecker'
+import { CustomError } from '../../middleware/errorHandler'
 
 const FORGOT_PASSWORD_PREFIX = 'forgot-password:'
 
@@ -84,17 +85,19 @@ export class ManagerResolver {
       user_type === USER_TYPE.SUPERADMIN &&
       ctx.req.session.role !== 'SUPERADMIN'
     ) {
-      throw Error('A super admin can only be created by another super admin!')
+      throw new CustomError(
+        'A super admin can only be created by another super admin!'
+      )
     }
 
     // confirm valid email and password
     if (!validateEmail(email)) {
-      throw Error(
+      throw new CustomError(
         'invalid email submitted - Please confirm the email signature matches the official company email'
       )
     }
     if (!validatePassword(email_password)) {
-      throw Error(
+      throw new CustomError(
         'invalid password - please confirm password is at least 8 characters long, has upper and lowwercase characters, and includes a number and special character'
       )
     }
@@ -104,7 +107,9 @@ export class ManagerResolver {
       where: { email },
     })
     if (emailAlreadyRegistered) {
-      throw Error(`user with email "${email}" already registered in the system`)
+      throw new CustomError(
+        `user with email "${email}" already registered in the system`
+      )
     }
 
     // encrypt password
@@ -144,16 +149,18 @@ export class ManagerResolver {
       user_type === USER_TYPE.SUPERADMIN &&
       ctx.req.session.role !== 'SUPERADMIN'
     ) {
-      throw Error('A super admin can only be edited by another super admin!')
+      throw new CustomError(
+        'A super admin can only be edited by another super admin!'
+      )
     }
     // confirm valid email and password
     if (!validateEmail(email)) {
-      throw Error(
+      throw new CustomError(
         'invalid email submitted - Please confirm the email signature matches the official company email'
       )
     }
     if (!validatePassword(email_password)) {
-      throw Error(
+      throw new CustomError(
         'invalid password - please confirm password is at least 8 characters long, has upper and lowwercase characters, and includes a number and special character'
       )
     }
@@ -163,7 +170,9 @@ export class ManagerResolver {
       where: { email },
     })
     if (emailAlreadyRegistered) {
-      throw Error(`user with email "${email}" already registered in the system`)
+      throw new CustomError(
+        `user with email "${email}" already registered in the system`
+      )
     }
     // encrypt password
     const hashedPassword = await argon2.hash(email_password)
@@ -233,7 +242,7 @@ export class ManagerResolver {
     try {
       const manager = await ctx.prisma.managers.findFirst({ where: { email } })
       if (!manager) {
-        throw Error('incorrect username/password')
+        throw new CustomError('incorrect username/password')
       }
 
       const validPassword = await argon2.verify(
@@ -241,7 +250,7 @@ export class ManagerResolver {
         password
       )
       if (!validPassword) {
-        throw Error('incorrect username/password')
+        throw new CustomError('incorrect username/password')
       }
       ctx.req.session.manager_id = manager.manager_id
       ctx.req.session.role = manager.user_type
@@ -285,7 +294,7 @@ export class ManagerResolver {
     @Arg('newPassword') newPassword: string
   ) {
     if (!validatePassword(newPassword)) {
-      throw Error(
+      throw new CustomError(
         'invalid password - please confirm password is at least 8 characters long, has upper and lowwercase characters, and includes a number and special character'
       )
     }
@@ -305,7 +314,7 @@ export class ManagerResolver {
     @Arg('newPassword') newPassword: string
   ) {
     if (!validatePassword(newPassword)) {
-      throw Error(
+      throw new CustomError(
         'invalid password - please confirm password is at least 8 characters long, has upper and lowwercase characters, and includes a number and special character'
       )
     }
@@ -325,7 +334,7 @@ export class ManagerResolver {
   async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string) {
     const manager = await ctx.prisma.managers.findFirst({ where: { email } })
     if (!manager) {
-      throw Error(`no such manager with email "${email}" found`)
+      throw new CustomError(`no such manager with email "${email}" found`)
     }
 
     const token = v4()
@@ -352,7 +361,7 @@ export class ManagerResolver {
   ) {
     // validate new password
     if (!validatePassword(newPassword)) {
-      throw Error(
+      throw new CustomError(
         'invalid password - please confirm password is at least 8 characters long, has upper and lowwercase characters, and includes a number and special character'
       )
     }
@@ -360,7 +369,7 @@ export class ManagerResolver {
     console.log('key: ' + key)
     const redisId = await ctx.redis.get(key)
     if (!redisId) {
-      throw Error('Error: token expired')
+      throw new CustomError('Error: token expired')
     }
 
     const manager_id = parseInt(redisId)
@@ -368,7 +377,7 @@ export class ManagerResolver {
       where: { manager_id },
     })
     if (!manager) {
-      throw Error('Error: manager no longer registered in system')
+      throw new CustomError('Error: manager no longer registered in system')
     }
 
     const hashedPassword = await argon2.hash(newPassword)

@@ -45,6 +45,7 @@ import {
 import { rejectInactiveAdvisor } from './workshop_utils/confirmActiveAdvisor'
 import { hasTimeConflict } from './workshop_utils/checkTimeConflicts'
 import { confirmAvailableLicenses } from './workshop_utils/confirmLicenses'
+import { CustomError } from '../../middleware/errorHandler'
 
 // generate success / error union type when creating/ editing workshop
 const CreateWorkshopResultUnion = createUnionType({
@@ -214,14 +215,14 @@ export class WorkshopResolver {
       },
     })
 
-    if (!clientWithLicenses) throw Error('No such client found!')
-    if (!clientWithLicenses.active) throw Error('Client is currently inactive!')
+    if (!clientWithLicenses) throw new CustomError('No such client found!')
+    if (!clientWithLicenses.active) throw new CustomError('Client is currently inactive!')
 
     const updatedAvailableLicenseAmount =
       clientWithLicenses.available_licenses[0].remaining_amount -
       workshopDetails.class_size
     if (updatedAvailableLicenseAmount < 0)
-      throw Error('Not enough licenses for this course!')*/
+      throw new CustomError('Not enough licenses for this course!')*/
 
     /* --------------- if requested advisor check for availability -------------- */
     if (workshopDetails.requested_advisor_id) {
@@ -329,6 +330,19 @@ export class WorkshopResolver {
   // update workshop // distinct from updating sessions, just for workshop meta data, again one off, but need to update change log
   // when updating/ deleting workshop/ restoring, need to update license counts
   // what if editing course type?
+  // !!! change requests will be handled separately and need approval by coordinator
+  // !!! the below function is for coordinators directly changing it on their own
+  @CoordinatorOrAdminOnly()
+  @Mutation(() => Workshop)
+  editWorkshop(
+    @Ctx() ctx: Context,
+    @Arg('workshop_id', () => Int) workshop_id: number
+  ) {
+    return ctx.prisma.workshops.update({
+      where: { workshop_id },
+      data: {},
+    })
+  }
 
   // delete workshop (move to trash, can still be restored)
   @Authenticated()
@@ -344,7 +358,7 @@ export class WorkshopResolver {
       include: { available_licenses: true },
     })
     if (!reservedLicenses)
-      throw Error('No such workshop / resereved licenses found!')
+      throw new CustomError('No such workshop / resereved licenses found!')
     const updatedAvailableLicenseAmount =
       reservedLicenses.available_licenses.remaining_amount +
       reservedLicenses.reserved_amount
@@ -435,12 +449,12 @@ export class WorkshopResolver {
       include: { available_licenses: true },
     })
     if (!reservedLicenses)
-      throw Error('No such workshop / resereved licenses found!')
+      throw new CustomError('No such workshop / resereved licenses found!')
     const updatedAvailableLicenseAmount =
       reservedLicenses.available_licenses.remaining_amount -
       reservedLicenses.reserved_amount
     if (updatedAvailableLicenseAmount < 0) {
-      throw Error(
+      throw new CustomError(
         'Not enough available licenses to reserve this workshop again!'
       )
       // add optional updated reserved amount for recreating workshop but with fewer licenses?

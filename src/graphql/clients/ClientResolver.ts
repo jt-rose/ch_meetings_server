@@ -13,6 +13,7 @@ import { Client } from './Client'
 import { ClientNote } from './ClientNote'
 import { AvailableLicense } from '../licenses/AvailableLicense'
 import { Workshop } from '../workshops/Workshop'
+import { CustomError } from '../../middleware/errorHandler'
 
 @Resolver(Client)
 export class ClientResolver {
@@ -67,7 +68,7 @@ export class ClientResolver {
       where: { client_name, business_unit },
     })
     if (nameInUse) {
-      throw Error(
+      throw new CustomError(
         `client "${client_name}" with business unit "${business_unit}" is already registered in the system`
       )
     }
@@ -88,7 +89,9 @@ export class ClientResolver {
       where: { client_name, business_unit },
     })
     if (alreadyRegistered) {
-      throw Error('This client has already been registered in the system')
+      throw new CustomError(
+        'This client has already been registered in the system'
+      )
     }
     return ctx.prisma.clients.create({
       data: {
@@ -113,11 +116,11 @@ export class ClientResolver {
 
     // reject if no client found
     if (!clientAndWorkshops) {
-      throw Error(`Client not found in database`)
+      throw new CustomError(`Client not found in database`)
     }
     // reject if client has workshops scheduled, past or present
     if (clientAndWorkshops.workshops.length > 0) {
-      throw Error(
+      throw new CustomError(
         'Cannot remove client with past or present workshops assigned'
       )
     }
@@ -128,7 +131,7 @@ export class ClientResolver {
         (x) => x.remaining_amount !== 0
       )
     ) {
-      throw Error('Cannot remove client with outstanding licenses')
+      throw new CustomError('Cannot remove client with outstanding licenses')
     }
 
     // safe to delete if client present but without workshops/ licenses
@@ -176,7 +179,7 @@ export class ClientResolver {
         .flatMap((x) => x.workshop_sessions)
         .some((session) => session.session_status !== 'COMPLETED')
       if (hasActiveWorkshops) {
-        throw Error(
+        throw new CustomError(
           'Client cannot be deactivated as they have upcoming workshops scheduled'
         )
       }

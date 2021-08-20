@@ -13,6 +13,7 @@ import { Context } from '../../utils/context'
 import { Workshop } from '../workshops/Workshop'
 import { Authenticated } from '../../middleware/authChecker'
 import { ReservedLicense } from './ReservedLicenses'
+import { CustomError } from '../../middleware/errorHandler'
 
 @Resolver(ReservedLicense)
 export class ReservedLicenseResolver {
@@ -49,12 +50,12 @@ export class ReservedLicenseResolver {
       where: { license_id },
     })
     // reject if licenses not found under this license id
-    if (!currentLicenseCount) throw Error('No such licenses found!')
+    if (!currentLicenseCount) throw new CustomError('No such licenses found!')
     // get the updated amount of available licenses and reject if it is less than 0
     const updatedAvailableLicensesAmount =
       currentLicenseCount.remaining_amount - reserved_amount
     if (updatedAvailableLicensesAmount < 0)
-      throw Error(
+      throw new CustomError(
         `Not enough licenses! This client only has ${currentLicenseCount.remaining_amount} of these licenses left but you requested ${reserved_amount} licenses`
       )
 
@@ -95,20 +96,20 @@ export class ReservedLicenseResolver {
     @Arg('change_note', { nullable: true }) change_note?: string
   ) {
     if (amount_change === 0)
-      throw Error('Please select an amount to change the reserved licenses by')
+      throw new CustomError('Please select an amount to change the reserved licenses by')
     // if reserved amount increases, confirm enough available licenses
     const currentReservedLicenses =
       await ctx.prisma.reserved_licenses.findFirst({
         where: { reserved_license_id },
         include: { available_licenses: true },
       })
-    if (!currentReservedLicenses) throw Error('No such licenses found!')
+    if (!currentReservedLicenses) throw new CustomError('No such licenses found!')
 
     const updatedAvailableLicensesAmount =
       currentReservedLicenses.available_licenses.remaining_amount -
       amount_change
     if (amount_change > 0 && updatedAvailableLicensesAmount < 0) {
-      throw Error(
+      throw new CustomError(
         `Not enough licenses! This client only has ${currentReservedLicenses.available_licenses.remaining_amount} of these licenses left but you requested an additional ${amount_change} licenses`
       )
     }
@@ -157,7 +158,7 @@ export class ReservedLicenseResolver {
       where: { reserved_license_id },
       include: { available_licenses: true },
     })
-    if (!reservedLicense) throw Error('No such reserved licenses found!')
+    if (!reservedLicense) throw new CustomError('No such reserved licenses found!')
     const updated_amount =
       reservedLicense.available_licenses.remaining_amount +
       reservedLicense.reserved_amount
@@ -194,7 +195,8 @@ export class ReservedLicenseResolver {
       where: { reserved_license_id },
       include: { available_licenses: true },
     })
-    if (!reservedLicense) throw Error('No such reserved licenses found!')
+    if (!reservedLicense)
+      throw new CustomError('No such reserved licenses found!')
 
     // check for difference in final amounts used
     const finalAmountChange =
@@ -204,7 +206,7 @@ export class ReservedLicenseResolver {
 
     // if higher number of licenses used then originally reserved, confirm enough available
     if (updatedAvailableLicenseAmount < 0) {
-      throw Error(
+      throw new CustomError(
         'Not enough available licenses to cover the increase reserved licenses amount requested!'
       )
     }

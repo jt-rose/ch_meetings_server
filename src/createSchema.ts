@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import { buildSchema } from 'type-graphql'
 import { authChecker } from './middleware/authChecker'
+import { ErrorInterceptor } from './middleware/errorHandler'
 
 /* ---------------------------- import resolvers ---------------------------- */
 import { WorkshopSessionResolver } from './graphql/workshops/SessionResolver'
@@ -47,6 +48,7 @@ const generateSchemaType =
       // automatically create `schema.gql` file with schema definition in project's working directory
       emitSchemaFile: emitSDL,
       authChecker: customAuthChecker,
+      globalMiddlewares: [ErrorInterceptor],
     })
 
 // create schema for production

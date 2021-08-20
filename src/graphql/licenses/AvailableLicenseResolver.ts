@@ -16,6 +16,7 @@ import { Context } from '../../utils/context'
 import { Client } from '../clients/Client'
 import { Authenticated } from '../../middleware/authChecker'
 import { ReservedLicense } from './ReservedLicenses'
+import { CustomError } from '../../middleware/errorHandler'
 
 @InputType()
 class LicenseInput {
@@ -93,7 +94,9 @@ export class AvailableLicenseResolver {
         where: { client_id, course_id },
       })
     if (courseLicensesAlreadyExist) {
-      throw Error('Requested course licenses for this client already exist!')
+      throw new CustomError(
+        'Requested course licenses for this client already exist!'
+      )
     }
     return ctx.prisma.available_licenses.create({
       data: {
@@ -129,7 +132,7 @@ export class AvailableLicenseResolver {
 
     // reject if new remaining amount is less than 0
     if (remaining_amount < 0)
-      throw Error('Available license amount cannot be negative!')
+      throw new CustomError('Available license amount cannot be negative!')
 
     // confirm license exists in database
     const currentLicense = await ctx.prisma.available_licenses.findFirst({
@@ -138,7 +141,7 @@ export class AvailableLicenseResolver {
     })
 
     if (!currentLicense) {
-      throw Error('no such license found!')
+      throw new CustomError('no such license found!')
     }
 
     // calculate how much the available license amount is changing by
@@ -180,14 +183,14 @@ export class AvailableLicenseResolver {
       (license) => license.license_id === license_id
     )
     if (!currentLicense) {
-      throw Error('No such license exists!')
+      throw new CustomError('No such license exists!')
     }
 
     // confirm license count will not drop below 0 upon change
     const updatedRemainingAmount =
       currentLicense.remaining_amount - conversionAmount
     if (updatedRemainingAmount < 0) {
-      throw Error('Not enough licenses to convert this amount!')
+      throw new CustomError('Not enough licenses to convert this amount!')
     }
 
     //
@@ -224,7 +227,7 @@ export class AvailableLicenseResolver {
         where: { course_id: targetCourse },
       })
       if (!targetCourseExists) {
-        throw Error('No such course exists to move licenses into!')
+        throw new CustomError('No such course exists to move licenses into!')
       }
 
       // batch query to add licenses toa  new license entity
@@ -262,7 +265,9 @@ export class AvailableLicenseResolver {
 
     // reject if current license and target license are the same
     if (targetLicense.license_id === license_id) {
-      throw Error('Cannot convert licenses from and to the same course!')
+      throw new CustomError(
+        'Cannot convert licenses from and to the same course!'
+      )
     }
 
     // remove licenses from original course license and add to license amount for a different course

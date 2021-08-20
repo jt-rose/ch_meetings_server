@@ -3,7 +3,7 @@ import { WorkshopSession } from './Session'
 import {
   CreateSessionInput,
   EditSessionInput,
-} from './searchOptions/SessionInput'
+} from './workshop_utils/SessionInput'
 import { Context } from '../../utils/context'
 import { Authenticated } from '../../middleware/authChecker'
 

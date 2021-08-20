@@ -262,6 +262,7 @@ type Mutation {
   editCoursework(courseworkInput: CourseworkInput!): Coursework!
   editManager(managerInput: ManagerInput!, manager_id: Float!): Manager!
   editSession(sessionID: Int!, updatedInfo: EditSessionInput!): WorkshopSession!
+  editWorkshop(workshop_id: Int!): Workshop!
   editWorkshopGroup(group_description: String, group_id: Int!, group_name: String!): WorkshopGroup!
   forgotPassword(email: String!): Boolean!
   login(email: String!, password: String!): Manager!

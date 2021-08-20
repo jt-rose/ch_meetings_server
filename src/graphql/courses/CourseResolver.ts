@@ -1,3 +1,4 @@
+import { CustomError } from '../../middleware/errorHandler'
 import {
   Resolver,
   FieldResolver,
@@ -51,7 +52,7 @@ export class CourseResolver {
       where: { course_name: courseData.course_name },
     })
     if (nameAlreadyInUse) {
-      throw Error(
+      throw new CustomError(
         `Error: Course name "${courseData.course_name}" is already in use`
       )
     }
@@ -72,7 +73,7 @@ export class CourseResolver {
       where: { course_name: courseData.course_name, NOT: { course_id } },
     })
     if (nameAlreadyInUse) {
-      throw Error(
+      throw new CustomError(
         `Error: Course name "${courseData.course_name}" is already in use`
       )
     }
@@ -94,7 +95,7 @@ export class CourseResolver {
       where: { course_id },
     })
     if (hasWorkshops) {
-      throw Error(
+      throw new CustomError(
         `Cannot delete course with past or present workshops assigned`
       )
     }

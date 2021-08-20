@@ -13,6 +13,7 @@ import { Advisor } from './Advisor'
 import { Context } from '../../utils/context'
 import { languageList } from '../../utils/languageList'
 import { Authenticated } from '../../middleware/authChecker'
+import { CustomError } from '../../middleware/errorHandler'
 
 @Resolver(AdvisorLanguage)
 export class LanguageResolver {
@@ -36,7 +37,7 @@ export class LanguageResolver {
     @Arg('language') language: string
   ) {
     if (!languageList.includes(language)) {
-      throw Error('Please submit a valid language')
+      throw new CustomError('Please submit a valid language')
     }
     return ctx.prisma.languages.create({
       data: { advisor_id, advisor_language: language },
