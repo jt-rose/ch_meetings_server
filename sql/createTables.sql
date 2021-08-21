@@ -268,5 +268,6 @@ CREATE TABLE workshop_participants (
 CREATE TABLE error_log (
     error_id SERIAL PRIMARY KEY,
     error_response JSON NOT NULL,
-    error_time TIMESTAMPTZ NOT NULL
+    error_time TIMESTAMPTZ NOT NULL,
+    manager_id INT REFERENCES managers(manager_id)
 );

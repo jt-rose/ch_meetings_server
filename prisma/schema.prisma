@@ -81,6 +81,7 @@ model managers {
   clients             clients[]
   courses             courses[]
   coursework          coursework[]
+  error_log           error_log[]
   license_changes     license_changes[]
   manager_assignments manager_assignments[]
   manager_clients     manager_clients[]
@@ -309,9 +310,11 @@ model advisor_unavailable_times {
 }
 
 model error_log {
-  error_id       Int      @id @default(autoincrement())
-  error_response Json     @db.Json
-  error_time     DateTime @db.Timestamptz(6)
+  error_id       Int       @id @default(autoincrement())
+  error_response Json      @db.Json
+  error_time     DateTime  @db.Timestamptz(6)
+  manager_id     Int?
+  managers       managers? @relation(fields: [manager_id], references: [manager_id])
 }
 
 enum session_status_enum {

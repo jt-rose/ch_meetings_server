@@ -41,6 +41,7 @@ export const ErrorInterceptor: MiddlewareFn<Context> = async (
       data: {
         error_response: JSON.stringify(err),
         error_time: new Date(),
+        manager_id: context.req.session.manager_id,
       },
     })
 
