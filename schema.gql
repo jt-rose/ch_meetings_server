@@ -179,6 +179,13 @@ input EditSessionInput {
   start_time: DateTime!
 }
 
+type ErrorLog {
+  error_id: Int!
+  error_response: String!
+  error_time: DateTime!
+  manager_id: Int
+}
+
 type LicenseChange {
   amount_change: Int!
   change_note: String!
@@ -277,12 +284,19 @@ type Mutation {
   removeClient(client_id: Int!): Client!
   removeCourse(course_id: Int!): Course!
   removeCoursework(coursework_id: Int!): Coursework!
+  removeErrorLog(error_id: Int!): ErrorLog!
   removeFromCourseMaterial(course_and_coursework_id: Int!): CoursesToCoursework!
   removeManagerFromWorkshop(assignment_id: Int!): ManagerAssignment!
   removeWorkshopFromWorkshopGroup(workshop_id: Int!): WorkshopGroup!
   removeWorkshopGroup(group_id: Int!): WorkshopGroup!
   resetPassword(newPassword: String!, token: String!): Manager!
   restoreWorkshop(workshop_id: Int!): Workshop!
+}
+
+"""sort data by ascending or descending order"""
+enum ORDERBY_DIRECTION {
+  ASC
+  DESC
 }
 
 type Query {
@@ -293,6 +307,7 @@ type Query {
   getAllClients: [Client!]
   getAllCourses: [Course!]!
   getAllCoursework: [Coursework!]!
+  getAllErrorLogs(gte: DateTime, lte: DateTime, manager_id: Int, orderBy: ORDERBY_DIRECTION!, skip: Int!, take: Int!): [ErrorLog!]!
   getAllManagers: [Manager!]!
   getAllWorkshopGroups: [WorkshopGroup!]!
   getAllWorkshops(filters: WorkshopFilterOptions, orderBy: [WorkshopsOrderBy!], skip: Float, take: Float): [Workshop!]!

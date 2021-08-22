@@ -19,6 +19,7 @@ import { AvailableLicenseResolver } from './graphql/licenses/AvailableLicenseRes
 import { ReservedLicenseResolver } from './graphql/licenses/ReservedLicenseResolver'
 import { WorkshopResolver } from './graphql/workshops/WorkshopResolver'
 import { WorkshopGroupResolver } from './graphql/workshops/WorkshopGroupResolver'
+import { ErrorLogResolver } from './graphql/error_log/ErrorLogResolver'
 
 /* ---------------------- generates the graphQL schema ---------------------- */
 // authChecker is applied as an arg, allowing for DI if needed
@@ -43,6 +44,7 @@ const generateSchemaType =
         ManagerAssignmentsResolver,
         AvailableLicenseResolver,
         ReservedLicenseResolver,
+        ErrorLogResolver,
       ],
       validate: false,
       // automatically create `schema.gql` file with schema definition in project's working directory
