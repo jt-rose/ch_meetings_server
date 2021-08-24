@@ -24,6 +24,12 @@ CREATE TYPE RESERVED_LICENSE_STATUS_ENUM AS ENUM (
     'FINALIZED',
     'CANCELLED'
 );
+CREATE TYPE CHANGE_REQUEST_STATUS_ENUM AS ENUM (
+    'REQUESTED',
+    'APPROVED',
+    'REJECTED',
+    'REJECTED WITH DIFFERENT CHANGES REQUESTED'
+);
 CREATE TABLE managers (
     manager_id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -146,6 +152,49 @@ CREATE TABLE workshops (
     participant_sign_up_link VARCHAR(255) NOT NULL,
     launch_participant_sign_ups BOOLEAN NOT NULL DEFAULT FALSE
 );
+-- store requested changes that will be approved by managers / coordinators
+-- fields are nullable for values that aren't changing
+-- this is mostly a copy of the workshop table, but for tracking
+-- and for keeping the workshop entity clean
+-- this will be managed separately rather than adding numerous additional fields
+-- to the main workshop entity
+CREATE TABLE workshop_change_requests (
+    workshop_change_request_id SERIAL PRIMARY KEY,
+    workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
+    --group_id INT REFERENCES workshop_groups (group_id),
+    --created_by INT REFERENCES managers (manager_id) NOT NULL,
+    --created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    -- start and end dates will be manually updated
+    -- as workshop sessions are added, updated, deleted
+    -- this will allow for much simpler sorting by date
+    workshop_start_time TIMESTAMPTZ,
+    workshop_end_time TIMESTAMPTZ,
+    workshop_status SESSION_STATUS_ENUM,
+    course_id INT REFERENCES courses (course_id),
+    cohort_name VARCHAR(255) UNIQUE,
+    requested_advisor_id INT REFERENCES advisors (advisor_id),
+    -- nullable for no preference
+    assigned_advisor_id INT REFERENCES advisors (advisor_id),
+    -- workshop_location can refer to a physical address or zoom/ teams
+    workshop_location VARCHAR(255),
+    workshop_region REGION_ENUM,
+    class_size INT,
+    -- nullable for situations where we don't yet know the number
+    client_id INT REFERENCES clients (client_id),
+    open_air_id VARCHAR(255),
+    time_zone VARCHAR(10),
+    workshop_language VARCHAR(255),
+    record_attendance BOOLEAN,
+    in_person BOOLEAN,
+    deleted BOOLEAN,
+    -- identifying info for change request
+    change_request_note TEXT NOT NULL,
+    change_request_status CHANGE_REQUEST_STATUS_ENUM NOT NULL,
+    requested_by INT REFERENCES managers (manager_id) NOT NULL,
+    requested_at TIMESTAMPTZ NOT NULL,
+    resolved_at TIMESTAMPTZ,
+    coordinator_request BOOLEAN NOT NULL
+);
 -- different versions of coursework are available for each course
 -- this table will track which one has been chosen for each workshop
 CREATE TABLE workshop_coursework (
@@ -174,6 +223,24 @@ CREATE TABLE workshop_sessions (
     end_time TIMESTAMPTZ NOT NULL,
     session_status SESSION_STATUS_ENUM NOT NULL,
     meeting_link VARCHAR(255)
+);
+CREATE TABLE workshop_session_change_requests (
+    workshop_session_change_request_id SERIAL PRIMARY KEY,
+    workshop_change_request_id INT REFERENCES workshop_change_requests(workshop_change_request_id),
+    -- nullable
+    workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
+    workshop_session_id INT REFERENCES workshop_sessions(workshop_session_id) NOT NULL,
+    session_name VARCHAR(255),
+    start_time TIMESTAMPTZ,
+    end_time TIMESTAMPTZ,
+    session_status SESSION_STATUS_ENUM,
+    meeting_link VARCHAR(255),
+    change_request_note TEXT NOT NULL,
+    change_request_status CHANGE_REQUEST_STATUS_ENUM NOT NULL,
+    requested_by INT REFERENCES managers (manager_id) NOT NULL,
+    requested_at TIMESTAMPTZ NOT NULL,
+    resolved_at TIMESTAMPTZ,
+    coordinator_request BOOLEAN NOT NULL
 );
 -- start time ranges for session requests can be entered
 -- time range will default on server to cover a 24 hour period

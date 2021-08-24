@@ -8,47 +8,51 @@ datasource db {
 }
 
 model advisors {
-  advisor_id                                         Int                         @id @default(autoincrement())
-  email                                              String                      @unique @db.VarChar(255)
-  first_name                                         String                      @db.VarChar(255)
-  last_name                                          String                      @db.VarChar(255)
-  active                                             Boolean                     @default(true)
-  advisor_notes                                      advisor_notes[]
-  advisor_unavailable_times                          advisor_unavailable_times[]
-  languages                                          languages[]
-  regions                                            regions[]
-  workshops_advisorsToworkshops_assigned_advisor_id  workshops[]                 @relation("advisorsToworkshops_assigned_advisor_id")
-  workshops_advisorsToworkshops_requested_advisor_id workshops[]                 @relation("advisorsToworkshops_requested_advisor_id")
+  advisor_id                                                                       Int                         @id @default(autoincrement())
+  email                                                                            String                      @unique @db.VarChar(255)
+  first_name                                                                       String                      @db.VarChar(255)
+  last_name                                                                        String                      @db.VarChar(255)
+  active                                                                           Boolean                     @default(true)
+  advisor_notes                                                                    advisor_notes[]
+  advisor_unavailable_times                                                        advisor_unavailable_times[]
+  languages                                                                        languages[]
+  regions                                                                          regions[]
+  workshop_change_requests_advisorsToworkshop_change_requests_assigned_advisor_id  workshop_change_requests[]  @relation("advisorsToworkshop_change_requests_assigned_advisor_id")
+  workshop_change_requests_advisorsToworkshop_change_requests_requested_advisor_id workshop_change_requests[]  @relation("advisorsToworkshop_change_requests_requested_advisor_id")
+  workshops_advisorsToworkshops_assigned_advisor_id                                workshops[]                 @relation("advisorsToworkshops_assigned_advisor_id")
+  workshops_advisorsToworkshops_requested_advisor_id                               workshops[]                 @relation("advisorsToworkshops_requested_advisor_id")
 }
 
 model clients {
-  client_id          Int                  @id @default(autoincrement())
-  client_name        String               @db.VarChar(255)
-  business_unit      String?              @db.VarChar(255)
-  active             Boolean              @default(true)
-  created_by         Int
-  created_at         DateTime             @default(now()) @db.Timestamptz(6)
-  managers           managers             @relation(fields: [created_by], references: [manager_id])
-  available_licenses available_licenses[]
-  client_notes       client_notes[]
-  manager_clients    manager_clients[]
-  workshops          workshops[]
+  client_id                Int                        @id @default(autoincrement())
+  client_name              String                     @db.VarChar(255)
+  business_unit            String?                    @db.VarChar(255)
+  active                   Boolean                    @default(true)
+  created_by               Int
+  created_at               DateTime                   @default(now()) @db.Timestamptz(6)
+  managers                 managers                   @relation(fields: [created_by], references: [manager_id])
+  available_licenses       available_licenses[]
+  client_notes             client_notes[]
+  manager_clients          manager_clients[]
+  workshop_change_requests workshop_change_requests[]
+  workshops                workshops[]
 }
 
 model courses {
-  course_id              Int                      @id @default(autoincrement())
-  created_by             Int
-  course_name            String                   @unique @db.VarChar(255)
-  course_description     String
-  active                 Boolean                  @default(true)
-  virtual_course         Boolean
-  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
-  updated_at             DateTime                 @default(now()) @db.Timestamptz(6)
-  managers               managers                 @relation(fields: [created_by], references: [manager_id])
-  available_licenses     available_licenses[]
-  courses_and_coursework courses_and_coursework[]
-  workshop_session_sets  workshop_session_sets[]
-  workshops              workshops[]
+  course_id                Int                        @id @default(autoincrement())
+  created_by               Int
+  course_name              String                     @unique @db.VarChar(255)
+  course_description       String
+  active                   Boolean                    @default(true)
+  virtual_course           Boolean
+  created_at               DateTime                   @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime                   @default(now()) @db.Timestamptz(6)
+  managers                 managers                   @relation(fields: [created_by], references: [manager_id])
+  available_licenses       available_licenses[]
+  courses_and_coursework   courses_and_coursework[]
+  workshop_change_requests workshop_change_requests[]
+  workshop_session_sets    workshop_session_sets[]
+  workshops                workshops[]
 }
 
 model languages {
@@ -68,29 +72,31 @@ model manager_assignments {
 }
 
 model managers {
-  manager_id          Int                   @id @default(autoincrement())
-  first_name          String                @db.VarChar(255)
-  last_name           String                @db.VarChar(255)
-  email               String                @unique @db.VarChar(255)
-  email_password      String                @db.VarChar(255)
-  user_type           user_type_enum
-  active              Boolean               @default(true)
-  advisor_notes       advisor_notes[]
-  available_licenses  available_licenses[]
-  client_notes        client_notes[]
-  clients             clients[]
-  courses             courses[]
-  coursework          coursework[]
-  error_log           error_log[]
-  license_changes     license_changes[]
-  manager_assignments manager_assignments[]
-  manager_clients     manager_clients[]
-  reserved_licenses   reserved_licenses[]
-  workshop_change_log workshop_change_log[]
-  workshop_groups     workshop_groups[]
-  workshop_notes      workshop_notes[]
-  workshop_sessions   workshop_sessions[]
-  workshops           workshops[]
+  manager_id                       Int                                @id @default(autoincrement())
+  first_name                       String                             @db.VarChar(255)
+  last_name                        String                             @db.VarChar(255)
+  email                            String                             @unique @db.VarChar(255)
+  email_password                   String                             @db.VarChar(255)
+  user_type                        user_type_enum
+  active                           Boolean                            @default(true)
+  advisor_notes                    advisor_notes[]
+  available_licenses               available_licenses[]
+  client_notes                     client_notes[]
+  clients                          clients[]
+  courses                          courses[]
+  coursework                       coursework[]
+  error_log                        error_log[]
+  license_changes                  license_changes[]
+  manager_assignments              manager_assignments[]
+  manager_clients                  manager_clients[]
+  reserved_licenses                reserved_licenses[]
+  workshop_change_log              workshop_change_log[]
+  workshop_change_requests         workshop_change_requests[]
+  workshop_groups                  workshop_groups[]
+  workshop_notes                   workshop_notes[]
+  workshop_session_change_requests workshop_session_change_requests[]
+  workshop_sessions                workshop_sessions[]
+  workshops                        workshops[]
 }
 
 model regions {
@@ -111,56 +117,59 @@ model workshop_notes {
 }
 
 model workshop_sessions {
-  workshop_session_id Int                 @id @default(autoincrement())
-  created_by          Int
-  created_at          DateTime            @default(now()) @db.Timestamptz(6)
-  workshop_id         Int
-  session_name        String              @db.VarChar(255)
-  start_time          DateTime            @db.Timestamptz(6)
-  end_time            DateTime            @db.Timestamptz(6)
-  session_status      session_status_enum
-  meeting_link        String?             @db.VarChar(255)
-  managers            managers            @relation(fields: [created_by], references: [manager_id])
-  workshops           workshops           @relation(fields: [workshop_id], references: [workshop_id])
+  workshop_session_id              Int                                @id @default(autoincrement())
+  created_by                       Int
+  created_at                       DateTime                           @default(now()) @db.Timestamptz(6)
+  workshop_id                      Int
+  session_name                     String                             @db.VarChar(255)
+  start_time                       DateTime                           @db.Timestamptz(6)
+  end_time                         DateTime                           @db.Timestamptz(6)
+  session_status                   session_status_enum
+  meeting_link                     String?                            @db.VarChar(255)
+  managers                         managers                           @relation(fields: [created_by], references: [manager_id])
+  workshops                        workshops                          @relation(fields: [workshop_id], references: [workshop_id])
+  workshop_session_change_requests workshop_session_change_requests[]
 }
 
 model workshops {
-  workshop_id                                       Int                     @id @default(autoincrement())
+  workshop_id                                       Int                                @id @default(autoincrement())
   group_id                                          Int?
   created_by                                        Int
-  created_at                                        DateTime                @default(now()) @db.Timestamptz(6)
-  workshop_start_time                               DateTime                @db.Timestamptz(6)
-  workshop_end_time                                 DateTime                @db.Timestamptz(6)
+  created_at                                        DateTime                           @default(now()) @db.Timestamptz(6)
+  workshop_start_time                               DateTime                           @db.Timestamptz(6)
+  workshop_end_time                                 DateTime                           @db.Timestamptz(6)
   workshop_status                                   session_status_enum
   course_id                                         Int
-  cohort_name                                       String                  @unique @db.VarChar(255)
+  cohort_name                                       String                             @unique @db.VarChar(255)
   requested_advisor_id                              Int?
   assigned_advisor_id                               Int?
-  workshop_location                                 String                  @db.VarChar(255)
+  workshop_location                                 String                             @db.VarChar(255)
   workshop_region                                   region_enum
   class_size                                        Int?
   client_id                                         Int
-  open_air_id                                       String                  @db.VarChar(255)
-  time_zone                                         String                  @db.VarChar(10)
-  workshop_language                                 String                  @db.VarChar(255)
+  open_air_id                                       String                             @db.VarChar(255)
+  time_zone                                         String                             @db.VarChar(10)
+  workshop_language                                 String                             @db.VarChar(255)
   record_attendance                                 Boolean
   in_person                                         Boolean
-  deleted                                           Boolean                 @default(false)
-  participant_sign_up_link                          String                  @db.VarChar(255)
-  launch_participant_sign_ups                       Boolean                 @default(false)
-  advisors_advisorsToworkshops_assigned_advisor_id  advisors?               @relation("advisorsToworkshops_assigned_advisor_id", fields: [assigned_advisor_id], references: [advisor_id])
-  clients                                           clients                 @relation(fields: [client_id], references: [client_id])
-  courses                                           courses                 @relation(fields: [course_id], references: [course_id])
-  managers                                          managers                @relation(fields: [created_by], references: [manager_id])
-  workshop_groups                                   workshop_groups?        @relation(fields: [group_id], references: [group_id])
-  advisors_advisorsToworkshops_requested_advisor_id advisors?               @relation("advisorsToworkshops_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
+  deleted                                           Boolean                            @default(false)
+  participant_sign_up_link                          String                             @db.VarChar(255)
+  launch_participant_sign_ups                       Boolean                            @default(false)
+  advisors_advisorsToworkshops_assigned_advisor_id  advisors?                          @relation("advisorsToworkshops_assigned_advisor_id", fields: [assigned_advisor_id], references: [advisor_id])
+  clients                                           clients                            @relation(fields: [client_id], references: [client_id])
+  courses                                           courses                            @relation(fields: [course_id], references: [course_id])
+  managers                                          managers                           @relation(fields: [created_by], references: [manager_id])
+  workshop_groups                                   workshop_groups?                   @relation(fields: [group_id], references: [group_id])
+  advisors_advisorsToworkshops_requested_advisor_id advisors?                          @relation("advisorsToworkshops_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
   license_changes                                   license_changes[]
   manager_assignments                               manager_assignments[]
   reserved_licenses                                 reserved_licenses[]
   workshop_change_log                               workshop_change_log[]
+  workshop_change_requests                          workshop_change_requests[]
   workshop_coursework                               workshop_coursework[]
   workshop_notes                                    workshop_notes[]
   workshop_participants                             workshop_participants[]
+  workshop_session_change_requests                  workshop_session_change_requests[]
   workshop_sessions                                 workshop_sessions[]
 }
 
@@ -317,6 +326,63 @@ model error_log {
   managers       managers? @relation(fields: [manager_id], references: [manager_id])
 }
 
+model workshop_change_requests {
+  workshop_change_request_id                                       Int                                @id @default(autoincrement())
+  workshop_id                                                      Int
+  workshop_start_time                                              DateTime?                          @db.Timestamptz(6)
+  workshop_end_time                                                DateTime?                          @db.Timestamptz(6)
+  workshop_status                                                  session_status_enum?
+  course_id                                                        Int?
+  cohort_name                                                      String?                            @unique @db.VarChar(255)
+  requested_advisor_id                                             Int?
+  assigned_advisor_id                                              Int?
+  workshop_location                                                String?                            @db.VarChar(255)
+  workshop_region                                                  region_enum?
+  class_size                                                       Int?
+  client_id                                                        Int?
+  open_air_id                                                      String?                            @db.VarChar(255)
+  time_zone                                                        String?                            @db.VarChar(10)
+  workshop_language                                                String?                            @db.VarChar(255)
+  record_attendance                                                Boolean?
+  in_person                                                        Boolean?
+  deleted                                                          Boolean?
+  change_request_note                                              String
+  change_request_status                                            change_request_status_enum
+  requested_by                                                     Int
+  requested_at                                                     DateTime                           @db.Timestamptz(6)
+  resolved_at                                                      DateTime?                          @db.Timestamptz(6)
+  coordinator_request                                              Boolean
+  advisors_advisorsToworkshop_change_requests_assigned_advisor_id  advisors?                          @relation("advisorsToworkshop_change_requests_assigned_advisor_id", fields: [assigned_advisor_id], references: [advisor_id])
+  clients                                                          clients?                           @relation(fields: [client_id], references: [client_id])
+  courses                                                          courses?                           @relation(fields: [course_id], references: [course_id])
+  advisors_advisorsToworkshop_change_requests_requested_advisor_id advisors?                          @relation("advisorsToworkshop_change_requests_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
+  managers                                                         managers                           @relation(fields: [requested_by], references: [manager_id])
+  workshops                                                        workshops                          @relation(fields: [workshop_id], references: [workshop_id])
+  workshop_session_change_requests                                 workshop_session_change_requests[]
+}
+
+model workshop_session_change_requests {
+  workshop_session_change_request_id Int                        @id @default(autoincrement())
+  workshop_change_request_id         Int?
+  workshop_id                        Int
+  workshop_session_id                Int
+  session_name                       String?                    @db.VarChar(255)
+  start_time                         DateTime?                  @db.Timestamptz(6)
+  end_time                           DateTime?                  @db.Timestamptz(6)
+  session_status                     session_status_enum?
+  meeting_link                       String?                    @db.VarChar(255)
+  change_request_note                String
+  change_request_status              change_request_status_enum
+  requested_by                       Int
+  requested_at                       DateTime                   @db.Timestamptz(6)
+  resolved_at                        DateTime?                  @db.Timestamptz(6)
+  coordinator_request                Boolean
+  managers                           managers                   @relation(fields: [requested_by], references: [manager_id])
+  workshop_change_requests           workshop_change_requests?  @relation(fields: [workshop_change_request_id], references: [workshop_change_request_id])
+  workshops                          workshops                  @relation(fields: [workshop_id], references: [workshop_id])
+  workshop_sessions                  workshop_sessions          @relation(fields: [workshop_session_id], references: [workshop_session_id])
+}
+
 enum session_status_enum {
   REQUESTED
   VETTING
@@ -345,4 +411,11 @@ enum reserved_license_status_enum {
   RESERVED
   FINALIZED
   CANCELLED
+}
+
+enum change_request_status_enum {
+  REQUESTED
+  APPROVED
+  REJECTED
+  REJECTED_WITH_DIFFERENT_CHANGES_REQUESTED @map("REJECTED WITH DIFFERENT CHANGES REQUESTED")
 }
