@@ -1,3 +1,4 @@
+import { TIME_ZONE } from 'src/graphql/enums/TIME_ZONES'
 import { InputType, Field, Int } from 'type-graphql'
 import { REGION } from '../../enums/REGION'
 
@@ -31,8 +32,8 @@ export class CreateWorkshopInput {
   @Field()
   open_air_id: string
 
-  @Field()
-  time_zone: string
+  @Field(() => TIME_ZONE)
+  time_zone: TIME_ZONE
 
   @Field()
   workshop_language: string // enums/ validation

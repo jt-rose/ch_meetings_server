@@ -9,6 +9,7 @@ import { WorkshopNote } from './WorkshopNote'
 import { Coursework } from '../courses/Coursework'
 import { REGION } from '../enums/REGION'
 import { SESSION_STATUS } from '../enums/SESSION_STATUS'
+import { TIME_ZONE } from '../enums/TIME_ZONES'
 
 @ObjectType()
 export class Workshop {
@@ -51,8 +52,8 @@ export class Workshop {
   @Field()
   open_air_id: string
 
-  @Field()
-  time_zone: string
+  @Field(() => TIME_ZONE)
+  time_zone: TIME_ZONE
 
   // add validation
   @Field()

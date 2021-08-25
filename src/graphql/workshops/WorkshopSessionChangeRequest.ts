@@ -1,13 +1,4 @@
 import { ObjectType, Field, Int } from 'type-graphql'
-/*import { Advisor } from '../advisors/Advisor'
-import { ChangeLog } from './WorkshopChangeLog'
-import { Client } from '../clients/Client'
-import { Course } from '../courses/Course'
-import { Manager } from '../managers/Manager'
-import { WorkshopSession } from './Session'
-import { WorkshopNote } from './WorkshopNote'
-import { Coursework } from '../courses/Coursework'
-import { REGION } from '../enums/REGION'*/
 import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 import { CHANGE_REQUEST_STATUS } from '../enums/CHANGE_REQUEST_STATUS'
 
