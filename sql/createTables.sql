@@ -13,6 +13,20 @@ CREATE TYPE REGION_ENUM AS ENUM (
     'APAC',
     'ANZ'
 );
+CREATE TYPE TIME_ZONE_ENUM AS ENUM (
+    'UTC -08.00 - Pacific Time - US & Canada',
+    'UTC -07.00 - Mountain Time - US & Canada',
+    'UTC -06.00 - Central Time - US & Canada',
+    'UTC -05.00 - Eastern Time - US & Canada',
+    'UTC 00:00 - Dublin, Edinburgh, Lisbon, London',
+    'UTC +01.00 - Western Europe',
+    'UTC +03.00 - Moscow, St. Petersburg',
+    'UTC +05.30 - Chennai, Kolkata, Mumbai, New Delhi',
+    'UTC +08:00 - Beijing, Hong Kong, Singapore, Perth',
+    'UTC +09.00 - Seoul, Tokyo',
+    'UTC +09.30 - Adelaide, Darwin',
+    'UTC +10.00 - Brisbane, Canberra, Melbourne, Sydney'
+);
 CREATE TYPE USER_TYPE_ENUM AS ENUM (
     'USER',
     'COORDINATOR',
@@ -144,13 +158,14 @@ CREATE TABLE workshops (
     -- nullable for situations where we don't yet know the number
     client_id INT REFERENCES clients (client_id) NOT NULL,
     open_air_id VARCHAR(255) NOT NULL,
-    time_zone VARCHAR(10) NOT NULL,
+    time_zone TIME_ZONE_ENUM NOT NULL,
     workshop_language VARCHAR(255) NOT NULL,
     record_attendance BOOLEAN NOT NULL,
     in_person BOOLEAN NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT FALSE,
     participant_sign_up_link VARCHAR(255) NOT NULL,
-    launch_participant_sign_ups BOOLEAN NOT NULL DEFAULT FALSE
+    launch_participant_sign_ups BOOLEAN NOT NULL DEFAULT FALSE,
+    active_change_request BOOLEAN NOT NULL DEFAULT FALSE
 );
 -- store requested changes that will be approved by managers / coordinators
 -- fields are nullable for values that aren't changing
@@ -182,7 +197,7 @@ CREATE TABLE workshop_change_requests (
     -- nullable for situations where we don't yet know the number
     client_id INT REFERENCES clients (client_id) NOT NULL,
     open_air_id VARCHAR(255) NOT NULL,
-    time_zone VARCHAR(10) NOT NULL,
+    time_zone TIME_ZONE_ENUM NOT NULL,
     workshop_language VARCHAR(255) NOT NULL,
     record_attendance BOOLEAN NOT NULL,
     in_person BOOLEAN NOT NULL,
