@@ -207,30 +207,10 @@ export class WorkshopResolver {
         client_id: workshopDetails.client_id,
         course_id: workshopDetails.course_id,
         class_size: workshopDetails.class_size,
-      }) /*
-    const clientWithLicenses = await ctx.prisma.clients.findFirst({
-      where: { client_id: workshopDetails.client_id },
-      include: {
-        available_licenses: { where: { course_id: workshopDetails.course_id } },
-      },
-    })
-
-    if (!clientWithLicenses) throw new CustomError('No such client found!')
-    if (!clientWithLicenses.active) throw new CustomError('Client is currently inactive!')
-
-    const updatedAvailableLicenseAmount =
-      clientWithLicenses.available_licenses[0].remaining_amount -
-      workshopDetails.class_size
-    if (updatedAvailableLicenseAmount < 0)
-      throw new CustomError('Not enough licenses for this course!')*/
+      })
 
     /* --------------- if requested advisor check for availability -------------- */
     if (workshopDetails.requested_advisor_id) {
-      /*const sessionTimes = sessionDetails.map((session) => ({
-        start_time: session.start_time,
-        end_time: session.end_time,
-      }))*/
-      // mapping needed?
       await hasTimeConflict({
         prisma: ctx.prisma,
         advisor_id: workshopDetails.requested_advisor_id,
@@ -274,6 +254,7 @@ export class WorkshopResolver {
         participant_sign_up_link: nanoid(),
         // password for sign_up_link?
         launch_participant_sign_ups: false,
+        active_change_request: false,
         workshop_sessions: { createMany: { data: sessions } },
         manager_assignments: { createMany: { data: managerAssignments } },
         workshop_notes: { createMany: { data: workshop_notes } },

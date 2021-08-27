@@ -14,18 +14,18 @@ CREATE TYPE REGION_ENUM AS ENUM (
     'ANZ'
 );
 CREATE TYPE TIME_ZONE_ENUM AS ENUM (
-    'UTC -08.00 - Pacific Time - US & Canada',
-    'UTC -07.00 - Mountain Time - US & Canada',
-    'UTC -06.00 - Central Time - US & Canada',
-    'UTC -05.00 - Eastern Time - US & Canada',
-    'UTC 00:00 - Dublin, Edinburgh, Lisbon, London',
-    'UTC +01.00 - Western Europe',
-    'UTC +03.00 - Moscow, St. Petersburg',
-    'UTC +05.30 - Chennai, Kolkata, Mumbai, New Delhi',
-    'UTC +08:00 - Beijing, Hong Kong, Singapore, Perth',
-    'UTC +09.00 - Seoul, Tokyo',
-    'UTC +09.30 - Adelaide, Darwin',
-    'UTC +10.00 - Brisbane, Canberra, Melbourne, Sydney'
+    'UTC_NEG_8_00__Pacific_Time__US_Canada',
+    'UTC_NEG_7_00__Mountain_Time__US_Canada',
+    'UTC_NEG_6_00__Central_Time__US_Canada',
+    'UTC_NEG_5_00__Eastern_Time__US_Canada',
+    'UTC_0_00__Dublin_Edinburgh_Lisbon_London',
+    'UTC_1_00__Western_Europe',
+    'UTC_3_00__Moscow_St_Petersburg',
+    'UTC_5_30__Chennai_Kolkata_Mumbai_New_Delhi',
+    'UTC_8_00__Beijing_Hong_Kong_Singapore_Perth',
+    'UTC_9_00__Seoul_Tokyo',
+    'UTC_9_30__Adelaide_Darwin',
+    'UTC_10_00__Brisbane_Canberra_Melbourne_Sydney'
 );
 CREATE TYPE USER_TYPE_ENUM AS ENUM (
     'USER',
@@ -37,12 +37,6 @@ CREATE TYPE RESERVED_LICENSE_STATUS_ENUM AS ENUM (
     'RESERVED',
     'FINALIZED',
     'CANCELLED'
-);
-CREATE TYPE CHANGE_REQUEST_STATUS_ENUM AS ENUM (
-    'REQUESTED',
-    'APPROVED',
-    'REJECTED',
-    'REJECTED WITH DIFFERENT CHANGES REQUESTED'
 );
 CREATE TABLE managers (
     manager_id SERIAL PRIMARY KEY,
@@ -204,10 +198,9 @@ CREATE TABLE workshop_change_requests (
     deleted BOOLEAN NOT NULL,
     -- identifying info for change request
     change_request_note TEXT NOT NULL,
-    change_request_status CHANGE_REQUEST_STATUS_ENUM NOT NULL,
     requested_by INT REFERENCES managers (manager_id) NOT NULL,
     requested_at TIMESTAMPTZ NOT NULL,
-    resolved_at TIMESTAMPTZ,
+    -- distinguish between manager and coordinator change requests
     coordinator_request BOOLEAN NOT NULL
 );
 -- different versions of coursework are available for each course
@@ -233,29 +226,17 @@ CREATE TABLE workshop_sessions (
     created_by INT REFERENCES managers(manager_id) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
+    -- workshop change request id is nullable
+    -- to distinguish between normally scheduled sessions
+    -- and sessions requested as part of a change request
+    -- when the change is accepted, this field will be cleared
+    -- when the change is rejected, this session will be deleted
+    workshop_change_request_id INT REFERENCES workshop_change_requests (workshop_change_request_id),
     session_name VARCHAR(255) NOT NULL,
     start_time TIMESTAMPTZ NOT NULL,
     end_time TIMESTAMPTZ NOT NULL,
     session_status SESSION_STATUS_ENUM NOT NULL,
     meeting_link VARCHAR(255)
-);
-CREATE TABLE workshop_session_change_requests (
-    workshop_session_change_request_id SERIAL PRIMARY KEY,
-    workshop_change_request_id INT REFERENCES workshop_change_requests(workshop_change_request_id),
-    -- nullable
-    workshop_id INT REFERENCES workshops (workshop_id) NOT NULL,
-    workshop_session_id INT REFERENCES workshop_sessions(workshop_session_id) NOT NULL,
-    session_name VARCHAR(255) NOT NULL,
-    start_time TIMESTAMPTZ NOT NULL,
-    end_time TIMESTAMPTZ NOT NULL,
-    session_status SESSION_STATUS_ENUM NOT NULL,
-    meeting_link VARCHAR(255),
-    change_request_note TEXT NOT NULL,
-    change_request_status CHANGE_REQUEST_STATUS_ENUM NOT NULL,
-    requested_by INT REFERENCES managers (manager_id) NOT NULL,
-    requested_at TIMESTAMPTZ NOT NULL,
-    resolved_at TIMESTAMPTZ,
-    coordinator_request BOOLEAN NOT NULL
 );
 -- start time ranges for session requests can be entered
 -- time range will default on server to cover a 24 hour period
