@@ -17,7 +17,6 @@ ALTER SEQUENCE workshop_change_requests_workshop_change_request_id_seq RESTART W
 ALTER SEQUENCE workshop_coursework_workshop_coursework_id_seq RESTART WITH 1;
 ALTER SEQUENCE workshop_session_sets_session_set_id_seq RESTART WITH 1;
 ALTER SEQUENCE workshop_sessions_workshop_session_id_seq RESTART WITH 1;
-ALTER SEQUENCE workshop_sessions_change_requests_workshop_session_change_request_id_seq RESTART WITH 1;
 ALTER SEQUENCE workshop_groups_group_id_seq RESTART WITH 1;
 ALTER SEQUENCE workshop_change_log_log_id_seq RESTART WITH 1;
 ALTER SEQUENCE manager_assignments_assignment_id_seq RESTART WITH 1;
