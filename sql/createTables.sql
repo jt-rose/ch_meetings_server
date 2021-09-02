@@ -1,8 +1,9 @@
-CREATE TYPE SESSION_STATUS_ENUM AS ENUM (
+CREATE TYPE WORKSHOP_STATUS_ENUM AS ENUM (
     'REQUESTED',
     'VETTING',
     'HOLDING',
     'SCHEDULED',
+    'RESCHEDULING',
     'COMPLETED',
     'CANCELLED'
 );
@@ -14,18 +15,18 @@ CREATE TYPE REGION_ENUM AS ENUM (
     'ANZ'
 );
 CREATE TYPE TIME_ZONE_ENUM AS ENUM (
-    'UTC_NEG_8_00__Pacific_Time__US_Canada',
-    'UTC_NEG_7_00__Mountain_Time__US_Canada',
-    'UTC_NEG_6_00__Central_Time__US_Canada',
-    'UTC_NEG_5_00__Eastern_Time__US_Canada',
-    'UTC_0_00__Dublin_Edinburgh_Lisbon_London',
-    'UTC_1_00__Western_Europe',
-    'UTC_3_00__Moscow_St_Petersburg',
-    'UTC_5_30__Chennai_Kolkata_Mumbai_New_Delhi',
-    'UTC_8_00__Beijing_Hong_Kong_Singapore_Perth',
-    'UTC_9_00__Seoul_Tokyo',
-    'UTC_9_30__Adelaide_Darwin',
-    'UTC_10_00__Brisbane_Canberra_Melbourne_Sydney'
+    'UTC_NEG_8_00_Pacific_Time_US_Canada',
+    'UTC_NEG_7_00_Mountain_Time_US_Canada',
+    'UTC_NEG_6_00_Central_Time_US_Canada',
+    'UTC_NEG_5_00_Eastern_Time_US_Canada',
+    'UTC_0_00_Dublin_Edinburgh_Lisbon_London',
+    'UTC_1_00_Western_Europe',
+    'UTC_3_00_Moscow_St_Petersburg',
+    'UTC_5_30_Chennai_Kolkata_Mumbai_New_Delhi',
+    'UTC_8_00_Beijing_Hong_Kong_Singapore_Perth',
+    'UTC_9_00_Seoul_Tokyo',
+    'UTC_9_30_Adelaide_Darwin',
+    'UTC_10_00_Brisbane_Canberra_Melbourne_Sydney'
 );
 CREATE TYPE USER_TYPE_ENUM AS ENUM (
     'USER',
@@ -139,7 +140,7 @@ CREATE TABLE workshops (
     -- this will allow for much simpler sorting by date
     workshop_start_time TIMESTAMPTZ NOT NULL,
     workshop_end_time TIMESTAMPTZ NOT NULL,
-    workshop_status SESSION_STATUS_ENUM NOT NULL,
+    workshop_status WORKSHOP_STATUS_ENUM NOT NULL,
     course_id INT REFERENCES courses (course_id) NOT NULL,
     cohort_name VARCHAR(255) UNIQUE NOT NULL,
     requested_advisor_id INT REFERENCES advisors (advisor_id),
@@ -178,7 +179,7 @@ CREATE TABLE workshop_change_requests (
     -- this will allow for much simpler sorting by date
     workshop_start_time TIMESTAMPTZ NOT NULL,
     workshop_end_time TIMESTAMPTZ NOT NULL,
-    workshop_status SESSION_STATUS_ENUM NOT NULL,
+    workshop_status WORKSHOP_STATUS_ENUM NOT NULL,
     course_id INT REFERENCES courses (course_id) NOT NULL,
     cohort_name VARCHAR(255) UNIQUE NOT NULL,
     requested_advisor_id INT REFERENCES advisors (advisor_id),
@@ -187,7 +188,7 @@ CREATE TABLE workshop_change_requests (
     -- workshop_location can refer to a physical address or zoom/ teams
     workshop_location VARCHAR(255) NOT NULL,
     workshop_region REGION_ENUM NOT NULL,
-    class_size INT,
+    class_size INT NOT NULL,
     -- nullable for situations where we don't yet know the number
     client_id INT REFERENCES clients (client_id) NOT NULL,
     open_air_id VARCHAR(255) NOT NULL,
@@ -235,7 +236,6 @@ CREATE TABLE workshop_sessions (
     session_name VARCHAR(255) NOT NULL,
     start_time TIMESTAMPTZ NOT NULL,
     end_time TIMESTAMPTZ NOT NULL,
-    session_status SESSION_STATUS_ENUM NOT NULL,
     meeting_link VARCHAR(255)
 );
 -- start time ranges for session requests can be entered
