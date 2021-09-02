@@ -1,15 +1,16 @@
 import { registerEnumType } from 'type-graphql'
 
-export enum SESSION_STATUS {
+export enum WORKSHOP_STATUS {
   REQUESTED = 'REQUESTED',
   SCHEDULED = 'SCHEDULED',
   VETTING = 'VETTING',
   HOLDING = 'HOLDING',
+  RESCHEDULING = 'RESCHEDULING',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
 }
 
-registerEnumType(SESSION_STATUS, {
-  name: 'SESSION_STATUS',
-  description: 'status of workshops and individual session requests',
+registerEnumType(WORKSHOP_STATUS, {
+  name: 'WORKSHOP_STATUS',
+  description: 'status of workshop requests',
 })
