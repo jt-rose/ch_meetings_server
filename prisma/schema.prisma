@@ -144,7 +144,7 @@ model workshops {
   assigned_advisor_id                               Int?
   workshop_location                                 String                     @db.VarChar(255)
   workshop_region                                   region_enum
-  class_size                                        Int?
+  class_size                                        Int
   client_id                                         Int
   open_air_id                                       String                     @db.VarChar(255)
   time_zone                                         time_zone_enum
