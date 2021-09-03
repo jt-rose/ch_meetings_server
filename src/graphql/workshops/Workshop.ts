@@ -8,7 +8,7 @@ import { WorkshopSession } from './Session'
 import { WorkshopNote } from './WorkshopNote'
 import { Coursework } from '../courses/Coursework'
 import { REGION } from '../enums/REGION'
-import { SESSION_STATUS } from '../enums/SESSION_STATUS'
+import { WORKSHOP_STATUS } from '../enums/WORKSHOP_STATUS'
 import { TIME_ZONE } from '../enums/TIME_ZONES'
 
 @ObjectType()
@@ -74,8 +74,8 @@ export class Workshop {
   @Field(() => Date)
   workshop_end_time: Date
 
-  @Field(() => SESSION_STATUS)
-  workshop_status: SESSION_STATUS
+  @Field(() => WORKSHOP_STATUS)
+  workshop_status: WORKSHOP_STATUS
 
   @Field()
   participant_sign_up_link: string

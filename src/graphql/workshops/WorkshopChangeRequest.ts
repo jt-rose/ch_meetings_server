@@ -1,10 +1,10 @@
 import { ObjectType, Field, Int } from 'type-graphql'
 import { Manager } from '../managers/Manager'
 import { REGION } from '../enums/REGION'
-import { SESSION_STATUS } from '../enums/SESSION_STATUS'
+import { WORKSHOP_STATUS } from '../enums/WORKSHOP_STATUS'
 import { CHANGE_REQUEST_STATUS } from '../enums/CHANGE_REQUEST_STATUS'
-import { WorkshopSessionChangeRequest } from './WorkshopSessionChangeRequest'
 import { TIME_ZONE } from '../enums/TIME_ZONES'
+import { WorkshopSession } from './Session'
 
 @ObjectType()
 export class WorkshopChangeRequest {
@@ -32,8 +32,8 @@ export class WorkshopChangeRequest {
   @Field(() => REGION)
   workshop_region: REGION
 
-  @Field(() => Int, { nullable: true })
-  class_size?: number
+  @Field(() => Int)
+  class_size: number
 
   @Field(() => Int)
   client_id: number
@@ -63,8 +63,8 @@ export class WorkshopChangeRequest {
   @Field(() => Date)
   workshop_end_time: Date
 
-  @Field(() => SESSION_STATUS)
-  workshop_status: SESSION_STATUS
+  @Field(() => WORKSHOP_STATUS)
+  workshop_status: WORKSHOP_STATUS
 
   @Field()
   change_request_note: string
@@ -86,8 +86,8 @@ export class WorkshopChangeRequest {
 
   /* ----------------------------- field resolvers ---------------------------- */
 
-  @Field(() => [WorkshopSessionChangeRequest], { nullable: true })
-  workshop_sessions_change_requests?: WorkshopSessionChangeRequest[]
+  @Field(() => [WorkshopSession])
+  change_request_sessions: WorkshopSession[]
 
   @Field(() => Manager)
   requestor: Manager
