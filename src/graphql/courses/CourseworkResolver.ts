@@ -14,6 +14,7 @@ import { Context } from '../../utils/context'
 import { Coursework } from './Coursework'
 import { Course } from './Course'
 import { CoursesToCoursework } from './CoursesToCoursework'
+import { CustomError } from '../../middleware/errorHandler'
 
 // coursework input
 @InputType()
@@ -88,11 +89,32 @@ export class CourseworkResolver {
 
   // delete
   @Mutation(() => Coursework)
-  removeCoursework(
+  async removeCoursework(
     @Ctx() ctx: Context,
     @Arg('coursework_id', () => Int) coursework_id: number
   ) {
-    return ctx.prisma.coursework.delete({ where: { coursework_id } })
+    try {
+      return ctx.prisma.coursework.delete({ where: { coursework_id } })
+    } catch (err) {
+      const courseworkInUse = await ctx.prisma.coursework.findFirst({
+        where: { coursework_id },
+        include: { workshop_coursework: true, courses_and_coursework: true },
+      })
+
+      if (courseworkInUse?.courses_and_coursework.length) {
+        throw new CustomError(
+          `This coursework is registered to a course and cannot be deleted. Please unregister it first!`
+        )
+      }
+
+      if (courseworkInUse?.workshop_coursework.length) {
+        throw new CustomError(
+          `This coursework has been assigned to a workshop and cannot be deleted without unregistering it from the workshop first!`
+        )
+      }
+
+      throw err
+    }
   }
 
   // registerAsCourseMaterial
