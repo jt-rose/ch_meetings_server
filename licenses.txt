@@ -1,0 +1,37 @@
+Participation in workshops is based upon licenses.
+A client will purchase 10 licenses for the 101 class
+and can then have 10 participants attend the class, 
+using one license per attendant.
+
+1. Licenses are added to the client file in the database
+    a. These licenses are directly linked to the course they will be used on,
+        but a separate "license type" could be implemented to give greater flexibility
+        for example, one license that may count toward a 101, 102, 201, or 202 workshop 
+
+2. Two numbers for the licenses will be tracked, along with a log of changes:
+    a. Remaining Amount - how many licenses are available for new requests. 
+        Pending is not included in this
+    b. Pending - licenses reserved for an upcoming workshop. These have technically 
+        not been reconciled yet, as the workshop is yet to complete,
+        but they can be considered reserved and should not be considered available
+
+3. A workshop is requested. The server will check for a sufficient number of 
+    "Remaining Amount" licenses against the class size and reject the request 
+    if the client does not have enough available
+
+4. Assuming there are enough licenses, the amount of the class size of 
+    the workshop will be removed from the Remaining Amount and added to Pending
+
+5. Once the workshop is finalized, the adjusted class size amount will be 
+    reconciled against the remaining amount and the pending amount. Pending will be removed
+    while remaining amount will be adjusted as needed
+
+
+Concrete Example
+1. add 30 licenses for course 1
+2. request 20 licenses for course 1 based on workshop request class size
+3. 20 licenses are removed from "remaining" (leaving 10 available)
+    and 20 are stored in pending
+4. the workshop is finalized with a class size of 18 (two couldn't make it). 
+    The pending amount is removed and 2 licenses are added back to the 
+    remaining amount, bringing it up to 12
