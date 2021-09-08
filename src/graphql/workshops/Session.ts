@@ -1,5 +1,4 @@
 import { ObjectType, Field, Int } from 'type-graphql'
-import { SESSION_STATUS } from '../enums/SESSION_STATUS'
 
 @ObjectType()
 export class WorkshopSession {
@@ -17,9 +16,6 @@ export class WorkshopSession {
 
   @Field(() => Date)
   end_time: Date
-
-  @Field(() => SESSION_STATUS)
-  session_status: SESSION_STATUS
 
   @Field({ nullable: true })
   meeting_link: string
