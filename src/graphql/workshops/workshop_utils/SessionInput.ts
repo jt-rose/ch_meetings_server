@@ -1,5 +1,4 @@
 import { InputType, Field } from 'type-graphql'
-import { SESSION_STATUS } from '../../enums/SESSION_STATUS'
 
 // user input for creating a session
 // the workshop_id, session status,, and created_at/ created_by info
@@ -15,12 +14,6 @@ export class CreateSessionInput {
   @Field()
   session_name: string
 
-  @Field()
-  meeting_link: string
-}
-
-@InputType()
-export class EditSessionInput extends CreateSessionInput {
-  @Field(() => SESSION_STATUS)
-  session_status: SESSION_STATUS
+  @Field({ nullable: true })
+  meeting_link: string | null
 }

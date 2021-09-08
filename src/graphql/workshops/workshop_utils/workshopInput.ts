@@ -1,10 +1,11 @@
-import { TIME_ZONE } from 'src/graphql/enums/TIME_ZONES'
+import { WORKSHOP_STATUS } from '../../enums/WORKSHOP_STATUS'
+import { TIME_ZONE } from '../../enums/TIME_ZONES'
 import { InputType, Field, Int } from 'type-graphql'
 import { REGION } from '../../enums/REGION'
 
-// user submitted fields when creating a new workshop
+// fields shared across creating / editing a workshop
 @InputType()
-export class CreateWorkshopInput {
+class WorkshopInput {
   @Field(() => Int, { nullable: true })
   group_id?: number
 
@@ -15,7 +16,7 @@ export class CreateWorkshopInput {
   cohort_name: string
 
   @Field(() => Int, { nullable: true })
-  requested_advisor_id?: number
+  requested_advisor_id: number | null
 
   @Field()
   workshop_location: string
@@ -25,9 +26,6 @@ export class CreateWorkshopInput {
 
   @Field()
   class_size: number
-
-  @Field()
-  client_id: number
 
   @Field()
   open_air_id: string
@@ -55,12 +53,21 @@ export class CreateWorkshopInput {
   //managers: {},
 }
 
+// user submitted fields when creating a new workshop
 @InputType()
-export class EditWorkshopInput {
-  @Field(() => Int, { nullable: true })
-  assigned_advisor_id: number
+export class CreateWorkshopInput extends WorkshopInput {
+  @Field()
+  client_id: number
+}
 
-  // status
+// user submitted fields when editing a workshop
+@InputType()
+export class EditWorkshopInput extends WorkshopInput {
+  @Field(() => Int, { nullable: true })
+  assigned_advisor_id: number | null
+
+  @Field(() => WORKSHOP_STATUS)
+  workshop_status: WORKSHOP_STATUS
 }
 
 /* -------------------------- validation functions -------------------------- */

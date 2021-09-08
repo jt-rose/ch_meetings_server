@@ -1,5 +1,5 @@
 import { Field, InputType } from 'type-graphql'
-import { SESSION_STATUS } from '../../enums/SESSION_STATUS'
+import { WORKSHOP_STATUS } from '../../enums/WORKSHOP_STATUS'
 
 /* ----------------------------- order by fields ---------------------------- */
 
@@ -81,8 +81,8 @@ export class WorkshopFilterOptions {
   @Field({ nullable: true })
   workshop_id?: number
 
-  @Field(() => [SESSION_STATUS], { nullable: true })
-  workshop_status: SESSION_STATUS[]
+  @Field(() => [WORKSHOP_STATUS], { nullable: true })
+  workshop_status: WORKSHOP_STATUS[]
 }
 
 export const parseWorkshopWhereArgs = (filters: WorkshopFilterOptions) => {
