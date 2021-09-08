@@ -16,6 +16,11 @@ export const confirmAvailableLicenses = async (config: {
     include: {
       available_licenses: {
         where: { course_id },
+        // the reserved license count will be pulled if a workshop id is provided
+        // this is used when editing a reserved amount
+        // but will default to 0 when checking against a new request
+        // by cross referencing the workshop id and the course id
+        // this will also work when requesting a change of workshop course
         include: { reserved_licenses: { where: { workshop_id: workshop_id } } },
       },
     },
