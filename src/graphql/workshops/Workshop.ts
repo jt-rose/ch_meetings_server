@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from 'type-graphql'
+import { ObjectType, Field, Int, createUnionType } from 'type-graphql'
 import { Advisor } from '../advisors/Advisor'
 import { ChangeLog } from './WorkshopChangeLog'
 import { Client } from '../clients/Client'
@@ -10,6 +10,7 @@ import { Coursework } from '../courses/Coursework'
 import { REGION } from '../enums/REGION'
 import { WORKSHOP_STATUS } from '../enums/WORKSHOP_STATUS'
 import { TIME_ZONE } from '../enums/TIME_ZONES'
+import { TimeConflictError } from './workshop_utils/checkTimeConflicts'
 
 @ObjectType()
 export class Workshop {
@@ -112,3 +113,18 @@ export class Workshop {
   @Field(() => [Coursework])
   coursework: Coursework[]
 }
+
+// generate success / error union type when creating/ editing workshop
+export const ValidatedWorkshopUnion = createUnionType({
+  name: 'CreateWorkshopResult',
+  types: () => [Workshop, TimeConflictError] as const,
+  resolveType: (value) => {
+    if ('timeConflicts' in value) {
+      return TimeConflictError
+    }
+    if ('workshop_id' in value) {
+      return Workshop
+    }
+    return undefined
+  },
+})
