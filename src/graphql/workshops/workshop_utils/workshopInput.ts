@@ -9,9 +9,6 @@ class WorkshopInput {
   @Field(() => Int, { nullable: true })
   group_id?: number
 
-  @Field(() => Int)
-  course_id: number
-
   @Field()
   cohort_name: string
 
@@ -48,7 +45,6 @@ class WorkshopInput {
   @Field()
   workshop_end_time: Date
 
-  //workshop_sessions: {},
   //workshop_notes: {},
   //managers: {},
 }
@@ -58,6 +54,9 @@ class WorkshopInput {
 export class CreateWorkshopInput extends WorkshopInput {
   @Field()
   client_id: number
+
+  @Field(() => Int)
+  course_id: number
 }
 
 // user submitted fields when editing a workshop
