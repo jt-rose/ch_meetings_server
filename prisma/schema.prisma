@@ -237,17 +237,19 @@ model client_notes {
 }
 
 model license_changes {
-  license_change_id  Int                @id @default(autoincrement())
-  license_id         Int
-  updated_amount     Int
-  amount_change      Int
-  workshop_id        Int?
-  created_by         Int
-  created_at         DateTime           @default(now()) @db.Timestamptz(6)
-  change_note        String
-  managers           managers           @relation(fields: [created_by], references: [manager_id])
-  available_licenses available_licenses @relation(fields: [license_id], references: [license_id])
-  workshops          workshops?         @relation(fields: [workshop_id], references: [workshop_id])
+  license_change_id   Int                @id @default(autoincrement())
+  license_id          Int
+  updated_amount      Int
+  amount_change       Int
+  workshop_id         Int?
+  reserved_license_id Int?
+  created_by          Int
+  created_at          DateTime           @default(now()) @db.Timestamptz(6)
+  change_note         String
+  managers            managers           @relation(fields: [created_by], references: [manager_id])
+  available_licenses  available_licenses @relation(fields: [license_id], references: [license_id])
+  reserved_licenses   reserved_licenses? @relation(fields: [reserved_license_id], references: [reserved_license_id])
+  workshops           workshops?         @relation(fields: [workshop_id], references: [workshop_id])
 }
 
 model workshop_groups {
@@ -296,6 +298,7 @@ model reserved_licenses {
   managers            managers                     @relation(fields: [created_by], references: [manager_id])
   available_licenses  available_licenses           @relation(fields: [license_id], references: [license_id])
   workshops           workshops                    @relation(fields: [workshop_id], references: [workshop_id])
+  license_changes     license_changes[]
 }
 
 model workshop_change_log {

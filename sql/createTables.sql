@@ -306,7 +306,8 @@ CREATE TABLE license_changes (
     updated_amount INT NOT NULL,
     amount_change INT NOT NULL,
     workshop_id INT REFERENCES workshops(workshop_id),
-    -- nullable, for when changes are not related to workshops
+    reserved_license_id INT REFERENCES reserved_licenses (reserved_license_id),
+    -- above two are nullable, for when changes are not related to workshops or reserved licenses
     created_by INT REFERENCES managers(manager_id) NOT NULL,
     -- references who made the change
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
