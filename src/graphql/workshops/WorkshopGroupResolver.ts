@@ -155,21 +155,24 @@ export class WorkshopGroupResolver {
     @Arg('group_description', { nullable: true })
     group_description: string
   ) {
-    const workshopGroups = await ctx.prisma.workshop_groups.findMany({
-      where: { OR: [{ group_id }, { group_name }] },
-    })
-    if (workshopGroups.every((group) => group.group_id !== group_id)) {
-      throw new CustomError('No such workshop group found!')
-    }
+    try {
+      return ctx.prisma.workshop_groups.update({
+        where: { group_id },
+        data: { group_name, group_description },
+      })
+    } catch (err) {
+      const workshopGroups = await ctx.prisma.workshop_groups.findMany({
+        where: { OR: [{ group_id }, { group_name }] },
+      })
+      if (workshopGroups.every((group) => group.group_id !== group_id)) {
+        throw new CustomError('No such workshop group found!')
+      }
 
-    if (workshopGroups.find((group) => group.group_name === group_name)) {
-      throw new CustomError(`Group name \"${group_name}\" already in use!`)
+      if (workshopGroups.find((group) => group.group_name === group_name)) {
+        throw new CustomError(`Group name \"${group_name}\" already in use!`)
+      }
+      throw err
     }
-
-    return ctx.prisma.workshop_groups.update({
-      where: { group_id },
-      data: { group_name, group_description },
-    })
   }
 
   // remove workshop group and unassign workshops
