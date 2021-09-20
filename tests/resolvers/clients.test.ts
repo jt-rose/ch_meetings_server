@@ -378,5 +378,4 @@ describe('Client Resolvers', function () {
         'Client cannot be deactivated as they have upcoming workshops scheduled',
     })
   })
-  it('add licenses + license change')
 })
