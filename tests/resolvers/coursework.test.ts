@@ -233,7 +233,7 @@ describe('Coursework Resolvers', function () {
 }
     `,
       expectedErrorMessage:
-        "The change you are trying to make would violate the required relation 'courses_and_courseworkTocoursework' between the `courses_and_coursework` and `coursework` models.",
+        'This coursework is registered to a course and cannot be deleted. Please unregister it first!',
     })
   })
 
