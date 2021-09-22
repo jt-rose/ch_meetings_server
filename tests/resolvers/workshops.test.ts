@@ -25,7 +25,7 @@ import { describe } from 'mocha'
 //import { prisma } from '../../src/prisma'
 import { createMockApolloUser, MockApolloTestRunners } from '../mockApollo'
 
-describe('Course Resolvers', function () {
+describe('Workshop Resolvers', function () {
   /* ------------------- declare mockUser and initialize it ------------------- */
   let mockUser: MockApolloTestRunners
 
