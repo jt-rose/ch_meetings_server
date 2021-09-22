@@ -12,9 +12,11 @@ export const validateWorkshopRequest = async (config: {
   workshopDetails: CreateWorkshopInput | EditWorkshopInput
   sessionDetails: CreateSessionInput[]
   client_id: number
+  course_id: number
   prisma: PrismaClient
 }) => {
-  const { workshopDetails, sessionDetails, client_id, prisma } = config
+  const { workshopDetails, sessionDetails, client_id, course_id, prisma } =
+    config
 
   /* --------- ignore validation if workshop request will be cancelled -------- */
   if (
@@ -43,7 +45,7 @@ export const validateWorkshopRequest = async (config: {
     await confirmAvailableLicenses({
       prisma,
       client_id,
-      course_id: workshopDetails.course_id,
+      course_id: course_id,
       class_size: workshopDetails.class_size,
     })
 

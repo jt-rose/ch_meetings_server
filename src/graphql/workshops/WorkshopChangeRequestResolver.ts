@@ -124,6 +124,7 @@ export class WorkshopChangeRequestResolver {
       workshopDetails: workshopInput,
       sessionDetails: editedSessions,
       client_id: workshop.client_id,
+      course_id: workshop.course_id,
       prisma: ctx.prisma,
     })
 
@@ -293,6 +294,7 @@ export class WorkshopChangeRequestResolver {
       },
       sessionDetails: changeRequest.workshop_sessions,
       client_id: changeRequest.client_id,
+      course_id: changeRequest.course_id,
       prisma: ctx.prisma,
     })
 

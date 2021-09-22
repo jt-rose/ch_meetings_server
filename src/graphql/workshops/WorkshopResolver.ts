@@ -194,6 +194,7 @@ export class WorkshopResolver {
       workshopDetails,
       sessionDetails,
       client_id: workshopDetails.client_id,
+      course_id: workshopDetails.course_id,
       prisma: ctx.prisma,
     })
     if (validationResult instanceof TimeConflictError) {
@@ -422,6 +423,7 @@ export class WorkshopResolver {
       workshopDetails,
       sessionDetails,
       client_id: workshopRequest.client_id,
+      course_id: workshopRequest.course_id,
       prisma: ctx.prisma,
     })
 
