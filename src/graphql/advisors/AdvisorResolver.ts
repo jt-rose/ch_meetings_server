@@ -67,20 +67,11 @@ export class AdvisorResolver {
 
   @FieldResolver()
   async requested_workshops(@Ctx() ctx: Context, @Root() root: Advisor) {
-    // get workshops where advisor is the first requested advisor
-    const firstRequest = await ctx.prisma.advisors
+    return ctx.prisma.advisors
       .findUnique({ where: { advisor_id: root.advisor_id } })
       .workshops_advisorsToworkshops_requested_advisor_id({
-        include: { workshop_sessions: true },
+        where: { assigned_advisor_id: null },
       })
-
-    // combine both lists and remove workshops that are already complete
-    const upcomingRequestedWorkshops = firstRequest.filter((workshop) =>
-      workshop.workshop_sessions.some(
-        (session) => session.session_status === 'REQUESTED'
-      )
-    )
-    return upcomingRequestedWorkshops
   }
 
   /* ----------------------------- CRUD operations ---------------------------- */
@@ -238,12 +229,14 @@ export class AdvisorResolver {
         where: { assigned_advisor_id: advisor_id },
         include: { workshop_sessions: true },
       })
-      const hasActiveWorkshops = advisorWorkshops
-        .flatMap((x) => x.workshop_sessions)
-        .some((session) => session.session_status !== 'COMPLETED')
+      const hasActiveWorkshops = advisorWorkshops.some(
+        (workshop) =>
+          workshop.workshop_status !== 'COMPLETED' &&
+          workshop.workshop_status !== 'CANCELLED'
+      )
       if (hasActiveWorkshops) {
         throw new CustomError(
-          'Advisor cannote be deactivated as they have upcoming workshops scheduled'
+          'Advisor cannot be deactivated as they have upcoming workshops scheduled'
         )
       }
     }
