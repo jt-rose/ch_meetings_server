@@ -4,7 +4,6 @@ import { authChecker } from './middleware/authChecker'
 import { ErrorInterceptor } from './middleware/errorHandler'
 
 /* ---------------------------- import resolvers ---------------------------- */
-import { WorkshopSessionResolver } from './graphql/workshops/SessionResolver'
 import { ClientResolver } from './graphql/clients/ClientResolver'
 import { CourseResolver } from './graphql/courses/CourseResolver'
 import { AdvisorResolver } from './graphql/advisors/AdvisorResolver'
@@ -18,6 +17,7 @@ import { ManagerAssignmentsResolver } from './graphql/managers/ManagerAssignment
 import { AvailableLicenseResolver } from './graphql/licenses/AvailableLicenseResolver'
 import { ReservedLicenseResolver } from './graphql/licenses/ReservedLicenseResolver'
 import { WorkshopResolver } from './graphql/workshops/WorkshopResolver'
+import { WorkshopChangeRequestResolver } from './graphql/workshops/WorkshopChangeRequestResolver'
 import { WorkshopGroupResolver } from './graphql/workshops/WorkshopGroupResolver'
 import { ErrorLogResolver } from './graphql/error_log/ErrorLogResolver'
 
@@ -30,7 +30,7 @@ const generateSchemaType =
     buildSchema({
       resolvers: [
         WorkshopResolver,
-        WorkshopSessionResolver,
+        WorkshopChangeRequestResolver,
         WorkshopGroupResolver,
         ClientResolver,
         CourseResolver,
