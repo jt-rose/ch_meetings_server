@@ -175,9 +175,11 @@ export class ClientResolver {
         where: { client_id },
         include: { workshop_sessions: true },
       })
-      const hasActiveWorkshops = clientWorkshops
-        .flatMap((x) => x.workshop_sessions)
-        .some((session) => session.session_status !== 'COMPLETED')
+      const hasActiveWorkshops = clientWorkshops.some(
+        (workshop) =>
+          workshop.workshop_status !== 'COMPLETED' &&
+          workshop.workshop_status !== 'CANCELLED'
+      )
       if (hasActiveWorkshops) {
         throw new CustomError(
           'Client cannot be deactivated as they have upcoming workshops scheduled'
