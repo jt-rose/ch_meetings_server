@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { CustomError } from 'src/middleware/errorHandler'
+import { CustomError } from '../../../middleware/errorHandler'
 
 export const confirmAvailableLicenses = async (config: {
   prisma: PrismaClient
