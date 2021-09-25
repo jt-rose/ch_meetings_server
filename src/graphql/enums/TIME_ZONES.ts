@@ -16,5 +16,5 @@ export enum TIME_ZONE {
 }
 
 registerEnumType(TIME_ZONE, {
-  name: 'TIME ZONE',
+  name: 'TIME_ZONE',
 })
