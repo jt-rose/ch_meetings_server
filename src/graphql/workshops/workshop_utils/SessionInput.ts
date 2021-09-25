@@ -15,5 +15,5 @@ export class CreateSessionInput {
   session_name: string
 
   @Field({ nullable: true })
-  meeting_link: string | null
+  meeting_link?: string
 }

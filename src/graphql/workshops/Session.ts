@@ -18,7 +18,7 @@ export class WorkshopSession {
   end_time: Date
 
   @Field({ nullable: true })
-  meeting_link: string
+  meeting_link?: string
 
   @Field(() => Int)
   created_by: number

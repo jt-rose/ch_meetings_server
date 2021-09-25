@@ -135,7 +135,7 @@ input CourseworkInput {
 
 input CreateSessionInput {
   end_time: DateTime!
-  meeting_link: String!
+  meeting_link: String
   session_name: String!
   start_time: DateTime!
 }
@@ -150,7 +150,7 @@ input CreateWorkshopInput {
   open_air_id: String!
   record_attendance: Boolean = false
   requested_advisor_id: Int
-  time_zone: String!
+  time_zone: TIME_ZONE!
   workshop_end_time: DateTime!
   workshop_language: String!
   workshop_location: String!
@@ -171,12 +171,22 @@ input EditLicenseInput {
   remaining_amount: Int!
 }
 
-input EditSessionInput {
-  end_time: DateTime!
-  meeting_link: String!
-  session_name: String!
-  session_status: SESSION_STATUS!
-  start_time: DateTime!
+input EditWorkshopInput {
+  assigned_advisor_id: Int
+  class_size: Float!
+  cohort_name: String!
+  group_id: Int
+  in_person: Boolean!
+  open_air_id: String!
+  record_attendance: Boolean = false
+  requested_advisor_id: Int
+  time_zone: TIME_ZONE!
+  workshop_end_time: DateTime!
+  workshop_language: String!
+  workshop_location: String!
+  workshop_region: REGION!
+  workshop_start_time: DateTime!
+  workshop_status: WORKSHOP_STATUS!
 }
 
 type ErrorLog {
@@ -194,6 +204,7 @@ type LicenseChange {
   license_change_id: Int!
   license_id: Int!
   manager_id: Int!
+  reserved_license_id: Int
   updated_amount: Int!
   workshop_id: Int
 }
@@ -247,7 +258,7 @@ type Mutation {
   addManagerToWorkshop(manager_id: Int!, workshop_id: Int!): ManagerAssignment!
   addWorkshop(managers: [Int!]!, notes: [String!], sessionDetails: [CreateSessionInput!]!, workshopDetails: CreateWorkshopInput!): CreateWorkshopResult!
   addWorkshopGroup(group_description: String, group_name: String!, workshop_ids: [Int!]!): WorkshopGroup!
-  assignAdvisortoWorkshop(advisor_id: Int!, note: String, workshop_id: Int!): Workshop!
+  approveRequestedChanges(workshop_change_request_id: Int!): CreateWorkshopResult!
   assignWorkshopToWorkshopGroup(group_id: Int!, workshop_id: Int!): Workshop!
   changeAdvisorActiveStatus(active: Boolean!, advisor_id: Int!): Advisor!
   changeClientActiveStatus(active: Boolean!, client_id: Int!): Client!
@@ -256,10 +267,8 @@ type Mutation {
   changeMyPassword(newPassword: String!): Manager!
   changePasswordAdminAccess(manager_id: Int!, newPassword: String!): Manager!
   confirmReservedLicensesUsed(final_amount_used: Int!, reserved_license_id: Int!): AvailableLicense!
+  confirmWorkshopComplete(finalLicenseCount: Int!, note: String, workshop_id: Int!): Workshop!
   convertAvailableLicenses(conversionAmount: Int!, license_id: Int!, targetCourse: Int!): [AvailableLicense!]!
-  createSession(sessionInfo: CreateSessionInput!, workshop_id: Int!): WorkshopSession!
-  deleteSession(sessionID: Float!): WorkshopSession!
-  deleteWorkshop(note: String, workshop_id: Int!): Workshop!
   editAdvisor(advisor_id: Int!, email: String, first_name: String, last_name: String): Advisor!
   editAdvisorNote(advisor_note: String!, note_id: Int!): AdvisorNote!
   editAdvisorUnavailableTime(unavailable_time_info: UnavailableTimeInfoWithID!): UnavailableTimeResult!
@@ -268,15 +277,14 @@ type Mutation {
   editCourse(courseData: CourseInput!, course_id: Int!): Course!
   editCoursework(courseworkInput: CourseworkInput!): Coursework!
   editManager(managerInput: ManagerInput!, manager_id: Float!): Manager!
-  editSession(sessionID: Int!, updatedInfo: EditSessionInput!): WorkshopSession!
-  editWorkshop(workshop_id: Int!): Workshop!
+  editUnprocessedWorkshop(deleted: Boolean!, managers: [Int!]!, note: String, sessionDetails: [CreateSessionInput!]!, workshopDetails: EditWorkshopInput!, workshop_id: Int!): CreateWorkshopResult!
   editWorkshopGroup(group_description: String, group_id: Int!, group_name: String!): WorkshopGroup!
   forgotPassword(email: String!): Boolean!
   login(email: String!, password: String!): Manager!
   logout: Boolean!
   registerAsCourseMaterial(course_id: Int!, coursework_id: Int!): CoursesToCoursework!
+  rejectRequestedChanges(workshop_change_request_id: Int!): Workshop!
   removeAdvisor(advisor_id: Int!): Advisor!
-  removeAdvisorFromWorkshop(note: String, workshop_id: Int!): Workshop!
   removeAdvisorLanguage(language_id: Int!): AdvisorLanguage!
   removeAdvisorNote(note_id: Int!): AdvisorNote!
   removeAdvisorRegion(region_id: Int!): AdvisorRegion!
@@ -290,7 +298,8 @@ type Mutation {
   removeWorkshopFromWorkshopGroup(workshop_id: Int!): WorkshopGroup!
   removeWorkshopGroup(group_id: Int!): WorkshopGroup!
   resetPassword(newPassword: String!, token: String!): Manager!
-  restoreWorkshop(workshop_id: Int!): Workshop!
+  updateSchedulingStatus(newStatus: SCHEDULING_PROCESS!, note: String, workshop_id: Int!): CreateWorkshopResult!
+  upsertChangeRequest(change_request_note: String!, editedSessions: [CreateSessionInput!]!, workshopInput: EditWorkshopInput!, workshop_id: Int!): CreateWorkshopResult!
 }
 
 """sort data by ascending or descending order"""
@@ -313,7 +322,6 @@ type Query {
   getAllWorkshops(filters: WorkshopFilterOptions, orderBy: [WorkshopsOrderBy!], skip: Float, take: Float): [Workshop!]!
   getClient(client_id: Int!): Client
   getCourse(course_id: Int!): Course
-  getSessions(sessionID: Float!): [WorkshopSession!]!
   getWorkshop(workshop_id: Int!): Workshop!
   getWorkshopGroup(group_id: Int!): WorkshopGroup!
 }
@@ -338,14 +346,24 @@ type ReservedLicense {
   workshop: Workshop!
 }
 
-"""status of workshops and individual session requests"""
-enum SESSION_STATUS {
-  CANCELLED
-  COMPLETED
+enum SCHEDULING_PROCESS {
   HOLDING
-  REQUESTED
-  SCHEDULED
   VETTING
+}
+
+enum TIME_ZONE {
+  UTC_0_LONDON_TIME
+  UTC_NEG_5_EASTERN_TIME
+  UTC_NEG_6_CENTRAL_TIME
+  UTC_NEG_7_MOUNTAIN_TIME
+  UTC_NEG_8_PACIFIC_TIME
+  UTC_PLUS_1_WESTERN_EUROPE_TIME
+  UTC_PLUS_3_MOSCOW_TIME
+  UTC_PLUS_5_30_MUMBAI_TIME
+  UTC_PLUS_8_BEIJING_TIME
+  UTC_PLUS_9_30_DARWIN_TIME
+  UTC_PLUS_9_TOKYO_TIME
+  UTC_PLUS_10_SYDNEY_TIME
 }
 
 type TimeConflict {
@@ -389,6 +407,17 @@ input UnavailableTimeInfoWithID {
 
 union UnavailableTimeResult = AdvisorUnavailableTime | TimeConflictError
 
+"""status of workshop requests"""
+enum WORKSHOP_STATUS {
+  CANCELLED
+  COMPLETED
+  HOLDING
+  REQUESTED
+  RESCHEDULING
+  SCHEDULED
+  VETTING
+}
+
 type Workshop {
   assignedAdvisor: [Advisor!]
   assigned_advisor: Advisor
@@ -417,7 +446,7 @@ type Workshop {
   requested_advisor: Advisor
   requested_advisor_id: Int!
   sessions: [WorkshopSession!]!
-  time_zone: String!
+  time_zone: TIME_ZONE!
   workshop_end_time: DateTime!
   workshop_id: Int!
   workshop_language: String!
@@ -425,7 +454,7 @@ type Workshop {
   workshop_notes: [WorkshopNote!]!
   workshop_region: REGION!
   workshop_start_time: DateTime!
-  workshop_status: SESSION_STATUS!
+  workshop_status: WORKSHOP_STATUS!
 }
 
 input WorkshopFilterOptions {
@@ -440,7 +469,7 @@ input WorkshopFilterOptions {
   workshop_groups: Float
   workshop_id: Float
   workshop_start_time: DateTime
-  workshop_status: [SESSION_STATUS!]
+  workshop_status: [WORKSHOP_STATUS!]
 }
 
 type WorkshopGroup {
@@ -465,7 +494,6 @@ type WorkshopSession {
   end_time: DateTime!
   meeting_link: String
   session_name: String!
-  session_status: SESSION_STATUS!
   start_time: DateTime!
   workshop_id: Float!
   workshop_session_id: Int!

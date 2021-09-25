@@ -42,7 +42,7 @@ import { CustomError } from '../../middleware/errorHandler'
 import { validateWorkshopRequest } from './workshop_utils/validateWorkshopRequest'
 
 // generate success / error union type when creating/ editing workshop
-const CreateWorkshopResultUnion = createUnionType({
+export const CreateWorkshopResultUnion = createUnionType({
   name: 'CreateWorkshopResult',
   types: () => [Workshop, TimeConflictError] as const,
   resolveType: (value) => {
