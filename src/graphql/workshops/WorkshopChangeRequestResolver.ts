@@ -1,6 +1,6 @@
-import { Authenticated } from 'src/middleware/authChecker'
-import { CustomError } from 'src/middleware/errorHandler'
-import { Context } from 'src/utils/context'
+import { Authenticated } from '../../middleware/authChecker'
+import { CustomError } from '../../middleware/errorHandler'
+import { Context } from '../../utils/context'
 import {
   Resolver,
   FieldResolver,
@@ -10,7 +10,8 @@ import {
   Arg,
   Int,
 } from 'type-graphql'
-import { ValidatedWorkshopUnion, Workshop } from './Workshop'
+import { Workshop } from './Workshop'
+import { CreateWorkshopResultUnion } from './WorkshopResolver'
 import { REGION } from '../enums/REGION'
 import { TIME_ZONE } from '../enums/TIME_ZONES'
 import { WORKSHOP_STATUS } from '../enums/WORKSHOP_STATUS'
@@ -72,7 +73,7 @@ export class WorkshopChangeRequestResolver {
   // create change request - manager
 
   @Authenticated()
-  @Mutation(() => ValidatedWorkshopUnion)
+  @Mutation(() => CreateWorkshopResultUnion)
   async upsertChangeRequest(
     @Ctx() ctx: Context,
     @Arg('workshop_id', () => Int) workshop_id: number,
@@ -237,7 +238,7 @@ export class WorkshopChangeRequestResolver {
 
   // approve requested changes and apply them
   @Authenticated()
-  @Mutation(() => ValidatedWorkshopUnion)
+  @Mutation(() => CreateWorkshopResultUnion)
   async approveRequestedChanges(
     @Ctx() ctx: Context,
     @Arg('workshop_change_request_id', () => Int)
@@ -284,6 +285,13 @@ export class WorkshopChangeRequestResolver {
     const courseChange =
       changeRequest.course_id === changeRequest.workshops.course_id
 
+    // convert missing session meeting links to undefined instead of null
+    // to comply with prisma types
+    const sessionDetails = changeRequest.workshop_sessions.map((session) => ({
+      ...session,
+      meeting_link: session.meeting_link || undefined,
+    }))
+
     // validate change request
     const validationResult = await validateWorkshopRequest({
       workshopDetails: {
@@ -292,7 +300,7 @@ export class WorkshopChangeRequestResolver {
         workshop_region: REGION[changeRequest.workshop_region],
         time_zone: changeRequest.time_zone as TIME_ZONE, //TIME_ZONE[changeRequest.time_zone],
       },
-      sessionDetails: changeRequest.workshop_sessions,
+      sessionDetails,
       client_id: changeRequest.client_id,
       course_id: changeRequest.course_id,
       prisma: ctx.prisma,
