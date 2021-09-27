@@ -155,6 +155,7 @@ model workshops {
   participant_sign_up_link                          String                     @db.VarChar(255)
   launch_participant_sign_ups                       Boolean                    @default(false)
   active_change_request                             Boolean                    @default(false)
+  license_type                                      license_type_enum
   advisors_advisorsToworkshops_assigned_advisor_id  advisors?                  @relation("advisorsToworkshops_assigned_advisor_id", fields: [assigned_advisor_id], references: [advisor_id])
   clients                                           clients                    @relation(fields: [client_id], references: [client_id])
   courses                                           courses                    @relation(fields: [course_id], references: [course_id])
@@ -279,6 +280,7 @@ model available_licenses {
   created_by        Int
   created_at        DateTime            @default(now()) @db.Timestamptz(6)
   last_updated      DateTime            @db.Timestamptz(6)
+  license_type      license_type_enum
   clients           clients             @relation(fields: [client_id], references: [client_id])
   courses           courses             @relation(fields: [course_id], references: [course_id])
   managers          managers            @relation(fields: [created_by], references: [manager_id])
@@ -348,6 +350,7 @@ model workshop_change_requests {
   record_attendance                                                Boolean
   in_person                                                        Boolean
   deleted                                                          Boolean
+  license_type                                                     license_type_enum
   change_request_note                                              String
   requested_by                                                     Int
   requested_at                                                     DateTime             @db.Timestamptz(6)
@@ -405,4 +408,9 @@ enum workshop_status_enum {
   RESCHEDULING
   COMPLETED
   CANCELLED
+}
+
+enum license_type_enum {
+  INDIVIDUAL_PARTICIPANT
+  FULL_WORKSHOP
 }

@@ -34,6 +34,10 @@ CREATE TYPE USER_TYPE_ENUM AS ENUM (
     'ADMIN',
     'SUPERADMIN' -- 'CLIENT', if needed
 );
+CREATE TYPE LICENSE_TYPE_ENUM AS ENUM (
+    'INDIVIDUAL_PARTICIPANT',
+    'FULL_WORKSHOP'
+);
 CREATE TYPE RESERVED_LICENSE_STATUS_ENUM AS ENUM (
     'RESERVED',
     'FINALIZED',
@@ -160,7 +164,8 @@ CREATE TABLE workshops (
     deleted BOOLEAN NOT NULL DEFAULT FALSE,
     participant_sign_up_link VARCHAR(255) NOT NULL,
     launch_participant_sign_ups BOOLEAN NOT NULL DEFAULT FALSE,
-    active_change_request BOOLEAN NOT NULL DEFAULT FALSE
+    active_change_request BOOLEAN NOT NULL DEFAULT FALSE,
+    license_type LICENSE_TYPE_ENUM NOT NULL
 );
 -- store requested changes that will be approved by managers / coordinators
 -- fields are nullable for values that aren't changing
@@ -197,6 +202,7 @@ CREATE TABLE workshop_change_requests (
     record_attendance BOOLEAN NOT NULL,
     in_person BOOLEAN NOT NULL,
     deleted BOOLEAN NOT NULL,
+    license_type LICENSE_TYPE_ENUM NOT NULL,
     -- identifying info for change request
     change_request_note TEXT NOT NULL,
     requested_by INT REFERENCES managers (manager_id) NOT NULL,
@@ -288,7 +294,8 @@ CREATE TABLE available_licenses (
     remaining_amount INT NOT NULL,
     created_by INT REFERENCES managers(manager_id) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    last_updated TIMESTAMPTZ NOT NULL
+    last_updated TIMESTAMPTZ NOT NULL,
+    license_type LICENSE_TYPE_ENUM NOT NULL
 );
 CREATE TABLE reserved_licenses (
     reserved_license_id SERIAL PRIMARY KEY,
