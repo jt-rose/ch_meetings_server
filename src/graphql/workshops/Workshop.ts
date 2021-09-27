@@ -10,6 +10,7 @@ import { Coursework } from '../courses/Coursework'
 import { REGION } from '../enums/REGION'
 import { WORKSHOP_STATUS } from '../enums/WORKSHOP_STATUS'
 import { TIME_ZONE } from '../enums/TIME_ZONES'
+import { LICENSE_TYPE } from '../enums/LICENSE_TYPE'
 
 @ObjectType()
 export class Workshop {
@@ -82,6 +83,9 @@ export class Workshop {
 
   @Field()
   launch_participant_sign_ups: boolean
+
+  @Field(() => LICENSE_TYPE)
+  license_type: LICENSE_TYPE
 
   /* ----------------------------- field resolvers ---------------------------- */
 

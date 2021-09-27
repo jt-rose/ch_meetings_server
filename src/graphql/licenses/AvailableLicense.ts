@@ -3,6 +3,7 @@ import { Course } from '../courses/Course'
 import { Client } from '../clients/Client'
 import { LicenseChange } from './LicenseChange'
 import { ReservedLicense } from './ReservedLicenses'
+import { LICENSE_TYPE } from '../enums/LICENSE_TYPE'
 
 @ObjectType()
 export class AvailableLicense {
@@ -26,6 +27,9 @@ export class AvailableLicense {
 
   @Field(() => Date)
   last_updated: Date
+
+  @Field(() => LICENSE_TYPE)
+  license_type: LICENSE_TYPE
 
   /* ----------------------------- field resolvers ---------------------------- */
   @Field(() => Course)

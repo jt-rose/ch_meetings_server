@@ -5,6 +5,7 @@ import { WORKSHOP_STATUS } from '../enums/WORKSHOP_STATUS'
 import { CHANGE_REQUEST_STATUS } from '../enums/CHANGE_REQUEST_STATUS'
 import { TIME_ZONE } from '../enums/TIME_ZONES'
 import { WorkshopSession } from './Session'
+import { LICENSE_TYPE } from '../enums/LICENSE_TYPE'
 
 @ObjectType()
 export class WorkshopChangeRequest {
@@ -83,6 +84,9 @@ export class WorkshopChangeRequest {
 
   @Field()
   coordinator_request: boolean
+
+  @Field(() => LICENSE_TYPE)
+  license_type: LICENSE_TYPE
 
   /* ----------------------------- field resolvers ---------------------------- */
 
