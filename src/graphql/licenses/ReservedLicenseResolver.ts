@@ -32,6 +32,8 @@ export class ReservedLicenseResolver {
       .workshops()
   }
 
+  // when a workshop license rather than an individual license is used
+  // the reserved and final amount should always be one
   @Authenticated()
   @Mutation(() => AvailableLicense)
   async confirmReservedLicensesUsed(
@@ -44,9 +46,19 @@ export class ReservedLicenseResolver {
       where: { reserved_license_id },
       include: { available_licenses: true },
     })
-    if (!reservedLicense)
+    if (!reservedLicense) {
       throw new CustomError('No such reserved licenses found!')
+    }
 
+    if (
+      reservedLicense.available_licenses.license_type === 'FULL_WORKSHOP' &&
+      reservedLicense.reserved_amount !== 1
+    ) {
+      // this error would be most likely caused by a mismatch of the front-end/ backend and will be hidden from users
+      throw new Error(
+        `a reserved license amount of ${final_amount_used} was requested for a full_workshop license reservation. A full workshop license covers all participants in a workshop, and therefore there should only be one of this type of license reserved per workshop.`
+      )
+    }
     // check for difference in final amounts used
     const finalAmountChange =
       final_amount_used - reservedLicense.reserved_amount
@@ -61,6 +73,14 @@ export class ReservedLicenseResolver {
     }
 
     // if difference found, adjust available licenses when resolving the reservation
+
+    const change_note =
+      reservedLicense.available_licenses.license_type === 'FULL_WORKSHOP'
+        ? 'Reserved full workshop license resolved'
+        : `Reserved Licenses (ID: ${reserved_license_id}) resolved with a final amount used of ${final_amount_used}. ${
+            finalAmountChange !== 0 &&
+            `Difference of ${finalAmountChange} from original reservation was found and amount of available licenses remaining was adjusted to ${updatedAvailableLicenseAmount}`
+          }`
 
     return ctx.prisma.available_licenses.update({
       where: { license_id: reservedLicense.license_id },
@@ -83,10 +103,7 @@ export class ReservedLicenseResolver {
             amount_change: finalAmountChange,
             updated_amount: updatedAvailableLicenseAmount,
             reserved_license_id,
-            change_note: `Reserved Licenses (ID: ${reserved_license_id}) resolved with a final amount used of ${final_amount_used}. ${
-              finalAmountChange !== 0 &&
-              `Difference of ${finalAmountChange} from original reservation was found and amount of available licenses remaining was adjusted to ${updatedAvailableLicenseAmount}`
-            }`,
+            change_note,
           },
         },
       },
