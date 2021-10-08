@@ -17,6 +17,7 @@ import { Client } from '../clients/Client'
 import { Authenticated } from '../../middleware/authChecker'
 import { ReservedLicense } from './ReservedLicenses'
 import { CustomError } from '../../middleware/errorHandler'
+import { LICENSE_TYPE } from '../enums/LICENSE_TYPE'
 
 @InputType()
 class LicenseInput {
@@ -28,8 +29,16 @@ class LicenseInput {
 
   @Field(() => Int)
   remaining_amount: number
+
+  @Field(() => LICENSE_TYPE)
+  license_type: LICENSE_TYPE
 }
 
+// to keep things simple and intentional
+// you will not be able to edit license type
+// and will instead need to remove licenses from one and create/ add to a new license
+// for editing the license type
+// this can, however, be simplified a bit on the front end
 @InputType()
 class EditLicenseInput {
   @Field(() => Int)
@@ -85,13 +94,14 @@ export class AvailableLicenseResolver {
     @Ctx() ctx: Context,
     @Arg('licenseInput') licenseInput: LicenseInput
   ) {
-    const { client_id, course_id, remaining_amount } = licenseInput
+    const { client_id, course_id, remaining_amount, license_type } =
+      licenseInput
 
     // check if client already has licenses for this course type, and reject if so
 
     const courseLicensesAlreadyExist =
       await ctx.prisma.available_licenses.findFirst({
-        where: { client_id, course_id },
+        where: { client_id, course_id, license_type },
       })
     if (courseLicensesAlreadyExist) {
       throw new CustomError(
@@ -103,6 +113,7 @@ export class AvailableLicenseResolver {
         client_id,
         course_id,
         remaining_amount,
+        license_type,
         last_updated: new Date(),
         created_by: ctx.req.session.manager_id!,
         created_at: new Date(),
@@ -165,6 +176,7 @@ export class AvailableLicenseResolver {
   }
 
   // convert client's licenses from one course to another
+  // does not change license type
   @Authenticated()
   @Mutation(() => [AvailableLicense])
   async convertAvailableLicenses(
@@ -217,7 +229,8 @@ export class AvailableLicenseResolver {
     const targetLicense = checkForLicenses.find(
       (license) =>
         license.course_id === targetCourse &&
-        license.client_id === currentLicense.client_id
+        license.client_id === currentLicense.client_id &&
+        license.license_type === currentLicense.license_type
     )
 
     // if no target license already exists, remove original licenses and create target licenses
@@ -230,7 +243,7 @@ export class AvailableLicenseResolver {
         throw new CustomError('No such course exists to move licenses into!')
       }
 
-      // batch query to add licenses toa  new license entity
+      // batch query to add licenses to a new license entity
       const createNewLicenses = ctx.prisma.available_licenses.create({
         data: {
           remaining_amount: conversionAmount,
@@ -238,6 +251,7 @@ export class AvailableLicenseResolver {
           client_id: currentLicense.client_id,
           created_by: ctx.req.session.manager_id!,
           created_at: new Date(),
+          license_type: currentLicense.license_type,
           last_updated: new Date(),
 
           license_changes: {
@@ -259,7 +273,7 @@ export class AvailableLicenseResolver {
       ])
     }
 
-    // if target license exists, confirm the the course type
+    // if target license exists, confirm the course type
     // reject if it is the same course
     // remove original licenses and update the target license amount
 
