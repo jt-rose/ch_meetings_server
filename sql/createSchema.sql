@@ -38,11 +38,6 @@ CREATE TYPE LICENSE_TYPE_ENUM AS ENUM (
     'INDIVIDUAL_PARTICIPANT',
     'FULL_WORKSHOP'
 );
-CREATE TYPE RESERVED_LICENSE_STATUS_ENUM AS ENUM (
-    'RESERVED',
-    'FINALIZED',
-    'CANCELLED'
-);
 CREATE TABLE managers (
     manager_id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -50,7 +45,7 @@ CREATE TABLE managers (
     email VARCHAR(255) UNIQUE NOT NULL,
     email_password VARCHAR(255) NOT NULL,
     user_type USER_TYPE_ENUM NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT TRUE -- may add regions for managers later if needed
+    active BOOLEAN NOT NULL DEFAULT TRUE
 );
 CREATE TABLE clients (
     client_id SERIAL PRIMARY KEY,
@@ -287,34 +282,25 @@ CREATE TABLE workshop_notes (
 -- and one for licenses currently reserved for a scheduled workshop
 -- a third table will track changes to each of these tables
 -- for accounting purposes
-CREATE TABLE available_licenses (
+CREATE TABLE licenses (
     license_id SERIAL PRIMARY KEY,
     course_id INT REFERENCES courses(course_id) NOT NULL,
     client_id INT REFERENCES clients(client_id) NOT NULL,
-    remaining_amount INT NOT NULL,
+    available_amount INT NOT NULL,
+    used_amount INT NOT NULL,
+    reserved_amount INT NOT NULL,
     created_by INT REFERENCES managers(manager_id) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     last_updated TIMESTAMPTZ NOT NULL,
     license_type LICENSE_TYPE_ENUM NOT NULL
 );
-CREATE TABLE reserved_licenses (
-    reserved_license_id SERIAL PRIMARY KEY,
-    license_id INT REFERENCES available_licenses(license_id) NOT NULL,
-    reserved_amount INT NOT NULL,
-    reserved_status RESERVED_LICENSE_STATUS_ENUM NOT NULL,
-    workshop_id INT REFERENCES workshops(workshop_id) NOT NULL,
-    created_by INT REFERENCES managers(manager_id) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    last_updated TIMESTAMPTZ NOT NULL
-);
 CREATE TABLE license_changes (
     license_change_id SERIAL PRIMARY KEY,
-    license_id INT REFERENCES available_licenses(license_id) NOT NULL,
+    license_id INT REFERENCES licenses(license_id) NOT NULL,
     updated_amount INT NOT NULL,
     amount_change INT NOT NULL,
     workshop_id INT REFERENCES workshops(workshop_id),
-    reserved_license_id INT REFERENCES reserved_licenses (reserved_license_id),
-    -- above two are nullable, for when changes are not related to workshops or reserved licenses
+    -- above is nullable for when changes are not related to workshop
     created_by INT REFERENCES managers(manager_id) NOT NULL,
     -- references who made the change
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

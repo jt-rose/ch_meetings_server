@@ -9,7 +9,5 @@ CREATE OR REPLACE FUNCTION trigger_update_time() RETURNS TRIGGER AS $$ BEGIN NEW
 RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-CREATE TRIGGER change_available_license_time_on_update BEFORE
-UPDATE ON available_licenses FOR EACH ROW EXECUTE PROCEDURE trigger_update_time();
-CREATE TRIGGER change_reserved_license_time_on_update BEFORE
-UPDATE ON reserved_licenses FOR EACH ROW EXECUTE PROCEDURE trigger_update_time();
+CREATE TRIGGER change_license_time_on_update BEFORE
+UPDATE ON licenses FOR EACH ROW EXECUTE PROCEDURE trigger_update_time();
