@@ -11,7 +11,7 @@ import {
 import { Context } from '../../utils/context'
 import { Client } from './Client'
 import { ClientNote } from './ClientNote'
-import { AvailableLicense } from '../licenses/AvailableLicense'
+import { License } from '../licenses/License'
 import { Workshop } from '../workshops/Workshop'
 import { CustomError } from '../../middleware/errorHandler'
 
@@ -25,11 +25,11 @@ export class ClientResolver {
       .client_notes()
   }
 
-  @FieldResolver(() => [AvailableLicense])
+  @FieldResolver(() => [License])
   licenses(@Ctx() ctx: Context, @Root() root: Client) {
     return ctx.prisma.clients
       .findUnique({ where: { client_id: root.client_id } })
-      .available_licenses()
+      .licenses()
   }
 
   @FieldResolver(() => [Workshop])
@@ -111,7 +111,7 @@ export class ClientResolver {
     // search for client and related workshops
     const clientAndWorkshops = await ctx.prisma.clients.findFirst({
       where: { client_id },
-      include: { workshops: true, available_licenses: true },
+      include: { workshops: true, licenses: true },
     })
 
     // reject if no client found
@@ -119,31 +119,25 @@ export class ClientResolver {
       throw new CustomError(`Client not found in database`)
     }
     // reject if client has workshops scheduled, past or present
-    if (clientAndWorkshops.workshops.length > 0) {
+    if (clientAndWorkshops.workshops.length) {
       throw new CustomError(
         'Cannot remove client with past or present workshops assigned'
       )
     }
 
-    // reject if outstanding licenses
-    if (
-      clientAndWorkshops.available_licenses.find(
-        (x) => x.remaining_amount !== 0
-      )
-    ) {
+    // reject if past or present licenses present
+    if (clientAndWorkshops.licenses.length) {
       throw new CustomError('Cannot remove client with outstanding licenses')
     }
 
     // safe to delete if client present but without workshops/ licenses
     // transaction used to remove all related fields together
-    const licenseIDs = clientAndWorkshops.available_licenses.map(
-      (x) => x.license_id
-    )
+    const licenseIDs = clientAndWorkshops.licenses.map((x) => x.license_id)
 
     const removeLicenseChanges = ctx.prisma.license_changes.deleteMany({
       where: { license_id: { in: licenseIDs } },
     })
-    const removeLicenses = ctx.prisma.available_licenses.deleteMany({
+    const removeLicenses = ctx.prisma.licenses.deleteMany({
       where: { client_id },
     })
     const removeClientNotes = ctx.prisma.client_notes.deleteMany({

@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from 'type-graphql'
 import { ClientNote } from './ClientNote'
-import { AvailableLicense } from '../licenses/AvailableLicense'
+import { License } from '../licenses/License'
 import { Workshop } from '../workshops/Workshop'
 
 @ObjectType()
@@ -27,8 +27,8 @@ export class Client {
   @Field(() => [ClientNote])
   client_notes: ClientNote[]
 
-  @Field(() => [AvailableLicense])
-  available_licenses: AvailableLicense[]
+  @Field(() => [License])
+  licenses: License[]
 
   @Field(() => [Workshop])
   workshops: Workshop[]
