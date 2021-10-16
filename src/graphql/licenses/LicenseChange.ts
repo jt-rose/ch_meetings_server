@@ -9,16 +9,16 @@ export class LicenseChange {
   license_id: number
 
   @Field(() => Int)
-  updated_amount: number
+  available_amount_change: number
 
   @Field(() => Int)
-  amount_change: number
+  used_amount_change: number
+
+  @Field(() => Int)
+  reserved_amount_change: number
 
   @Field(() => Int, { nullable: true })
   workshop_id?: number
-
-  @Field(() => Int, { nullable: true })
-  reserved_license_id?: number
 
   @Field(() => Int)
   manager_id: number

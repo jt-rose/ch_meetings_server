@@ -297,8 +297,9 @@ CREATE TABLE licenses (
 CREATE TABLE license_changes (
     license_change_id SERIAL PRIMARY KEY,
     license_id INT REFERENCES licenses(license_id) NOT NULL,
-    updated_amount INT NOT NULL,
-    amount_change INT NOT NULL,
+    available_amount_change INT NOT NULL,
+    used_amount_change INT NOT NULL,
+    reserved_amount_change INT NOT NULL,
     workshop_id INT REFERENCES workshops(workshop_id),
     -- above is nullable for when changes are not related to workshop
     created_by INT REFERENCES managers(manager_id) NOT NULL,
