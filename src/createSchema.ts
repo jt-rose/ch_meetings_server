@@ -14,8 +14,7 @@ import { AdvisorUnavailableTimeResolver } from './graphql/advisors/AdvisorUnavai
 import { CourseworkResolver } from './graphql/courses/CourseworkResolver'
 import { ManagerResolver } from './graphql/managers/ManagerResolver'
 import { ManagerAssignmentsResolver } from './graphql/managers/ManagerAssignmentResolver'
-import { AvailableLicenseResolver } from './graphql/licenses/AvailableLicenseResolver'
-import { ReservedLicenseResolver } from './graphql/licenses/ReservedLicenseResolver'
+import { LicenseResolver } from './graphql/licenses/LicenseResolver'
 import { WorkshopResolver } from './graphql/workshops/WorkshopResolver'
 import { WorkshopChangeRequestResolver } from './graphql/workshops/WorkshopChangeRequestResolver'
 import { WorkshopGroupResolver } from './graphql/workshops/WorkshopGroupResolver'
@@ -42,8 +41,7 @@ const generateSchemaType =
         CourseworkResolver,
         ManagerResolver,
         ManagerAssignmentsResolver,
-        AvailableLicenseResolver,
-        ReservedLicenseResolver,
+        LicenseResolver,
         ErrorLogResolver,
       ],
       validate: false,

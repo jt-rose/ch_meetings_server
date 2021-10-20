@@ -9,13 +9,12 @@ import {
   InputType,
   Field,
 } from 'type-graphql'
-import { AvailableLicense } from './AvailableLicense'
+import { License } from './License'
 import { LicenseChange } from './LicenseChange'
 import { Course } from '../courses/Course'
 import { Context } from '../../utils/context'
 import { Client } from '../clients/Client'
 import { Authenticated } from '../../middleware/authChecker'
-import { ReservedLicense } from './ReservedLicenses'
 import { CustomError } from '../../middleware/errorHandler'
 import { LICENSE_TYPE } from '../enums/LICENSE_TYPE'
 
@@ -27,11 +26,20 @@ class LicenseInput {
   @Field(() => Int)
   course_id: number
 
-  @Field(() => Int)
-  remaining_amount: number
-
   @Field(() => LICENSE_TYPE)
   license_type: LICENSE_TYPE
+}
+
+@InputType()
+class AddLicenseInput extends LicenseInput {
+  @Field(() => Int)
+  amount_to_add: number
+}
+
+@InputType()
+class RemoveLicenseInput extends LicenseInput {
+  @Field(() => Int)
+  amount_to_remove: number
 }
 
 // to keep things simple and intentional
@@ -39,46 +47,31 @@ class LicenseInput {
 // and will instead need to remove licenses from one and create/ add to a new license
 // for editing the license type
 // this can, however, be simplified a bit on the front end
-@InputType()
-class EditLicenseInput {
-  @Field(() => Int)
-  license_id: number
 
-  @Field(() => Int)
-  remaining_amount: number
+// since reserved and used licenses will be managed in conjunction with workshops
+// only the available_amount can be edited here
 
-  @Field()
-  change_note: string
-}
-
-@Resolver(AvailableLicense)
-export class AvailableLicenseResolver {
+@Resolver(License)
+export class LicenseResolver {
   /* ----------------------------- field resolvers ---------------------------- */
 
   @FieldResolver(() => Course)
-  course(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
-    return ctx.prisma.available_licenses
+  course(@Ctx() ctx: Context, @Root() root: License) {
+    return ctx.prisma.licenses
       .findUnique({ where: { license_id: root.license_id } })
       .courses()
   }
 
   @FieldResolver(() => Client)
-  client(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
-    return ctx.prisma.available_licenses
+  client(@Ctx() ctx: Context, @Root() root: License) {
+    return ctx.prisma.licenses
       .findUnique({ where: { license_id: root.license_id } })
       .clients()
   }
 
-  @FieldResolver(() => [ReservedLicense])
-  reservedLicenses(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
-    return ctx.prisma.available_licenses
-      .findUnique({ where: { license_id: root.license_id } })
-      .reserved_licenses()
-  }
-
   @FieldResolver(() => [LicenseChange])
-  license_changes(@Ctx() ctx: Context, @Root() root: AvailableLicense) {
-    return ctx.prisma.available_licenses
+  license_changes(@Ctx() ctx: Context, @Root() root: License) {
+    return ctx.prisma.licenses
       .findUnique({ where: { license_id: root.license_id } })
       .license_changes()
   }
@@ -88,40 +81,80 @@ export class AvailableLicenseResolver {
   // read function will be managed via field resolver on clients
   // records will be kept for all license creations and changes, so no delete function needed
 
+  // addLicenses (create new or add to existing)
   @Authenticated()
-  @Mutation(() => AvailableLicense)
-  async addLicenses(
+  @Mutation(() => License)
+  async addAvailableLicenses(
     @Ctx() ctx: Context,
-    @Arg('licenseInput') licenseInput: LicenseInput
+    @Arg('licenseInput') licenseInput: AddLicenseInput,
+    @Arg('change_note', { nullable: true }) change_note?: string
   ) {
-    const { client_id, course_id, remaining_amount, license_type } =
-      licenseInput
+    const { client_id, course_id, amount_to_add, license_type } = licenseInput
 
-    // check if client already has licenses for this course type, and reject if so
-
-    const courseLicensesAlreadyExist =
-      await ctx.prisma.available_licenses.findFirst({
-        where: { client_id, course_id, license_type },
-      })
-    if (courseLicensesAlreadyExist) {
-      throw new CustomError(
-        'Requested course licenses for this client already exist!'
-      )
+    if (amount_to_add <= 0) {
+      throw new CustomError('Amount of licenses added must be one or greater')
     }
-    return ctx.prisma.available_licenses.create({
+
+    // check for client with matching license for same course and license type
+    const clientWithLicense = await ctx.prisma.clients.findFirst({
+      where: {
+        client_id,
+      },
+      include: {
+        licenses: { where: { course_id, license_type } },
+      },
+    })
+
+    if (!clientWithLicense) {
+      throw new CustomError('No such client found!')
+    }
+
+    if (!clientWithLicense.active) {
+      throw new CustomError('Licenses cannot be added to an inactive client!')
+    }
+    const matchingLicense = clientWithLicense.licenses[0]
+    const note = `${amount_to_add} ${license_type} licenses added${
+      change_note && ' with Manager Note: ' + change_note
+    }`
+
+    // if matching license found, add available_amount to existing license
+    if (matchingLicense) {
+      return ctx.prisma.licenses.update({
+        where: { license_id: matchingLicense.license_id },
+        data: {
+          available_amount: matchingLicense.available_amount + amount_to_add,
+          last_updated: new Date(),
+          license_changes: {
+            create: {
+              available_amount_change: amount_to_add,
+              used_amount_change: 0,
+              reserved_amount_change: 0,
+              change_note: note,
+              created_by: ctx.req.session.manager_id!,
+              created_at: new Date(),
+            },
+          },
+        },
+      })
+    }
+
+    // if no licenses found for this client / course/ license type combination, create new one
+    return ctx.prisma.licenses.create({
       data: {
         client_id,
         course_id,
-        remaining_amount,
         license_type,
-        last_updated: new Date(),
+        available_amount: amount_to_add,
+        used_amount: 0,
+        reserved_amount: 0,
         created_by: ctx.req.session.manager_id!,
-        created_at: new Date(),
+        last_updated: new Date(),
         license_changes: {
           create: {
-            amount_change: remaining_amount,
-            updated_amount: remaining_amount,
-            change_note: `${remaining_amount} licenses for course #${course_id} added for client id ${client_id}`,
+            available_amount_change: amount_to_add,
+            used_amount_change: 0,
+            reserved_amount_change: 0,
+            change_note: note,
             created_by: ctx.req.session.manager_id!,
             created_at: new Date(),
           },
@@ -130,45 +163,49 @@ export class AvailableLicenseResolver {
     })
   }
 
-  // NOTE: adjusting the amount due to reserved licenses being used
-  // should be handled by the ReservedLicenses resolver
-  // this will instead be for adding new licenses and correcting clerical issues
+  // remove available licenses
   @Authenticated()
-  @Mutation(() => AvailableLicense)
-  async editAvailableLicenses(
+  @Mutation(() => License)
+  async removeAvailableLicenses(
     @Ctx() ctx: Context,
-    @Arg('licenseInput') licenseInput: EditLicenseInput
+    @Arg('licenseInput') licenseInput: RemoveLicenseInput,
+    @Arg('change_note', { nullable: true }) change_note?: string
   ) {
-    const { license_id, remaining_amount, change_note } = licenseInput
+    const { client_id, course_id, amount_to_remove, license_type } =
+      licenseInput
 
-    // reject if new remaining amount is less than 0
-    if (remaining_amount < 0)
-      throw new CustomError('Available license amount cannot be negative!')
-
-    // confirm license exists in database
-    const currentLicense = await ctx.prisma.available_licenses.findFirst({
-      where: { license_id },
-      include: { license_changes: true },
-    })
-
-    if (!currentLicense) {
-      throw new CustomError('no such license found!')
+    if (amount_to_remove <= 0) {
+      throw new CustomError('Amount of licenses removed must be one or greater')
     }
 
-    // calculate how much the available license amount is changing by
-    const amount_change = remaining_amount - currentLicense.remaining_amount
+    const currentLicenses = await ctx.prisma.licenses.findFirst({
+      where: { client_id, course_id, license_type },
+    })
+    if (!currentLicenses) {
+      throw new CustomError('No such licenses found to be removed from!')
+    }
 
-    // update license amount
-    return ctx.prisma.available_licenses.update({
-      where: { license_id },
+    if (amount_to_remove > currentLicenses.available_amount) {
+      throw new CustomError(
+        'Cannot remove more available licenses than are currently registered'
+      )
+    }
+
+    return ctx.prisma.licenses.update({
+      where: { license_id: currentLicenses.license_id },
       data: {
-        remaining_amount,
+        available_amount: currentLicenses.available_amount - amount_to_remove,
+        last_updated: new Date(),
         license_changes: {
           create: {
+            available_amount_change: -amount_to_remove,
+            used_amount_change: 0,
+            reserved_amount_change: 0,
             created_by: ctx.req.session.manager_id!,
-            amount_change,
-            updated_amount: remaining_amount,
-            change_note,
+            created_at: new Date(),
+            change_note: `${amount_to_remove} licenses removed ${
+              change_note && `. Manager Note: ${change_note}`
+            }`,
           },
         },
       },
@@ -178,15 +215,15 @@ export class AvailableLicenseResolver {
   // convert client's licenses from one course to another
   // does not change license type
   @Authenticated()
-  @Mutation(() => [AvailableLicense])
-  async convertAvailableLicenses(
+  @Mutation(() => [License])
+  async convertLicenses(
     @Ctx() ctx: Context,
     @Arg('license_id', () => Int) license_id: number,
     @Arg('targetCourse', () => Int) targetCourse: number,
     @Arg('conversionAmount', () => Int) conversionAmount: number
   ) {
     // check for course licenses to convert between
-    const checkForLicenses = await ctx.prisma.available_licenses.findMany({
+    const checkForLicenses = await ctx.prisma.licenses.findMany({
       where: { OR: [{ license_id }, { course_id: targetCourse }] },
     })
 
@@ -200,23 +237,22 @@ export class AvailableLicenseResolver {
 
     // confirm license count will not drop below 0 upon change
     const updatedRemainingAmount =
-      currentLicense.remaining_amount - conversionAmount
+      currentLicense.available_amount - conversionAmount
     if (updatedRemainingAmount < 0) {
       throw new CustomError('Not enough licenses to convert this amount!')
     }
 
-    //
-
     // batch query to remove licenses from original license
-    const removeOriginalLicenses = ctx.prisma.available_licenses.update({
+    const removeOriginalLicenses = ctx.prisma.licenses.update({
       where: { license_id },
       data: {
-        remaining_amount: updatedRemainingAmount,
+        available_amount: updatedRemainingAmount,
         last_updated: new Date(),
         license_changes: {
           create: {
-            amount_change: -conversionAmount,
-            updated_amount: updatedRemainingAmount,
+            available_amount_change: -conversionAmount,
+            used_amount_change: 0,
+            reserved_amount_change: 0,
             change_note: `${conversionAmount} licenses converted to course #${targetCourse}`,
             created_by: ctx.req.session.manager_id!,
             created_at: new Date(),
@@ -244,9 +280,11 @@ export class AvailableLicenseResolver {
       }
 
       // batch query to add licenses to a new license entity
-      const createNewLicenses = ctx.prisma.available_licenses.create({
+      const createNewLicenses = ctx.prisma.licenses.create({
         data: {
-          remaining_amount: conversionAmount,
+          available_amount: conversionAmount,
+          used_amount: 0,
+          reserved_amount: 0,
           course_id: targetCourse,
           client_id: currentLicense.client_id,
           created_by: ctx.req.session.manager_id!,
@@ -258,8 +296,9 @@ export class AvailableLicenseResolver {
             create: {
               created_by: ctx.req.session.manager_id!,
               created_at: new Date(),
-              amount_change: conversionAmount,
-              updated_amount: conversionAmount,
+              available_amount_change: conversionAmount,
+              used_amount_change: 0,
+              reserved_amount_change: 0,
               change_note: `${conversionAmount} licenses converted from license #${license_id} to new licenses for course #${targetCourse}`,
             },
           },
@@ -288,16 +327,17 @@ export class AvailableLicenseResolver {
     // if licenses for that course do not exist, create them with this amount
 
     // batch query to add licenses to existing license entity
-    const addToExistingLicenses = ctx.prisma.available_licenses.update({
+    const addToExistingLicenses = ctx.prisma.licenses.update({
       where: { license_id: targetLicense.license_id },
       data: {
-        remaining_amount: targetLicense.remaining_amount + conversionAmount,
+        available_amount: targetLicense.available_amount + conversionAmount,
         license_changes: {
           create: {
             created_by: ctx.req.session.manager_id!,
             created_at: new Date(),
-            amount_change: conversionAmount,
-            updated_amount: conversionAmount,
+            available_amount_change: conversionAmount,
+            used_amount_change: 0,
+            reserved_amount_change: 0,
             change_note: `${conversionAmount} licenses converted from license #${license_id} to new licenses for course #${targetCourse}`,
           },
         },
