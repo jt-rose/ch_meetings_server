@@ -11,12 +11,6 @@ export class LicenseChange {
   @Field(() => Int)
   updated_license_amount: number
 
-  @Field(() => Int, { nullable: true })
-  workshop_id?: number
-
-  @Field(() => Int)
-  manager_id: number
-
   @Field(() => Int)
   created_by: number
 

@@ -161,7 +161,6 @@ model workshops {
   managers                                          managers                   @relation(fields: [created_by], references: [manager_id])
   workshop_groups                                   workshop_groups?           @relation(fields: [group_id], references: [group_id])
   advisors_advisorsToworkshops_requested_advisor_id advisors?                  @relation("advisorsToworkshops_requested_advisor_id", fields: [requested_advisor_id], references: [advisor_id])
-  license_changes                                   license_changes[]
   manager_assignments                               manager_assignments[]
   workshop_change_log                               workshop_change_log[]
   workshop_change_requests                          workshop_change_requests[]
@@ -236,16 +235,14 @@ model client_notes {
 }
 
 model license_changes {
-  license_change_id      Int        @id @default(autoincrement())
+  license_change_id      Int      @id @default(autoincrement())
   license_id             Int
   updated_license_amount Int
-  workshop_id            Int?
   created_by             Int
-  created_at             DateTime   @default(now()) @db.Timestamptz(6)
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
   change_note            String
-  managers               managers   @relation(fields: [created_by], references: [manager_id])
-  licenses               licenses   @relation(fields: [license_id], references: [license_id])
-  workshops              workshops? @relation(fields: [workshop_id], references: [workshop_id])
+  managers               managers @relation(fields: [created_by], references: [manager_id])
+  licenses               licenses @relation(fields: [license_id], references: [license_id])
 }
 
 model workshop_groups {
