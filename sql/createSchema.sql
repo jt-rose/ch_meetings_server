@@ -286,9 +286,7 @@ CREATE TABLE licenses (
     license_id SERIAL PRIMARY KEY,
     course_id INT REFERENCES courses(course_id) NOT NULL,
     client_id INT REFERENCES clients(client_id) NOT NULL,
-    available_amount INT NOT NULL,
-    used_amount INT NOT NULL,
-    reserved_amount INT NOT NULL,
+    license_amount INT NOT NULL,
     created_by INT REFERENCES managers(manager_id) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     last_updated TIMESTAMPTZ NOT NULL,
@@ -297,9 +295,7 @@ CREATE TABLE licenses (
 CREATE TABLE license_changes (
     license_change_id SERIAL PRIMARY KEY,
     license_id INT REFERENCES licenses(license_id) NOT NULL,
-    available_amount_change INT NOT NULL,
-    used_amount_change INT NOT NULL,
-    reserved_amount_change INT NOT NULL,
+    updated_license_amount INT NOT NULL,
     workshop_id INT REFERENCES workshops(workshop_id),
     -- above is nullable for when changes are not related to workshop
     created_by INT REFERENCES managers(manager_id) NOT NULL,

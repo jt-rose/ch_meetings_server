@@ -16,13 +16,7 @@ export class License {
   client_id: number
 
   @Field(() => Int)
-  available_amount: number
-
-  @Field(() => Int)
-  reserved_amount: number
-
-  @Field(() => Int)
-  used_amount: number
+  license_amount: number
 
   @Field(() => Int)
   created_by: number

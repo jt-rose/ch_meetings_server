@@ -236,18 +236,16 @@ model client_notes {
 }
 
 model license_changes {
-  license_change_id       Int        @id @default(autoincrement())
-  license_id              Int
-  available_amount_change Int
-  used_amount_change      Int
-  reserved_amount_change  Int
-  workshop_id             Int?
-  created_by              Int
-  created_at              DateTime   @default(now()) @db.Timestamptz(6)
-  change_note             String
-  managers                managers   @relation(fields: [created_by], references: [manager_id])
-  licenses                licenses   @relation(fields: [license_id], references: [license_id])
-  workshops               workshops? @relation(fields: [workshop_id], references: [workshop_id])
+  license_change_id      Int        @id @default(autoincrement())
+  license_id             Int
+  updated_license_amount Int
+  workshop_id            Int?
+  created_by             Int
+  created_at             DateTime   @default(now()) @db.Timestamptz(6)
+  change_note            String
+  managers               managers   @relation(fields: [created_by], references: [manager_id])
+  licenses               licenses   @relation(fields: [license_id], references: [license_id])
+  workshops              workshops? @relation(fields: [workshop_id], references: [workshop_id])
 }
 
 model workshop_groups {
@@ -331,20 +329,18 @@ model workshop_change_requests {
 }
 
 model licenses {
-  license_id       Int               @id @default(autoincrement())
-  course_id        Int
-  client_id        Int
-  available_amount Int
-  used_amount      Int
-  reserved_amount  Int
-  created_by       Int
-  created_at       DateTime          @default(now()) @db.Timestamptz(6)
-  last_updated     DateTime          @db.Timestamptz(6)
-  license_type     license_type_enum
-  clients          clients           @relation(fields: [client_id], references: [client_id])
-  courses          courses           @relation(fields: [course_id], references: [course_id])
-  managers         managers          @relation(fields: [created_by], references: [manager_id])
-  license_changes  license_changes[]
+  license_id      Int               @id @default(autoincrement())
+  course_id       Int
+  client_id       Int
+  license_amount  Int
+  created_by      Int
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  last_updated    DateTime          @db.Timestamptz(6)
+  license_type    license_type_enum
+  clients         clients           @relation(fields: [client_id], references: [client_id])
+  courses         courses           @relation(fields: [course_id], references: [course_id])
+  managers        managers          @relation(fields: [created_by], references: [manager_id])
+  license_changes license_changes[]
 }
 
 enum region_enum {
