@@ -2,6 +2,7 @@ import { WORKSHOP_STATUS } from '../../enums/WORKSHOP_STATUS'
 import { TIME_ZONE } from '../../enums/TIME_ZONES'
 import { InputType, Field, Int } from 'type-graphql'
 import { REGION } from '../../enums/REGION'
+import { LICENSE_TYPE } from 'src/graphql/enums/LICENSE_TYPE'
 
 // fields shared across creating / editing a workshop
 @InputType()
@@ -44,6 +45,9 @@ class WorkshopInput {
 
   @Field()
   workshop_end_time: Date
+
+  @Field(() => LICENSE_TYPE)
+  license_type: LICENSE_TYPE
 
   //workshop_notes: {},
   //managers: {},
